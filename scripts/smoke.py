@@ -383,3 +383,116 @@ with tempfile.TemporaryDirectory(prefix='design-checks-') as directory:
                                 text=True, capture_output=True, timeout=60)
         assert result.returncode == 0 and 'PASS:' in result.stdout, (result.stdout, result.stderr)
 print('PASS: lessons 014-016 composition, reader contracts, DI lifetimes and disposal.')
+
+# Lessons 017-019: refactoring behavior, value semantics and a persistent layered CLI.
+for name in ['16-ticket-solid', '17-ticket-values', '18-ticket-layers']:
+    subprocess.run(['dotnet', 'build', str(ROOT / 'samples' / name / 'SupportDesk.csproj'),
+                    '--nologo'], check=True)
+output = run('16-ticket-solid')
+for text in ['#1: Network issue (Open)', '#1 Open', 'Invalid registration rejected.',
+             'Next successful ID: 2', 'Ticket not found.', 'State after reporting: Open']:
+    assert text in output, output
+output = run('17-ticket-values')
+for text in ['Same value: True; same reference: False', 'Case sensitive: False',
+             'Unique values: 1', 'Original: Network issue; copy: Printer issue',
+             'Invalid value rejected.', 'Shallow original count: 2',
+             'List content equality automatic: False']:
+    assert text in output, output
+
+with tempfile.TemporaryDirectory(prefix='layers-check-') as directory:
+    folder = Path(directory)
+    path = folder / 'tickets.json'
+    output = run_args('18-ticket-layers', [path, 'find', '99'])
+    assert 'Ticket not found.' in output and not path.exists(), output
+    output = run_args('18-ticket-layers', [path, 'add', '  مشکل شبکه  '])
+    assert 'Saved #1: مشکل شبکه' in output, output
+    output = run_args('18-ticket-layers', [path, 'find', '1'])
+    assert 'Found #1: مشکل شبکه' in output, output
+    before = path.read_bytes()
+    output = run_args('18-ticket-layers', [path, 'add', 'ab'], expected_code=1)
+    assert 'Saved #' not in output and path.read_bytes() == before, output
+    output = run_args('18-ticket-layers', [path, 'add', 'Printer issue'])
+    assert 'Saved #2' in output, output
+    before = path.read_bytes()
+    for invalid in ['0', '-1', 'abc', '2147483648']:
+        output = run_args('18-ticket-layers', [path, 'find', invalid], expected_code=2)
+        assert 'Usage:' in output and path.read_bytes() == before, output
+    for invalid in ['{broken', 'null', json.dumps({'Version': 1, 'Tickets': []}),
+                    json.dumps({'Schema': 'registration-v1', 'Items': [None]}),
+                    json.dumps({'Schema': 'registration-v1', 'Items': [{'Id': 0, 'Title': 'Valid title'}]}),
+                    json.dumps({'Schema': 'registration-v1', 'Items': [{'Id': 1, 'Title': 'ab'}]}),
+                    json.dumps({'Schema': 'registration-v1', 'Items': [
+                        {'Id': 1, 'Title': 'First ticket'}, {'Id': 1, 'Title': 'Second ticket'}]})]:
+        bad = folder / 'bad.json'
+        bad.write_text(invalid, encoding='utf-8')
+        original = bad.read_bytes()
+        output = run_args('18-ticket-layers', [bad, 'add', 'Valid title'], expected_code=1)
+        assert 'Saved #' not in output and bad.read_bytes() == original, output
+    output = run_args('18-ticket-layers', [folder / 'absent' / 'tickets.json', 'add', 'Valid title'], expected_code=1)
+    assert 'Storage failed' in output and 'Saved #' not in output, output
+    capacity = folder / 'capacity.json'
+    capacity.write_text(json.dumps({'Schema': 'registration-v1', 'Items': [
+        {'Id': 2147483647, 'Title': 'Existing ticket'}]}), encoding='utf-8')
+    original = capacity.read_bytes()
+    run_args('18-ticket-layers', [capacity, 'add', 'Valid title'], expected_code=1)
+    assert capacity.read_bytes() == original
+    assert not list(folder.glob('*.tmp'))
+
+value_source = '''
+using SupportDesk.Domain;
+static void Check(bool ok) { if (!ok) throw new Exception("Value semantics failed"); }
+static void Invalid(string? raw)
+{
+    try { _ = TicketTitle.Create(raw!); }
+    catch (ArgumentException) { return; }
+    throw new Exception("Invalid value accepted");
+}
+foreach (string? raw in new string?[] { null, "  ", "ab", new string('x', 121) }) Invalid(raw);
+_ = TicketTitle.Create("abc");
+_ = TicketTitle.Create(new string('x', 120));
+TicketTitle first = TicketTitle.Create("  abc  ");
+TicketTitle second = TicketTitle.Create("abc");
+Check(first == second && !ReferenceEquals(first, second));
+Check(first != TicketTitle.Create("ABC"));
+Check(new HashSet<TicketTitle> { first, second }.Count == 1);
+TicketTitle copy = first with { };
+Check(copy == first && copy.Value == "abc");
+Console.WriteLine("PASS: value object boundaries");
+'''
+solid_source = '''
+using SupportDesk.Application;
+using SupportDesk.Infrastructure;
+using SupportDesk.Presentation;
+using SupportDesk.Domain;
+InMemoryTicketStore store = new();
+TicketRegistrationService registration = new(store);
+int id = registration.Register("  Network issue  ");
+try { registration.Register("ab"); throw new Exception("Invalid title accepted"); }
+catch (ArgumentException) { }
+if (registration.Register("Printer issue") != 2) throw new Exception("Failed registration consumed ID");
+Ticket ticket = store.FindById(id) ?? throw new Exception("Missing ticket");
+ticket.AddNote("Resolved configuration"); ticket.Start(); ticket.Close();
+foreach (ITicketFormatter formatter in new ITicketFormatter[] { new PlainTextFormatter(), new CompactFormatter() })
+{
+    string output = new TicketReportService(store, formatter).Report(id);
+    if (string.IsNullOrEmpty(output) || ticket.Status != TicketStatus.Closed || ticket.Notes.Count != 1)
+        throw new Exception("Formatter violated state contract");
+}
+Console.WriteLine("PASS: refactoring contracts");
+'''
+with tempfile.TemporaryDirectory(prefix='values-consumer-') as directory:
+    for name, source in {'16-ticket-solid': solid_source, '17-ticket-values': value_source}.items():
+        project = consumer_project(Path(directory) / name, ROOT / 'samples' / name / 'SupportDesk.csproj')
+        (project.parent / 'Program.cs').write_text(source, encoding='utf-8')
+        result = subprocess.run(['dotnet', 'run', '--project', str(project)],
+                                text=True, capture_output=True, timeout=60)
+        assert result.returncode == 0 and 'PASS:' in result.stdout, (result.stdout, result.stderr)
+    negative = consumer_project(Path(directory) / 'negative', ROOT / 'samples' / '17-ticket-values' / 'SupportDesk.csproj')
+    (negative.parent / 'Program.cs').write_text(
+        'using SupportDesk.Domain;\nvar title = TicketTitle.Create("Valid title");\n'
+        'var invalid = title with { Value = "ab" };\n', encoding='utf-8')
+    result = subprocess.run(['dotnet', 'build', str(negative), '--nologo'],
+                            text=True, capture_output=True, timeout=60)
+    assert result.returncode != 0 and 'CS0200' in result.stdout + result.stderr, (result.stdout, result.stderr)
+
+print('PASS: lessons 017-019 SOLID behavior, value boundaries, protected with, persistence and failure paths.')

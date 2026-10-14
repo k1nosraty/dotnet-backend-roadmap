@@ -29,9 +29,9 @@
 | 014 | [composition و inheritance](lessons/02-design/014-composition/README.md) | نوشته‌شده |
 | 015 | [interface و قرارداد](lessons/02-design/015-interfaces/README.md) | نوشته‌شده |
 | 016 | [تزریق وابستگی و طول عمر](lessons/02-design/016-dependency-injection/README.md) | نوشته‌شده |
-| 017 | SOLID با بازآرایی یک قابلیت | برنامه‌ریزی‌شده |
-| 018 | record و value object | برنامه‌ریزی‌شده |
-| 019 | جداسازی presentation و application و persistence | برنامه‌ریزی‌شده |
+| 017 | [SOLID با بازآرایی یک قابلیت](lessons/02-design/017-solid/README.md) | نوشته‌شده |
+| 018 | [record و value object](lessons/02-design/018-value-objects/README.md) | نوشته‌شده |
+| 019 | [جداسازی presentation و application و persistence](lessons/02-design/019-separation/README.md) | نوشته‌شده |
 | 020 | نتیجهٔ عملیات و exception | برنامه‌ریزی‌شده |
 | 021 | بازآرایی و کنترل پیچیدگی | برنامه‌ریزی‌شده |
 | 022 | تحویل و بازبینی SupportDesk CLI | برنامه‌ریزی‌شده |

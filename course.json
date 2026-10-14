@@ -99,19 +99,19 @@
     "id": 17,
     "title": "SOLID با بازآرایی یک قابلیت",
     "path": "lessons/02-design/017-solid/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 18,
     "title": "record و value object",
     "path": "lessons/02-design/018-value-objects/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 19,
     "title": "جداسازی presentation و application و persistence",
     "path": "lessons/02-design/019-separation/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 20,

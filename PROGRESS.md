@@ -24,6 +24,10 @@
 - [ ] ۰۱۵: readerهای جایگزین با قرارداد سازگار ساختم و failure را از null جدا کردم.
 - [ ] ۰۱۶: lifetimeها، disposal و captive dependency را عملی بررسی کردم.
 
+- [ ] ۰۱۷: یک قابلیت را با SOLID و حفظ رفتار بازآرایی کردم.
+- [ ] ۰۱۸: value object معتبر، equality و shallow copy را بررسی کردم.
+- [ ] ۰۱۹: presentation، application و persistence را جدا و مسیر عملیات را توضیح دادم.
+
 ## گزارش هر جلسه
 
 | تاریخ | درس | چیزی که ساختم | خطایی که رفع کردم | سؤال باقی‌مانده |
