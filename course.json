@@ -117,19 +117,19 @@
     "id": 20,
     "title": "نتیجهٔ عملیات و exception",
     "path": "lessons/02-design/020-errors/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 21,
     "title": "بازآرایی و کنترل پیچیدگی",
     "path": "lessons/02-design/021-refactoring/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 22,
     "title": "تحویل و بازبینی SupportDesk CLI",
     "path": "lessons/02-design/022-cli-delivery/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 23,

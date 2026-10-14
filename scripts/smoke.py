@@ -16,7 +16,7 @@ for name in ['01-ticket-summary', '02-ticket-intake']:
 def run(name, stdin=''):
     project = ROOT / 'samples' / name / 'SupportDesk.csproj'
     result = subprocess.run(
-        ['dotnet', 'run', '--no-build', '--project', str(project)],
+        ['dotnet', str(project.parent / 'bin' / 'Debug' / 'net10.0' / 'SupportDesk.dll')],
         input=stdin, text=True, capture_output=True, check=True, timeout=30,
     )
     return result.stdout
@@ -101,8 +101,7 @@ assert output.index('#2:') < output.index('#3:') < output.index('#4:'), output
 
 def run_args(name, arguments, stdin='', expected_code=0):
     result = subprocess.run(
-        ['dotnet', 'run', '--no-build', '--project',
-         str(ROOT / 'samples' / name / 'SupportDesk.csproj'), '--', *map(str, arguments)],
+        ['dotnet', str(ROOT / 'samples' / name / 'bin' / 'Debug' / 'net10.0' / 'SupportDesk.dll'), *map(str, arguments)],
         input=stdin, text=True, capture_output=True, timeout=30)
     assert result.returncode == expected_code, (name, arguments, result.stdout, result.stderr)
     return result.stdout + result.stderr
@@ -496,3 +495,145 @@ with tempfile.TemporaryDirectory(prefix='values-consumer-') as directory:
     assert result.returncode != 0 and 'CS0200' in result.stdout + result.stderr, (result.stdout, result.stderr)
 
 print('PASS: lessons 017-019 SOLID behavior, value boundaries, protected with, persistence and failure paths.')
+
+# Lessons 020-022: outcome invariants, parser contracts and the final CLI delivery.
+for name in ['19-ticket-outcomes', '20-ticket-refactoring', '21-supportdesk-cli']:
+    subprocess.run(['dotnet', 'build', str(ROOT / 'samples' / name / 'SupportDesk.csproj'),
+                    '--nologo'], check=True)
+output = run('19-ticket-outcomes')
+for text in ['Error InvalidInput:', 'Success #1: Network issue', 'Error NotFound:']:
+    assert text in output, output
+output = run_args('19-ticket-outcomes', ['--failure'], expected_code=1)
+assert 'Persistence failed' in output and 'Success #' not in output, output
+assert '#1: Network issue' in run_args('20-ticket-refactoring', ['find', '1'])
+assert '#2: Printer issue' in run_args('20-ticket-refactoring', ['add', 'Printer issue'])
+for args in [['find', 'abc'], ['find', '0'], [], ['unknown']]:
+    run_args('20-ticket-refactoring', args, expected_code=2)
+run_args('20-ticket-refactoring', ['find', '99'], expected_code=3)
+run_args('20-ticket-refactoring', ['add', 'ab'], expected_code=2)
+
+outcome_check = '''
+using SupportDesk.Application;
+using SupportDesk.Infrastructure;
+using SupportDesk.Domain;
+static void Reject<T>(Action action) where T : Exception
+{
+    try { action(); }
+    catch (Exception ex) when (ex is T) { return; }
+    throw new Exception($"Expected {typeof(T).Name}");
+}
+Reject<ArgumentNullException>(() => Outcome<TicketSummary>.Success(null!));
+Reject<ArgumentOutOfRangeException>(() => Outcome<TicketSummary>.Failure((ErrorCode)99, "Error"));
+Reject<ArgumentException>(() => Outcome<TicketSummary>.Failure(ErrorCode.InvalidInput, " "));
+var failure = Outcome<TicketSummary>.Failure(ErrorCode.NotFound, "Missing");
+Reject<InvalidOperationException>(() => { _ = failure.Value; });
+if (failure.IsSuccess || failure.Error?.Code != ErrorCode.NotFound) throw new Exception("Outcome state broken");
+InMemoryTicketStore store = new();
+TicketService service = new(store, store);
+if (service.Register("ab").IsSuccess) throw new Exception("Invalid input accepted");
+if (service.Register("Valid title").Value.Id != 1) throw new Exception("Rejected input consumed ID");
+if (!TicketTitle.TryCreate(" abc ", out var title) || title.Value != "abc") throw new Exception("Try contract broken");
+if (TicketTitle.TryCreate(null, out var invalid) || invalid is not null) throw new Exception("Invalid Try contract");
+Console.WriteLine("PASS: outcome contracts");
+'''
+with tempfile.TemporaryDirectory(prefix='outcome-check-') as directory:
+    project = consumer_project(Path(directory) / 'consumer', ROOT / 'samples' / '19-ticket-outcomes' / 'SupportDesk.csproj')
+    (project.parent / 'Program.cs').write_text(outcome_check, encoding='utf-8')
+    result = subprocess.run(['dotnet', 'run', '--project', str(project)], text=True, capture_output=True, timeout=60)
+    assert result.returncode == 0 and 'PASS:' in result.stdout, (result.stdout, result.stderr)
+
+with tempfile.TemporaryDirectory(prefix='cli-delivery-') as directory:
+    folder = Path(directory)
+    path = folder / 'supportdesk.json'
+    def cli(*operation, expected=0, stdin=''):
+        return run_args('21-supportdesk-cli', [path, *operation], stdin, expected_code=expected)
+    assert 'Open: 0' in cli('report') and not path.exists()
+    assert 'Saved #1' in cli('add', '  مشکل شبکه  ', 'High')
+    assert 'High' in cli('find', '1') and 'مشکل شبکه' in cli('find', '1')
+    original = path.read_bytes()
+    cli('add', 'ab', expected=2)
+    cli('add', 'Valid title', '9', expected=2)
+    cli('find', '99', expected=3)
+    cli('find', '0', expected=2)
+    cli('close', '1', expected=2)
+    assert path.read_bytes() == original
+    assert 'Router issue' in cli('rename', '1', 'Router issue')
+    cli('start', '1')
+    original = path.read_bytes()
+    cli('close', '1', expected=2)
+    cli('note', '1', 'ab', expected=2)
+    assert path.read_bytes() == original
+    cli('note', '1', ' Configuration corrected ')
+    original = path.read_bytes()
+    cli('note', '1', 'Configuration corrected', expected=2)
+    assert path.read_bytes() == original
+    cli('close', '1')
+    assert 'Closed' in cli('find', '1')
+    original = path.read_bytes()
+    cli('rename', '1', 'Forbidden rename', expected=2)
+    cli('note', '1', 'Late note', expected=2)
+    cli('start', '1', expected=2)
+    assert path.read_bytes() == original
+    report = cli('report')
+    assert 'Open: 0' in report and 'InProgress: 0' in report and 'Closed: 1' in report, report
+    assert 'No tickets.' in cli('list', '--open')
+    assert 'Deleted #1' in cli('delete', '1')
+    assert 'Saved #2' in cli('add', 'Printer issue')
+    cli('delete', '2')
+    assert 'Saved #3' in cli('add', 'Email issue', 'Low')
+    data = json.loads(path.read_text())
+    assert data['NextId'] == 4 and data['Tickets'][0]['Id'] == 3, data
+    for text in ['one', 'two', 'three', 'four', 'five']:
+        cli('note', '3', text)
+    original = path.read_bytes()
+    cli('note', '3', 'six', expected=2)
+    assert path.read_bytes() == original
+    assert 'Cancelled.' in cli('--cancel-demo', expected=130)
+    assert path.read_bytes() == original
+    for stdin in ['', '1\n', '3\n', '4\n3\n', '1\nValid title\n']:
+        cli(stdin=stdin)
+    assert path.read_bytes() == original
+    menu = cli(stdin='1\nInteractive ticket\n\n2\n0\n')
+    assert 'Saved #4' in menu and 'Interactive ticket' in menu, menu
+
+    valid = {'Schema': 'supportdesk-v1', 'NextId': 2, 'Tickets': [
+        {'Id': 1, 'Title': 'Valid title', 'Priority': 1, 'Status': 0, 'Notes': []}]}
+    corrupt = ['{broken', 'null', json.dumps({'Schema': 'registration-v1', 'Items': []})]
+    import copy
+    for mutate in [
+        lambda d: d.update(NextId=1),
+        lambda d: d['Tickets'].append(copy.deepcopy(d['Tickets'][0])),
+        lambda d: d['Tickets'][0].update(Status=2),  # Closed without resolution.
+        lambda d: d['Tickets'][0].update(Status=99),
+        lambda d: d['Tickets'][0].update(Priority=99),
+        lambda d: d['Tickets'][0].update(Notes=['same', ' same ']),
+        lambda d: d['Tickets'][0].update(Notes=[None]),
+        lambda d: d['Tickets'][0].pop('Priority'),
+        lambda d: d['Tickets'][0].update(Title='ab'),
+    ]:
+        bad = copy.deepcopy(valid); mutate(bad); corrupt.append(json.dumps(bad))
+    for contents in corrupt:
+        path.write_text(contents, encoding='utf-8'); original = path.read_bytes()
+        output = cli('add', 'Valid new title', expected=1)
+        assert 'Saved #' not in output and path.read_bytes() == original, output
+    cap = copy.deepcopy(valid); cap['NextId'] = 2147483648; cap['Tickets'][0]['Id'] = 2147483647
+    path.write_text(json.dumps(cap), encoding='utf-8'); original = path.read_bytes()
+    cli('add', 'Capacity check', expected=2)
+    assert path.read_bytes() == original
+    bad_path = folder / 'missing' / 'tickets.json'
+    output = run_args('21-supportdesk-cli', [bad_path, 'add', 'Valid title'], expected_code=1)
+    assert 'Saved #' not in output and 'Storage failed' in output, output
+    assert not list(folder.glob('*.tmp'))
+
+    publish_directory = folder / 'published'
+    subprocess.run(['dotnet', 'publish', str(ROOT / 'samples' / '21-supportdesk-cli' / 'SupportDesk.csproj'),
+                    '-c', 'Release', '-p:UseAppHost=false', '-o', str(publish_directory), '--nologo'], check=True)
+    published_path = folder / 'published-data.json'
+    result = subprocess.run(['dotnet', str(publish_directory / 'SupportDesk.dll'), str(published_path), 'add', 'Published ticket'],
+                            cwd=folder, text=True, capture_output=True, timeout=30)
+    assert result.returncode == 0 and 'Saved #1' in result.stdout, (result.stdout, result.stderr)
+    result = subprocess.run(['dotnet', str(publish_directory / 'SupportDesk.dll'), str(published_path), 'find', '1'],
+                            cwd=folder, text=True, capture_output=True, timeout=30)
+    assert result.returncode == 0 and 'Published ticket' in result.stdout, (result.stdout, result.stderr)
+
+print('PASS: complete second section, final CLI persistence, outcomes, invariant failures, menu, cancellation and published DLL.')

@@ -32,9 +32,9 @@
 | 017 | [SOLID با بازآرایی یک قابلیت](lessons/02-design/017-solid/README.md) | نوشته‌شده |
 | 018 | [record و value object](lessons/02-design/018-value-objects/README.md) | نوشته‌شده |
 | 019 | [جداسازی presentation و application و persistence](lessons/02-design/019-separation/README.md) | نوشته‌شده |
-| 020 | نتیجهٔ عملیات و exception | برنامه‌ریزی‌شده |
-| 021 | بازآرایی و کنترل پیچیدگی | برنامه‌ریزی‌شده |
-| 022 | تحویل و بازبینی SupportDesk CLI | برنامه‌ریزی‌شده |
+| 020 | [نتیجهٔ عملیات و exception](lessons/02-design/020-errors/README.md) | نوشته‌شده |
+| 021 | [بازآرایی و کنترل پیچیدگی](lessons/02-design/021-refactoring/README.md) | نوشته‌شده |
+| 022 | [تحویل و بازبینی SupportDesk CLI](lessons/02-design/022-cli-delivery/README.md) | نوشته‌شده |
 
 ## HTTP و ASP.NET Core
 

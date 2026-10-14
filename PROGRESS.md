@@ -28,6 +28,11 @@
 - [ ] ۰۱۸: value object معتبر، equality و shallow copy را بررسی کردم.
 - [ ] ۰۱۹: presentation، application و persistence را جدا و مسیر عملیات را توضیح دادم.
 
+- [ ] ۰۲۰: expected failure، exception و cancellation را جدا کردم.
+- [ ] ۰۲۱: parse، dispatch و render را با حفظ رفتار بازآرایی کردم.
+- [ ] ۰۲۲: CLI یکپارچه را با persistence، restart و publish تحویل دادم.
+- [ ] دفاع از ساختار و ارزیابی پایان بخش دوم را مستقل انجام دادم.
+
 ## گزارش هر جلسه
 
 | تاریخ | درس | چیزی که ساختم | خطایی که رفع کردم | سؤال باقی‌مانده |
