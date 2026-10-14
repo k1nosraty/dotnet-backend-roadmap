@@ -81,19 +81,19 @@
     "id": 14,
     "title": "composition و inheritance",
     "path": "lessons/02-design/014-composition/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 15,
     "title": "interface و قرارداد",
     "path": "lessons/02-design/015-interfaces/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 16,
     "title": "تزریق وابستگی و طول عمر",
     "path": "lessons/02-design/016-dependency-injection/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 17,

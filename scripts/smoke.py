@@ -186,7 +186,7 @@ for text in ['Rejected rename; title: Network issue', 'Rejected note; count: 0',
 
 import xml.etree.ElementTree as ET
 
-def consumer_project(directory):
+def consumer_project(directory, reference=encapsulation_project):
     directory.mkdir()
     project = ET.Element('Project', Sdk='Microsoft.NET.Sdk')
     settings = ET.SubElement(project, 'PropertyGroup')
@@ -195,7 +195,7 @@ def consumer_project(directory):
                        'TreatWarningsAsErrors': 'true'}.items():
         ET.SubElement(settings, key).text = value
     references = ET.SubElement(project, 'ItemGroup')
-    ET.SubElement(references, 'ProjectReference', Include=str(encapsulation_project))
+    ET.SubElement(references, 'ProjectReference', Include=str(reference))
     ET.ElementTree(project).write(directory / 'Consumer.csproj', encoding='unicode')
     return directory / 'Consumer.csproj'
 
@@ -280,3 +280,106 @@ Console.WriteLine("PASS: model boundaries and rejected-operation state preservat
         result.stdout, result.stderr)
 
 print('PASS: lesson 013 boundary cases, read-only wrapper and compile-time setter protection.')
+
+# Lessons 014-016: composed policy, substitutable readers and DI ownership.
+for name in ['13-ticket-composition', '14-ticket-interfaces', '15-ticket-di']:
+    subprocess.run(['dotnet', 'build', str(ROOT / 'samples' / name / 'SupportDesk.csproj'),
+                    '--nologo'], check=True)
+output = run('13-ticket-composition')
+for text in ['Threshold 2: Review required', 'Threshold 3: No review',
+             'Unchanged: Open; notes=2', 'Closed: No review']:
+    assert text in output, output
+output = run('14-ticket-interfaces')
+assert '#1: Network issue (Open)' in output and '#10: Known demo ticket (Open)' in output, output
+assert output.count('Ticket not found.') == 2, output
+output = run_args('14-ticket-interfaces', ['--failure'], expected_code=1)
+assert 'Reader failed' in output and 'Ticket not found.' not in output, output
+output = run('15-ticket-di')
+for text in ['Transient same: False', 'Scoped same inside: True', 'Disposed inside: False',
+             'Disposed after scope: True', 'Scoped same across: False',
+             'Singleton same across: True', 'Root scoped resolution rejected.',
+             'Captive scoped dependency rejected at build.']:
+    assert text in output, output
+assert 'Unexpected:' not in output, output
+
+consumer_checks = {
+    '13-ticket-composition': '''
+using SupportDesk.Domain;
+using SupportDesk.Routing;
+using SupportDesk.Reporting;
+using SupportDesk.Application;
+
+static void Check(bool ok) { if (!ok) throw new Exception("Composition check failed"); }
+static void Reject(Action action)
+{
+    try { action(); }
+    catch (ArgumentOutOfRangeException) { return; }
+    throw new Exception("Invalid threshold accepted");
+}
+Reject(() => { _ = new TicketReviewPolicy(0); });
+Reject(() => { _ = new TicketReviewPolicy(6); });
+Ticket ticket = new(1, "Network issue");
+TicketReviewPolicy policy = new(2);
+Check(!policy.NeedsReview(ticket));
+ticket.AddNote("First note");
+Check(!policy.NeedsReview(ticket));
+ticket.AddNote("Second note");
+Check(policy.NeedsReview(ticket));
+Check(!new TicketReviewPolicy(3).NeedsReview(ticket));
+string title = ticket.Title;
+string[] notes = ticket.Notes.ToArray();
+foreach (TicketReport report in new TicketReport[] { new PlainTextTicketReport(), new DetailedTicketReport() })
+{
+    Check(!string.IsNullOrEmpty(report.Generate(ticket)));
+    Check(ticket.Title == title && ticket.Status == TicketStatus.Open && ticket.Notes.SequenceEqual(notes));
+}
+ticket.Start(); ticket.Close();
+Check(!policy.NeedsReview(ticket));
+Check(new TicketReviewService(policy).GetDecision(ticket) == "No review");
+Console.WriteLine("PASS: composition consumer");
+''',
+    '14-ticket-interfaces': '''
+using SupportDesk.Domain;
+using SupportDesk.Application;
+using SupportDesk.Infrastructure;
+
+static void Check(bool ok) { if (!ok) throw new Exception("Reader contract failed"); }
+static void InvalidId(ITicketReader reader, int id)
+{
+    try { _ = reader.FindById(id); }
+    catch (ArgumentOutOfRangeException) { return; }
+    throw new Exception("Invalid ID accepted");
+}
+ITicketReader memory = new InMemoryTicketReader(new[] { new Ticket(1, "Network issue") });
+ITicketReader fixedReader = new FixedTicketReader();
+foreach (ITicketReader reader in new[] { memory, fixedReader })
+{
+    InvalidId(reader, 0); InvalidId(reader, -1);
+    Check(reader.FindById(99) is null);
+}
+Check(memory.FindById(1)?.Id == 1);
+Check(fixedReader.FindById(10)?.Id == 10);
+Check(new TicketSummaryService(memory).GetSummary(99) == "Ticket not found.");
+try
+{
+    _ = new TicketSummaryService(new FailingTicketReader()).GetSummary(1);
+    throw new Exception("Failure was hidden");
+}
+catch (IOException) { }
+try
+{
+    _ = new InMemoryTicketReader(new[] { new Ticket(1, "First ticket"), new Ticket(1, "Second ticket") });
+    throw new Exception("Duplicate ID was hidden");
+}
+catch (ArgumentException) { }
+Console.WriteLine("PASS: interface consumer");
+'''
+}
+with tempfile.TemporaryDirectory(prefix='design-checks-') as directory:
+    for name, source in consumer_checks.items():
+        project = consumer_project(Path(directory) / name, ROOT / 'samples' / name / 'SupportDesk.csproj')
+        (project.parent / 'Program.cs').write_text(source, encoding='utf-8')
+        result = subprocess.run(['dotnet', 'run', '--project', str(project)],
+                                text=True, capture_output=True, timeout=60)
+        assert result.returncode == 0 and 'PASS:' in result.stdout, (result.stdout, result.stderr)
+print('PASS: lessons 014-016 composition, reader contracts, DI lifetimes and disposal.')

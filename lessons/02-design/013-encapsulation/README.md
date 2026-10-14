@@ -293,5 +293,5 @@ index باید در محدوده باشد و شکست عملیات هیچ داد
 
 ## قدم بعد
 
-درس ۰۱۴ به composition و inheritance اختصاص دارد و هنوز نوشته نشده است.
+[درس ۰۱۴](../014-composition/README.md) به composition و inheritance اختصاص دارد.
 پیش از آن تمرین RemoveNote را با سناریوهای شکست کامل کن.

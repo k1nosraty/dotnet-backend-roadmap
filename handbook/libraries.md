@@ -48,4 +48,6 @@ retry تنها برای عملیات مناسب و با توجه به idempotenc
 5. هزینهٔ نگهداری، رفتار امنیتی و محدودیت.
 6. راه حذف یا جایگزینی ابزار.
 
-در سه درس اول هیچ NuGet package بیرونی لازم نیست.
+در درس‌های ابتدایی هیچ NuGet package بیرونی لازم نیست.
+اولین package معرفی‌شده در [درس ۰۱۶](../lessons/02-design/016-dependency-injection/README.md)، Microsoft.Extensions.DependencyInjection با نسخهٔ ثابت 10.0.12 است.
+نصب، lifetime، ownership، محدودیت validation و روش حذف container با حفظ constructorها در همان درس آمده است.
