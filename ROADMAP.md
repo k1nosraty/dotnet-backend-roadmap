@@ -25,7 +25,7 @@
 
 | درس | موضوع | وضعیت |
 | --- | --- | --- |
-| 013 | encapsulation و invariant | برنامه‌ریزی‌شده |
+| 013 | [encapsulation و invariant](lessons/02-design/013-encapsulation/README.md) | نوشته‌شده |
 | 014 | composition و inheritance | برنامه‌ریزی‌شده |
 | 015 | interface و قرارداد | برنامه‌ریزی‌شده |
 | 016 | تزریق وابستگی و طول عمر | برنامه‌ریزی‌شده |

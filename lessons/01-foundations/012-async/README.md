@@ -248,5 +248,5 @@ Delay شبیه‌سازی انتظار است، نه benchmark واقعی دیس
 ## پایان بخش اول
 
 ۱۲ درس Foundation کامل شده است.
-بخش دوم از encapsulation و invariant شروع می‌شود؛ درس ۰۱۳ هنوز نوشته نشده است.
+بخش دوم با [درس ۰۱۳: encapsulation و invariant](../../02-design/013-encapsulation/README.md) شروع می‌شود.
 پیش از ورود، تمرین پایان بخش و توضیح مرز کلاس‌ها را انجام بده.

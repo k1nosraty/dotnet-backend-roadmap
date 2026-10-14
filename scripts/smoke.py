@@ -173,3 +173,109 @@ with tempfile.TemporaryDirectory(prefix='supportdesk-') as directory:
 
 print('PASS: all 11 samples; reference behavior, nullable, resource disposal, LINQ, '
       'JSON round-trip, corrupt data preservation, status persistence, EOF and pre-cancellation.')
+
+# Lesson 013: validate the public model from a separate consumer assembly.
+encapsulation_project = ROOT / 'samples' / '12-ticket-encapsulation' / 'SupportDesk.csproj'
+subprocess.run(['dotnet', 'build', str(encapsulation_project), '--nologo'], check=True)
+output = run('12-ticket-encapsulation')
+for text in ['Rejected rename; title: Network issue', 'Rejected note; count: 0',
+             'Rejected close without note; status: InProgress', 'Live view count: 1',
+             'Copy count: 2; actual count: 1', 'Wrapper rejected external mutation.',
+             'Final: Closed; notes: 1; title: Network issue']:
+    assert text in output, output
+
+import xml.etree.ElementTree as ET
+
+def consumer_project(directory):
+    directory.mkdir()
+    project = ET.Element('Project', Sdk='Microsoft.NET.Sdk')
+    settings = ET.SubElement(project, 'PropertyGroup')
+    for key, value in {'OutputType': 'Exe', 'TargetFramework': 'net10.0',
+                       'ImplicitUsings': 'enable', 'Nullable': 'enable',
+                       'TreatWarningsAsErrors': 'true'}.items():
+        ET.SubElement(settings, key).text = value
+    references = ET.SubElement(project, 'ItemGroup')
+    ET.SubElement(references, 'ProjectReference', Include=str(encapsulation_project))
+    ET.ElementTree(project).write(directory / 'Consumer.csproj', encoding='unicode')
+    return directory / 'Consumer.csproj'
+
+with tempfile.TemporaryDirectory(prefix='encapsulation-') as directory:
+    folder = Path(directory)
+    project = consumer_project(folder / 'checks')
+    (project.parent / 'Program.cs').write_text('''
+using SupportDesk.Domain;
+
+static void Check(bool condition, string message)
+{
+    if (!condition) throw new Exception(message);
+}
+static void Reject<T>(Action action) where T : Exception
+{
+    try { action(); }
+    catch (Exception ex) when (ex is T) { return; }
+    throw new Exception($"Expected {typeof(T).Name}");
+}
+
+Reject<ArgumentOutOfRangeException>(() => { _ = new Ticket(0, "Valid title"); });
+Reject<ArgumentException>(() => { _ = new Ticket(1, "ab"); });
+Reject<ArgumentNullException>(() => { _ = new Ticket(1, null!); });
+_ = new Ticket(1, new string('x', 120));
+Reject<ArgumentException>(() => { _ = new Ticket(1, new string('x', 121)); });
+
+Ticket ticket = new(1, "  Network issue  ");
+Check(ticket.Title == "Network issue", "Constructor normalization");
+Reject<ArgumentException>(() => ticket.Rename("ab"));
+Check(ticket.Title == "Network issue", "Rejected rename changed title");
+Reject<InvalidOperationException>(() => ticket.Close());
+Check(ticket.Status == TicketStatus.Open, "Rejected close changed status");
+ticket.Start();
+Reject<InvalidOperationException>(() => ticket.Start());
+Reject<InvalidOperationException>(() => ticket.Close());
+Check(ticket.Status == TicketStatus.InProgress, "Rejected transition changed status");
+
+IReadOnlyList<string> view = ticket.Notes;
+Reject<ArgumentException>(() => ticket.AddNote("ab"));
+Reject<ArgumentException>(() => ticket.AddNote(new string('x', 501)));
+Reject<ArgumentNullException>(() => ticket.AddNote(null!));
+Check(view.Count == 0, "Rejected notes were added");
+ticket.AddNote("  abc  ");
+Check(view.Count == 1 && view[0] == "abc", "Live view or normalization broken");
+Reject<InvalidOperationException>(() => ticket.AddNote(" abc "));
+Check(view.Count == 1, "Duplicate changed count");
+ticket.AddNote(new string('x', 500));
+ticket.AddNote("Note");
+ticket.AddNote("note");
+ticket.AddNote("Fifth note");
+Check(view.Count == 5, "Valid notes or case-sensitive rule broken");
+string[] before = view.ToArray();
+Reject<InvalidOperationException>(() => ticket.AddNote("Sixth note"));
+Check(view.SequenceEqual(before), "Capacity rejection changed notes");
+Reject<NotSupportedException>(() => ((ICollection<string>)view).Add("Bypass"));
+Reject<NotSupportedException>(() => ((IList<string>)view)[0] = "Bypass");
+Reject<NotSupportedException>(() => ((ICollection<string>)view).Clear());
+Check(view.SequenceEqual(before), "Wrapper permitted mutation");
+List<string> copy = view.ToList();
+copy.Clear();
+Check(view.Count == 5, "Copy clear changed original");
+ticket.Close();
+Reject<InvalidOperationException>(() => ticket.Rename("New title"));
+Reject<InvalidOperationException>(() => ticket.AddNote("Late note"));
+Check(ticket.Status == TicketStatus.Closed && ticket.Title == "Network issue" &&
+      view.SequenceEqual(before), "Rejected edit changed closed ticket");
+Console.WriteLine("PASS: model boundaries and rejected-operation state preservation.");
+''', encoding='utf-8')
+    result = subprocess.run(['dotnet', 'run', '--project', str(project)],
+                            text=True, capture_output=True, timeout=60)
+    assert result.returncode == 0, (result.stdout, result.stderr)
+    assert 'PASS: model boundaries' in result.stdout, result.stdout
+
+    negative = consumer_project(folder / 'negative')
+    (negative.parent / 'Program.cs').write_text(
+        'using SupportDesk.Domain;\nvar ticket = new Ticket(1, "Valid title");\n'
+        'ticket.Title = "Bypass";\n', encoding='utf-8')
+    result = subprocess.run(['dotnet', 'build', str(negative), '--nologo'],
+                            text=True, capture_output=True, timeout=60)
+    assert result.returncode != 0 and 'CS0272' in result.stdout + result.stderr, (
+        result.stdout, result.stderr)
+
+print('PASS: lesson 013 boundary cases, read-only wrapper and compile-time setter protection.')
