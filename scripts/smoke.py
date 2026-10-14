@@ -275,7 +275,8 @@ Console.WriteLine("PASS: model boundaries and rejected-operation state preservat
         'ticket.Title = "Bypass";\n', encoding='utf-8')
     result = subprocess.run(['dotnet', 'build', str(negative), '--nologo'],
                             text=True, capture_output=True, timeout=60)
-    assert result.returncode != 0 and 'CS0272' in result.stdout + result.stderr, (
+    diagnostics = result.stdout + result.stderr
+    assert result.returncode != 0 and any(code in diagnostics for code in ['CS0200', 'CS0272']), (
         result.stdout, result.stderr)
 
 print('PASS: lesson 013 boundary cases, read-only wrapper and compile-time setter protection.')
