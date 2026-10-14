@@ -1,0 +1,542 @@
+[
+  {
+    "id": 1,
+    "title": "محیط، SDK، CLI و اولین اجرا",
+    "path": "lessons/01-foundations/001-environment/README.md",
+    "status": "written"
+  },
+  {
+    "id": 2,
+    "title": "نوع‌ها، متغیرها و اولین قابلیت",
+    "path": "lessons/01-foundations/002-first-feature/README.md",
+    "status": "written"
+  },
+  {
+    "id": 3,
+    "title": "ورودی، شرط و اعتبارسنجی",
+    "path": "lessons/01-foundations/003-input-validation/README.md",
+    "status": "written"
+  },
+  {
+    "id": 4,
+    "title": "حلقه‌ها و منوی کنسول",
+    "path": "lessons/01-foundations/004-loops/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 5,
+    "title": "متدها و جداسازی محاسبه از ورودی",
+    "path": "lessons/01-foundations/005-methods/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 6,
+    "title": "List و Dictionary و جست‌وجو",
+    "path": "lessons/01-foundations/006-collections/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 7,
+    "title": "کلاس، سازنده و property",
+    "path": "lessons/01-foundations/007-classes/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 8,
+    "title": "nullability و قرارداد داده",
+    "path": "lessons/01-foundations/008-nullability/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 9,
+    "title": "exception و مدیریت منابع",
+    "path": "lessons/01-foundations/009-exceptions/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 10,
+    "title": "LINQ و اجرای deferred",
+    "path": "lessons/01-foundations/010-linq/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 11,
+    "title": "فایل و JSON و بازیابی داده",
+    "path": "lessons/01-foundations/011-files-json/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 12,
+    "title": "Task و async/await و لغو عملیات",
+    "path": "lessons/01-foundations/012-async/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 13,
+    "title": "encapsulation و invariant",
+    "path": "lessons/02-design/013-encapsulation/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 14,
+    "title": "composition و inheritance",
+    "path": "lessons/02-design/014-composition/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 15,
+    "title": "interface و قرارداد",
+    "path": "lessons/02-design/015-interfaces/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 16,
+    "title": "تزریق وابستگی و طول عمر",
+    "path": "lessons/02-design/016-dependency-injection/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 17,
+    "title": "SOLID با بازآرایی یک قابلیت",
+    "path": "lessons/02-design/017-solid/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 18,
+    "title": "record و value object",
+    "path": "lessons/02-design/018-value-objects/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 19,
+    "title": "جداسازی presentation و application و persistence",
+    "path": "lessons/02-design/019-separation/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 20,
+    "title": "نتیجهٔ عملیات و exception",
+    "path": "lessons/02-design/020-errors/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 21,
+    "title": "بازآرایی و کنترل پیچیدگی",
+    "path": "lessons/02-design/021-refactoring/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 22,
+    "title": "تحویل و بازبینی SupportDesk CLI",
+    "path": "lessons/02-design/022-cli-delivery/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 23,
+    "title": "HTTP و status code و idempotency",
+    "path": "lessons/03-web/023-http/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 24,
+    "title": "host و pipeline و تنظیمات اجرا",
+    "path": "lessons/03-web/024-web-host/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 25,
+    "title": "routing و binding",
+    "path": "lessons/03-web/025-routing/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 26,
+    "title": "controller و action و قرارداد API",
+    "path": "lessons/03-web/026-controllers/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 27,
+    "title": "DTO و serialization و mapping دستی",
+    "path": "lessons/03-web/027-dto/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 28,
+    "title": "validation و ProblemDetails",
+    "path": "lessons/03-web/028-validation/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 29,
+    "title": "middleware و مدیریت خطا",
+    "path": "lessons/03-web/029-middleware/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 30,
+    "title": "configuration و options و secrets",
+    "path": "lessons/03-web/030-configuration/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 31,
+    "title": "DI scope و lifetime در درخواست",
+    "path": "lessons/03-web/031-di-scopes/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 32,
+    "title": "طراحی REST و pagination",
+    "path": "lessons/03-web/032-rest/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 33,
+    "title": "OpenAPI و مصرف API",
+    "path": "lessons/03-web/033-openapi/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 34,
+    "title": "تحویل SupportDesk API در حافظه",
+    "path": "lessons/03-web/034-api-delivery/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 35,
+    "title": "مدل رابطه‌ای و کلید و constraint",
+    "path": "lessons/04-data/035-relational/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 36,
+    "title": "SQL و CRUD پارامتری",
+    "path": "lessons/04-data/036-sql-basics/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 37,
+    "title": "JOIN و aggregation",
+    "path": "lessons/04-data/037-joins/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 38,
+    "title": "index و EXPLAIN و طرح query",
+    "path": "lessons/04-data/038-indexes/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 39,
+    "title": "transaction و isolation",
+    "path": "lessons/04-data/039-transactions/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 40,
+    "title": "طراحی schema برای درخواست و پیام",
+    "path": "lessons/04-data/040-schema/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 41,
+    "title": "EF Core و DbContext و provider",
+    "path": "lessons/04-data/041-ef-core/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 42,
+    "title": "migration و تکامل schema",
+    "path": "lessons/04-data/042-migrations/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 43,
+    "title": "relationship و delete behavior",
+    "path": "lessons/04-data/043-relationships/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 44,
+    "title": "tracking و projection و N+1",
+    "path": "lessons/04-data/044-tracking/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 45,
+    "title": "هم‌زمانی و optimistic concurrency",
+    "path": "lessons/04-data/045-concurrency/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 46,
+    "title": "مرز data access و بحث repository",
+    "path": "lessons/04-data/046-data-access/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 47,
+    "title": "Dapper و SQL برای query هدفمند",
+    "path": "lessons/04-data/047-dapper/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 48,
+    "title": "تحویل API پایدار و بررسی خرابی دیتابیس",
+    "path": "lessons/04-data/048-data-delivery/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 49,
+    "title": "تشخیص مسئولیت کلاس‌ها",
+    "path": "lessons/05-architecture/049-responsibilities/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 50,
+    "title": "ساختار پوشه‌ای بر اساس لایه یا قابلیت",
+    "path": "lessons/05-architecture/050-folders/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 51,
+    "title": "جداسازی assembly و جهت وابستگی",
+    "path": "lessons/05-architecture/051-projects/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 52,
+    "title": "application service و orchestration",
+    "path": "lessons/05-architecture/052-application-services/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 53,
+    "title": "قواعد domain و aggregate",
+    "path": "lessons/05-architecture/053-domain/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 54,
+    "title": "port و adapter و مرز infrastructure",
+    "path": "lessons/05-architecture/054-ports/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 55,
+    "title": "mapping و هزینهٔ abstraction",
+    "path": "lessons/05-architecture/055-mapping/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 56,
+    "title": "vertical slice و مقایسهٔ عملی",
+    "path": "lessons/05-architecture/056-vertical-slices/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 57,
+    "title": "تفکیک command و query بدون اجبار ابزار",
+    "path": "lessons/05-architecture/057-cqrs/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 58,
+    "title": "FluentValidation پس از بررسی سازگاری",
+    "path": "lessons/05-architecture/058-validation-library/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 59,
+    "title": "تست وابستگی‌های معماری و ADR",
+    "path": "lessons/05-architecture/059-architecture-tests/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 60,
+    "title": "بازآرایی TeamDesk و دفاع از معماری",
+    "path": "lessons/05-architecture/060-teamdesk/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 61,
+    "title": "مدل تهدید و مرز اعتماد",
+    "path": "lessons/06-security/061-threat-model/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 62,
+    "title": "Identity و مدیریت امن حساب",
+    "path": "lessons/06-security/062-identity/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 63,
+    "title": "hash رمز و سیاست بازیابی",
+    "path": "lessons/06-security/063-passwords/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 64,
+    "title": "cookie و bearer و انتخاب روش",
+    "path": "lessons/06-security/064-authentication/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 65,
+    "title": "policy و نقش و مجوز",
+    "path": "lessons/06-security/065-authorization/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 66,
+    "title": "کنترل مالکیت و جلوگیری از IDOR",
+    "path": "lessons/06-security/066-ownership/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 67,
+    "title": "CORS و CSRF و injection",
+    "path": "lessons/06-security/067-web-security/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 68,
+    "title": "rate limiting و کنترل سوءاستفاده",
+    "path": "lessons/06-security/068-rate-limits/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 69,
+    "title": "secrets و audit و دادهٔ حساس",
+    "path": "lessons/06-security/069-secrets/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 70,
+    "title": "بازبینی امنیت و سناریوهای منفی",
+    "path": "lessons/06-security/070-security-review/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 71,
+    "title": "unit test و xUnit",
+    "path": "lessons/07-testing/071-unit/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 72,
+    "title": "boundary و negative case و test double",
+    "path": "lessons/07-testing/072-test-design/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 73,
+    "title": "integration و WebApplicationFactory",
+    "path": "lessons/07-testing/073-integration/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 74,
+    "title": "تست دیتابیس و Testcontainers",
+    "path": "lessons/07-testing/074-database-tests/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 75,
+    "title": "HttpClientFactory و timeout و resilience",
+    "path": "lessons/07-testing/075-http-resilience/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 76,
+    "title": "BackgroundService و scope و shutdown",
+    "path": "lessons/07-testing/076-background-work/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 77,
+    "title": "ILogger و structured logging و Serilog",
+    "path": "lessons/07-testing/077-logging/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 78,
+    "title": "debugger و trace و بازتولید خطا",
+    "path": "lessons/07-testing/078-debugging/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 79,
+    "title": "Docker و image و محیط اجرا",
+    "path": "lessons/08-production/079-docker/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 80,
+    "title": "publish و reverse proxy و TLS",
+    "path": "lessons/08-production/080-deployment/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 81,
+    "title": "CI/CD و quality gate",
+    "path": "lessons/08-production/081-ci/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 82,
+    "title": "OpenTelemetry و health check",
+    "path": "lessons/08-production/082-observability/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 83,
+    "title": "cache و invalidation و Redis",
+    "path": "lessons/08-production/083-caching/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 84,
+    "title": "صف و پردازش job و ارزیابی Hangfire یا Quartz",
+    "path": "lessons/08-production/084-jobs/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 85,
+    "title": "load test و profiling و بودجهٔ latency",
+    "path": "lessons/08-production/085-performance/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 86,
+    "title": "backup و restore و rollback و تحویل worker",
+    "path": "lessons/08-production/086-operations/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 87,
+    "title": "تحلیل ServiceDesk و معیار پذیرش",
+    "path": "lessons/09-capstone/087-requirements/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 88,
+    "title": "پیاده‌سازی مستقل و review",
+    "path": "lessons/09-capstone/088-implementation/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 89,
+    "title": "تست و امنیت و عملکرد",
+    "path": "lessons/09-capstone/089-hardening/README.md",
+    "status": "planned"
+  },
+  {
+    "id": 90,
+    "title": "استقرار و مستندات و دفاع فنی",
+    "path": "lessons/09-capstone/090-delivery/README.md",
+    "status": "planned"
+  }
+]
