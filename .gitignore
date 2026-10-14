@@ -4,3 +4,5 @@ obj/
 *.user
 .env
 exercises/
+__pycache__/
+*.pyc

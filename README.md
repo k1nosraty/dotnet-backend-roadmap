@@ -10,13 +10,17 @@
 3. [درس ۰۰۱: راه‌اندازی محیط](lessons/01-foundations/001-environment/README.md) را انجام بده.
 4. [درس ۰۰۲: اولین قابلیت](lessons/01-foundations/002-first-feature/README.md) را انجام بده.
 5. [درس ۰۰۳: دریافت و اعتبارسنجی ورودی](lessons/01-foundations/003-input-validation/README.md) را انجام بده.
-6. پیشرفت خودت را در [PROGRESS.md](PROGRESS.md) ثبت کن.
+6. [درس ۰۰۴: حلقه و منو](lessons/01-foundations/004-loops/README.md) را انجام بده.
+7. [درس ۰۰۵: متدها و مسئولیت‌ها](lessons/01-foundations/005-methods/README.md) را انجام بده.
+8. [درس ۰۰۶: مجموعه‌ها و جست‌وجو](lessons/01-foundations/006-collections/README.md) را انجام بده.
+9. پیشرفت خودت را در [PROGRESS.md](PROGRESS.md) ثبت کن.
 
 ## وضعیت واقعی محتوا
 
-این نسخه شروع دوره در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: سه درس نوشته شده، دو نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
+این نسخه شروع دوره در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: شش درس نوشته شده، پنج نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
 درس‌های آینده در نقشه وضعیت «برنامه‌ریزی‌شده» دارند و فایل آموزشی خالی برای آن‌ها ساخته نشده است.
-نمونه‌ها در محیط تهیهٔ این نسخه اجرا نشده‌اند، چون SDK نصب نیست؛ بررسی ساختاری انجام شده است.
+SDK در محیط محلی تهیهٔ این نسخه نصب نیست؛ بررسی ساختاری محلی انجام شده است.
+ساخت و بررسی رفتار نمونه‌ها در workflow «Check course» روی GitHub اجرا می‌شود؛ نتیجهٔ هر commit را در تب Actions ببین.
 فرمان ساخت، سناریوهای بررسی و اسکریپت smoke در بسته وجود دارند.
 
 ```powershell

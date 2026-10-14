@@ -19,4 +19,5 @@ for path in root.rglob('*.md'):
             continue
         destination = path.parent / unquote(target.split('#')[0])
         assert destination.exists(), f'Broken link: {path}: {target}'
-print('PASS: 90 curriculum entries, 3 written lessons, local links and code fences.')
+written = sum(item['status'] == 'written' for item in lessons)
+print(f'PASS: 90 curriculum entries, {written} written lessons, local links and code fences.')

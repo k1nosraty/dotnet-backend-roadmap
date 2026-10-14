@@ -41,3 +41,39 @@ for stdin, expected in cases:
     actual = run('02-ticket-intake', stdin)
     assert expected in actual, (stdin, expected, actual)
 print(f'PASS: summary and {len(cases)} intake scenarios.')
+
+for name in ['03-ticket-menu', '04-ticket-methods', '05-ticket-collections']:
+    project = ROOT / 'samples' / name / 'SupportDesk.csproj'
+    subprocess.run(['dotnet', 'build', str(project), '--nologo'], check=True)
+
+for name in ['03-ticket-menu', '04-ticket-methods']:
+    output = run(name, '1\nab\nNetwork issue\n1\nPrinter issue\n2\n0\n')
+    assert 'Invalid title. Try again.' in output, output
+    assert 'Registered count: 2' in output, output
+    assert output.count('Registered:') == 2, output
+    assert 'Goodbye.' in output, output
+    output = run(name, '9\n0\n')
+    assert 'Unknown option.' in output and 'Goodbye.' in output, output
+    output = run(name, '')
+    assert 'Goodbye.' in output, output
+    output = run(name, '1\n')
+    assert 'Registered:' not in output, output
+
+output = run('05-ticket-collections',
+    '2\n1\nNetwork issue\n1\nPrinter issue\n4\n1\n1\nEmail issue\n'
+    '3\n1\n3\n2\n4\n1\n5\n0\n')
+for text in ['No tickets.', 'Added #3: Email issue', 'Found #2: Printer issue']:
+    assert text in output, output
+assert output.count('Ticket not found.') == 2, output
+assert output.count('Deleted #1') == 2, output  # one success message, one history item
+history = ['Added #1\n', 'Added #2\n', 'Deleted #1\n', 'Added #3\n']
+positions = [output.rfind(text) for text in history]
+assert all(p >= 0 for p in positions) and positions == sorted(positions), output
+for value in ['abc', '0', '-2', '۲', '2147483648']:
+    output = run('05-ticket-collections', f'3\n{value}\n0\n')
+    assert 'Invalid ID.' in output, output
+for stdin in ['', '1\n', '3\n', '4\n']:
+    run('05-ticket-collections', stdin)  # timeout guards against EOF busy loops
+output = run('05-ticket-collections', '1\nab\nValid title\n2\n0\n')
+assert 'Added #1: Valid title' in output and '#2:' not in output, output
+print('PASS: menu retry, refactoring, EOF, ID deletion/recreation, missing IDs and activity order.')
