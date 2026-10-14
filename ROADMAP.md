@@ -1,6 +1,6 @@
 # نقشهٔ ۹۰ درس
 
-شش درس اول آماده‌اند. ترتیب شماره‌ها پیش‌نیازها را تعیین می‌کند؛ درس‌های آینده هنوز محتوای آموزشی ندارند.
+هر دوازده درس بخش اول آماده‌اند. ترتیب شماره‌ها پیش‌نیازها را تعیین می‌کند؛ درس‌های آینده هنوز محتوای آموزشی ندارند.
 
 عبور از هر بخش نیازمند انجام تمرین و تحویل پروژه است. آزمون و امنیت از ابتدا به صورت سناریو مطرح می‌شوند؛ فصل‌های مستقل آن‌ها برای آموزش عمیق‌ترند.
 
@@ -14,12 +14,12 @@
 | 004 | [حلقه‌ها و منوی کنسول](lessons/01-foundations/004-loops/README.md) | نوشته‌شده |
 | 005 | [متدها و جداسازی محاسبه از ورودی](lessons/01-foundations/005-methods/README.md) | نوشته‌شده |
 | 006 | [List و Dictionary و جست‌وجو](lessons/01-foundations/006-collections/README.md) | نوشته‌شده |
-| 007 | کلاس، سازنده و property | برنامه‌ریزی‌شده |
-| 008 | nullability و قرارداد داده | برنامه‌ریزی‌شده |
-| 009 | exception و مدیریت منابع | برنامه‌ریزی‌شده |
-| 010 | LINQ و اجرای deferred | برنامه‌ریزی‌شده |
-| 011 | فایل و JSON و بازیابی داده | برنامه‌ریزی‌شده |
-| 012 | Task و async/await و لغو عملیات | برنامه‌ریزی‌شده |
+| 007 | [کلاس، سازنده و property](lessons/01-foundations/007-classes/README.md) | نوشته‌شده |
+| 008 | [nullability و قرارداد داده](lessons/01-foundations/008-nullability/README.md) | نوشته‌شده |
+| 009 | [exception و مدیریت منابع](lessons/01-foundations/009-exceptions/README.md) | نوشته‌شده |
+| 010 | [LINQ و اجرای deferred](lessons/01-foundations/010-linq/README.md) | نوشته‌شده |
+| 011 | [فایل و JSON و بازیابی داده](lessons/01-foundations/011-files-json/README.md) | نوشته‌شده |
+| 012 | [Task و async/await و لغو عملیات](lessons/01-foundations/012-async/README.md) | نوشته‌شده |
 
 ## شیءگرایی و طراحی کد
 

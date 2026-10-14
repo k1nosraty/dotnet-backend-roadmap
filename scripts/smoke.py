@@ -77,3 +77,99 @@ for stdin in ['', '1\n', '3\n', '4\n']:
 output = run('05-ticket-collections', '1\nab\nValid title\n2\n0\n')
 assert 'Added #1: Valid title' in output and '#2:' not in output, output
 print('PASS: menu retry, refactoring, EOF, ID deletion/recreation, missing IDs and activity order.')
+
+# Foundation lessons 007-012: resources, persistence and cancellation.
+import json
+import tempfile
+
+new_samples = ['06-ticket-model', '07-ticket-nullability', '08-ticket-exceptions',
+               '09-ticket-linq', '10-ticket-json', '11-ticket-async']
+for name in new_samples:
+    subprocess.run(['dotnet', 'build', str(ROOT / 'samples' / name / 'SupportDesk.csproj'),
+                    '--nologo'], check=True)
+
+output = run('06-ticket-model')
+assert 'First: #1 Router issue Closed' in output, output
+assert 'Alias is first: True' in output and 'Second: #2 Printer issue Open' in output, output
+output = run('07-ticket-nullability')
+for text in ['Found: Network issue', 'Missing: Ticket not found', 'Selection: None']:
+    assert text in output, output
+output = run('09-ticket-linq')
+for text in ['Deferred count: 3', 'Snapshot count: 2', 'Open: 3', 'Closed: 1']:
+    assert text in output, output
+assert output.index('#2:') < output.index('#3:') < output.index('#4:'), output
+
+def run_args(name, arguments, stdin='', expected_code=0):
+    result = subprocess.run(
+        ['dotnet', 'run', '--no-build', '--project',
+         str(ROOT / 'samples' / name / 'SupportDesk.csproj'), '--', *map(str, arguments)],
+        input=stdin, text=True, capture_output=True, timeout=30)
+    assert result.returncode == expected_code, (name, arguments, result.stdout, result.stderr)
+    return result.stdout + result.stderr
+
+with tempfile.TemporaryDirectory(prefix='supportdesk-') as directory:
+    folder = Path(directory)
+    log = folder / 'activity.log'
+    output = run_args('08-ticket-exceptions', [log])
+    assert 'Invalid title rejected.' in output and 'status: Open' in output, output
+    run_args('08-ticket-exceptions', [log])
+    assert log.read_text().splitlines() == ['Viewed ticket #1', 'Viewed ticket #1']
+    run_args('08-ticket-exceptions', [folder / 'missing-directory' / 'log'], expected_code=1)
+
+    path = folder / 'sync.json'
+    assert 'Count: 0' in run_args('10-ticket-json', [path, 'list'])
+    assert not path.exists(), 'Reading a missing file must not create it.'
+    run_args('10-ticket-json', [path, 'add', 'مشکل شبکه'])
+    assert 'مشکل شبکه' in run_args('10-ticket-json', [path, 'list'])
+    run_args('10-ticket-json', [path, 'add', 'Printer issue'])
+    assert 'Count: 2' in run_args('10-ticket-json', [path, 'list'])
+    original = path.read_bytes()
+    run_args('10-ticket-json', [path, 'add', 'ab'], expected_code=1)
+    assert path.read_bytes() == original
+
+    corrupt_cases = [
+        '{broken', 'null',
+        json.dumps({'Version': 2, 'Tickets': []}),
+        json.dumps({'Version': 1, 'Tickets': None}),
+        json.dumps({'Version': 1, 'Tickets': [None]}),
+        json.dumps({'Version': 1, 'Tickets': [{'Id': 1, 'Title': None, 'Status': 0}]}),
+        json.dumps({'Version': 1, 'Tickets': [{'Id': 0, 'Title': 'Valid title', 'Status': 0}]}),
+        json.dumps({'Version': 1, 'Tickets': [{'Id': 1, 'Title': 'ab', 'Status': 0}]}),
+        json.dumps({'Version': 1, 'Tickets': [{'Id': 1, 'Title': 'Valid title', 'Status': 99}]}),
+        json.dumps({'Version': 1, 'Tickets': [
+            {'Id': 1, 'Title': 'Valid title', 'Status': 0},
+            {'Id': 1, 'Title': 'Other title', 'Status': 2}]}),
+    ]
+    for name in ['10-ticket-json', '11-ticket-async']:
+        for text in corrupt_cases:
+            bad = folder / 'bad.json'
+            bad.write_text(text, encoding='utf-8')
+            before = bad.read_bytes()
+            arguments = [bad, 'add', 'Valid title'] if name == '10-ticket-json' else [bad]
+            run_args(name, arguments, '1\nValid title\n0\n', expected_code=1)
+            assert bad.read_bytes() == before, (name, text)
+
+    async_path = folder / 'async.json'
+    output = run_args('11-ticket-async', [async_path],
+        '1\nNetwork issue\n4\n1\n3\n1\n4\n1\n5\n0\n')
+    for text in ['Invalid transition.', 'Saved status: InProgress',
+                 'Saved status: Closed', 'Open: 0', 'InProgress: 0', 'Closed: 1']:
+        assert text in output, output
+    output = run_args('11-ticket-async', [async_path], '2\n1\nPrinter issue\n0\n')
+    assert '#1: Network issue (Closed)' in output and 'Saved #2' in output, output
+    original = async_path.read_bytes()
+    output = run_args('11-ticket-async', [async_path], '4\n2\n3\n99\n1\nab\n0\n')
+    assert 'Invalid transition.' in output and 'Ticket not found.' in output, output
+    assert async_path.read_bytes() == original, 'Rejected actions must not save.'
+    output = run_args('11-ticket-async', [async_path, '--cancel-demo'])
+    assert 'Cancelled.' in output and async_path.read_bytes() == original, output
+    cancel_path = folder / 'cancel-new.json'
+    assert 'Cancelled.' in run_args('11-ticket-async', [cancel_path, '--cancel-demo'])
+    assert not cancel_path.exists()
+    for stdin in ['', '1\n', '3\n', '4\n']:
+        run_args('11-ticket-async', [async_path], stdin)
+    assert async_path.read_bytes() == original
+    assert not list(folder.glob('*.tmp')), 'Temporary files should be cleaned up.'
+
+print('PASS: all 11 samples; reference behavior, nullable, resource disposal, LINQ, '
+      'JSON round-trip, corrupt data preservation, status persistence, EOF and pre-cancellation.')

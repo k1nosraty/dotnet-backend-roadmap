@@ -39,37 +39,37 @@
     "id": 7,
     "title": "کلاس، سازنده و property",
     "path": "lessons/01-foundations/007-classes/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 8,
     "title": "nullability و قرارداد داده",
     "path": "lessons/01-foundations/008-nullability/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 9,
     "title": "exception و مدیریت منابع",
     "path": "lessons/01-foundations/009-exceptions/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 10,
     "title": "LINQ و اجرای deferred",
     "path": "lessons/01-foundations/010-linq/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 11,
     "title": "فایل و JSON و بازیابی داده",
     "path": "lessons/01-foundations/011-files-json/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 12,
     "title": "Task و async/await و لغو عملیات",
     "path": "lessons/01-foundations/012-async/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 13,
