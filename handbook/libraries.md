@@ -14,7 +14,8 @@
 | System.Text.Json | ذخیره و قرارداد JSON | ۰۱۱، ۰۲۷ |
 | Task / CancellationToken | انتظار asynchronous و لغو | ۰۱۲ |
 | DI و options | اتصال اجزا و تنظیمات قابل بررسی | ۰۱۶، ۰۳۰، ۰۳۱ |
-| ILogger | لاگ ساختاریافته و زمینهٔ خطا | ۰۷۷ |
+| DataAnnotations و ProblemDetails | ورودی معتبر و قرارداد failure | ۰۲۸ |
+| ILogger | لاگ ساختاریافته و زمینهٔ خطا | ۰۲۹، ۰۷۷ |
 | IHttpClientFactory | مدیریت client و handler برای HTTP | ۰۷۵ |
 | BackgroundService | کار پس‌زمینه و توقف کنترل‌شده | ۰۷۶ |
 | RateLimiter و health checks | محدودسازی و وضعیت سرویس | ۰۶۸، ۰۸۲ |
@@ -23,6 +24,7 @@
 
 | ابزار | هدف آموزشی | درس | گزینهٔ مقایسه |
 | --- | --- | --- | --- |
+| Microsoft.AspNetCore.OpenApi | تولید سند قرارداد API | ۰۳۳ | سند دستی |
 | EF Core + Npgsql provider | persistence رابطه‌ای با PostgreSQL | ۰۴۱ تا ۰۴۶ | SQL مستقیم |
 | Dapper | query با کنترل مستقیم SQL | ۰۴۷ | projection در EF Core |
 | FluentValidation | قواعد اعتبارسنجی خوانا و قابل تست | ۰۵۸ | validation دستی |
@@ -51,3 +53,11 @@ retry تنها برای عملیات مناسب و با توجه به idempotenc
 در درس‌های ابتدایی هیچ NuGet package بیرونی لازم نیست.
 اولین package معرفی‌شده در [درس ۰۱۶](../lessons/02-design/016-dependency-injection/README.md)، Microsoft.Extensions.DependencyInjection با نسخهٔ ثابت 10.0.12 است.
 نصب، lifetime، ownership، محدودیت validation و روش حذف container با حفظ constructorها در همان درس آمده است.
+
+## ابزارهای اجراشده در بخش وب
+
+[درس ۰۲۸](../lessons/03-web/028-validation/README.md) از DataAnnotations و ProblemDetails استاندارد استفاده می‌کند.
+[درس ۰۳۰](../lessons/03-web/030-configuration/README.md) Options و ValidateOnStart را با configuration واقعی اجرا می‌کند.
+[درس ۰۳۳](../lessons/03-web/033-openapi/README.md) Microsoft.AspNetCore.OpenApi نسخهٔ ثابت 10.0.13 را نصب و سند تولیدشده را با HTTP مقایسه می‌کند.
+نسخهٔ OpenAPI در ۲۰۲۶/۱۰/۱۵ از [NuGet رسمی](https://www.nuget.org/packages/Microsoft.AspNetCore.OpenApi/10.0.13) بررسی شده است؛ سازگاری و audit وابستگی‌های transitive در CI بررسی می‌شود.
+UI مستندات یا ابزار mapping خارجی در این مرحله نصب نشده‌اند؛ نیاز و هزینهٔ آن‌ها پیش از افزودن ارزیابی می‌شود.

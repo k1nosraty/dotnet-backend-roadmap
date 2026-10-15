@@ -78,3 +78,29 @@ DbContext خودش قابلیت‌های unit of work و repository مانند �
 برای «بستن درخواست»، تعیین کن کدام بخش شناسهٔ HTTP، قانون وضعیت و ذخیرهٔ تغییر را می‌فهمد.
 اگر class به Request و DbContext و Console هم‌زمان نیاز دارد، مسئولیت‌هایش را بررسی کن.
 پاسخت را همراه یک دلیل بنویس؛ نام کلاس به تنهایی پاسخ نیست.
+
+## ساختار واقعیِ تحویل بخش سوم
+
+نمونهٔ اجرایی [SupportDesk API](../samples/33-supportdesk-api/README.md) همین مرزها را در یک Web project پیاده می‌کند:
+
+| مسیر | مسئولیت واقعی در این نسخه |
+| --- | --- |
+| Controllers/TicketsController.cs | route، guard ورودی و تبدیل نتیجه به HTTP |
+| Contracts | requestهای کوچک و response عمومی |
+| Mapping/TicketMapping.cs | تبدیل entity به response |
+| Application/TicketService.cs | اجرای use case با قرارداد store |
+| Application/ITicketStore.cs | عملیات مورد نیاز برنامه از ذخیره‌سازی |
+| Domain/Ticket.cs | invariant و مسیر مجاز تغییر وضعیت |
+| Infrastructure/InMemoryTicketStore.cs | dictionary و هماهنگی mutation در process |
+| Configuration/TicketOptions.cs | تنظیمات typed با validation شروع host |
+| Hosting | مدیریت exception و header شناسهٔ درخواست |
+| Program.cs | ثبت dependencyها و ترتیب pipeline |
+
+مسیر نوشتن از Controller به Application و از قرارداد store به implementation می‌رسد.
+Domain نه HttpContext می‌خواهد و نه connection string.
+Infrastructure به Controller وابسته نیست و فقط قرارداد ذخیره و مدل domain را می‌شناسد.
+Program.cs برای اتصال interface به implementation می‌تواند هر دو طرف را بشناسد.
+
+[درس ۰۲۶](../lessons/03-web/026-controllers/README.md) دلیل معرفی این مرزها و [درس ۰۳۴](../lessons/03-web/034-api-delivery/README.md) دفاع و ارزیابی آن‌ها را دارد.
+Data/DbContext جدول مفهومی بالا مربوط به مرحلهٔ دیتابیس آینده است؛ نمونهٔ بخش سوم هنوز حافظه‌ای است.
+پوشه dependency را در زمان کامپایل محدود نمی‌کند؛ تفکیک assembly و تست معماری در بخش پنجم بررسی می‌شود.
