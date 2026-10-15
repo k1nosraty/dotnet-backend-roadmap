@@ -8,7 +8,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -21,3 +21,6 @@ jobs:
 
       - name: Check real HTTP requests against ASP.NET Core samples
         run: python3 scripts/web_smoke.py
+
+      - name: Check controller API snapshots and published delivery
+        run: python3 scripts/controller_smoke.py
