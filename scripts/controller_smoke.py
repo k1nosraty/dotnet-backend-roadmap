@@ -134,28 +134,48 @@ for name in SAMPLES[7:]:
         assert 'schemas' in document['components']
         if name == SAMPLES[-1]:
             assert '/api/tickets/{id}/status' in paths and '/api/tickets/{id}/notes' in paths
+            assert '409' in paths['/api/tickets/{id}/notes']['post']['responses']
+            assert '409' in paths['/api/tickets/{id}/title']['put']['responses']
 
 with server(SAMPLES[-1]) as base:
     make(base)
     send(base, '/api/tickets/1/status', 'PUT', {'status': 'Closed'}, 409)
     send(base, '/api/tickets/1/status', 'PUT', {'status': 'unknown'}, 400)
+    assert get_json(base, '/api/tickets/1')['status'] == 'Open'
     send(base, '/api/tickets/1/status', 'PUT', {'status': 'InProgress'}, 200)
     send(base, '/api/tickets/1/status', 'PUT', {'status': 'Closed'}, 409)
-    send(base, '/api/tickets/1/notes', 'POST', {'text': '   '}, 400)
+    for note in ['   ', 'ab', 'x' * 501]:
+        send(base, '/api/tickets/1/notes', 'POST', {'text': note}, 400)
     send(base, '/api/tickets/999/notes', 'POST', {'text': 'Missing note'}, 404)
     send(base, '/api/tickets/1/notes', 'POST', {'text': '  Fixed network  '}, 200)
+    before = get_json(base, '/api/tickets/1')
+    send(base, '/api/tickets/1/notes', 'POST', {'text': ' Fixed network '}, 409)
+    assert get_json(base, '/api/tickets/1') == before
+    # Capacity is checked with mutation under the same lock, including concurrent callers.
+    def add_parallel_note(i):
+        status, _, data = request(base, '/api/tickets/1/notes', 'POST',
+            json.dumps({'text': f'Follow-up {i}'}).encode(), {'Content-Type': 'application/json'})
+        assert status in (200, 409), (status, data)
+        return status
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        statuses = list(pool.map(add_parallel_note, range(10)))
+    assert statuses.count(200) == 4 and statuses.count(409) == 6, statuses
+    full = get_json(base, '/api/tickets/1')
+    assert len(full['notes']) == 5 and full['notes'][0] == 'Fixed network'
+    send(base, '/api/tickets/1/notes', 'POST', {'text': 'Over capacity'}, 409)
+    assert get_json(base, '/api/tickets/1') == full
     _, closed = send(base, '/api/tickets/1/status', 'PUT', {'status': 'Closed'}, 200)
-    assert closed['status'] == 'Closed' and closed['notes'] == ['Fixed network']
+    assert closed['status'] == 'Closed' and closed['notes'] == full['notes']
     _, repeated = send(base, '/api/tickets/1/status', 'PUT', {'status': 'Closed'}, 200)
     assert repeated == closed
     send(base, '/api/tickets/1/status', 'PUT', {'status': 'Open'}, 409)
-    # Parallel adds and notes cannot lose writes or reuse IDs.
+    send(base, '/api/tickets/1/title', 'PUT', {'title': 'Forbidden rename'}, 409)
+    send(base, '/api/tickets/1/notes', 'POST', {'text': 'Forbidden late note'}, 409)
+    assert get_json(base, '/api/tickets/1') == closed
+    # Parallel creates cannot reuse IDs.
     with ThreadPoolExecutor(max_workers=6) as pool:
         made = list(pool.map(lambda i: make(base, f'Concurrent {i}')[1], range(12)))
     assert len({t['id'] for t in made}) == 12
-    with ThreadPoolExecutor(max_workers=6) as pool:
-        list(pool.map(lambda i: send(base, '/api/tickets/1/notes', 'POST', {'text': f'Follow-up {i}'}, 200), range(10)))
-    assert len(get_json(base, '/api/tickets/1')['notes']) == 11
 with server(SAMPLES[-1]) as base:
     assert rows(base) == []
 

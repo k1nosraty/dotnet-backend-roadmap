@@ -4,7 +4,7 @@
 
 ## تغییر این مرحله
 
-افزودن notes، status transition، MutationResult و mutation اتمیک در store؛ تحویل یکپارچهٔ بخش وب.
+افزودن notes، status transition، MutationResult محافظت‌شده و mutation اتمیک؛ حفظ قواعد پنج note غیرتکراری و منع ویرایش Closed از بخش دوم.
 
 این snapshot مستقل است؛ فایل‌های مرحلهٔ قبل را برای اجرای آن لازم نداری.
 داده پس از restart پاک می‌شود و فقط در همان process مشترک است.
@@ -44,10 +44,19 @@ dotnet run --project samples/33-supportdesk-api/SupportDesk.csproj --no-launch-p
 - `SupportDesk.csproj`
 - `appsettings.json`
 
+## قواعد note و وضعیت
+
+متن note پس از Trim بین ۳ و ۵۰۰ است؛ حداکثر پنج note با مقایسهٔ تکرار Ordinal.
+rename و افزودن note پس از Closed مجاز نیستند.
+ورودی خراب ۴۰۰، منبع ناموجود ۴۰۴ و تعارض قواعد ۴۰۹ می‌دهد.
+تغییر وضعیت Open به InProgress و سپس Closed با حداقل یک note مجاز است.
+درخواست همان وضعیت فعلی no-op موفق است.
+
 ## بررسی
 
 ```powershell
 python scripts/controller_smoke.py
+python scripts/domain_smoke.py
 ```
 
 اسکریپت از ریشهٔ دوره همهٔ نه نمونهٔ controller را build و روی loopback اجرا می‌کند.

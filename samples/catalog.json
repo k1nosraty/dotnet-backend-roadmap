@@ -1,0 +1,134 @@
+[
+  {
+    "lesson": 2,
+    "project": "samples/01-ticket-summary/SupportDesk.csproj"
+  },
+  {
+    "lesson": 3,
+    "project": "samples/02-ticket-intake/SupportDesk.csproj"
+  },
+  {
+    "lesson": 4,
+    "project": "samples/03-ticket-menu/SupportDesk.csproj"
+  },
+  {
+    "lesson": 5,
+    "project": "samples/04-ticket-methods/SupportDesk.csproj"
+  },
+  {
+    "lesson": 6,
+    "project": "samples/05-ticket-collections/SupportDesk.csproj"
+  },
+  {
+    "lesson": 7,
+    "project": "samples/06-ticket-model/SupportDesk.csproj"
+  },
+  {
+    "lesson": 8,
+    "project": "samples/07-ticket-nullability/SupportDesk.csproj"
+  },
+  {
+    "lesson": 9,
+    "project": "samples/08-ticket-exceptions/SupportDesk.csproj"
+  },
+  {
+    "lesson": 10,
+    "project": "samples/09-ticket-linq/SupportDesk.csproj"
+  },
+  {
+    "lesson": 11,
+    "project": "samples/10-ticket-json/SupportDesk.csproj"
+  },
+  {
+    "lesson": 12,
+    "project": "samples/11-ticket-async/SupportDesk.csproj"
+  },
+  {
+    "lesson": 13,
+    "project": "samples/12-ticket-encapsulation/SupportDesk.csproj"
+  },
+  {
+    "lesson": 14,
+    "project": "samples/13-ticket-composition/SupportDesk.csproj"
+  },
+  {
+    "lesson": 15,
+    "project": "samples/14-ticket-interfaces/SupportDesk.csproj"
+  },
+  {
+    "lesson": 16,
+    "project": "samples/15-ticket-di/SupportDesk.csproj"
+  },
+  {
+    "lesson": 17,
+    "project": "samples/16-ticket-solid/SupportDesk.csproj"
+  },
+  {
+    "lesson": 18,
+    "project": "samples/17-ticket-values/SupportDesk.csproj"
+  },
+  {
+    "lesson": 19,
+    "project": "samples/18-ticket-layers/SupportDesk.csproj"
+  },
+  {
+    "lesson": 20,
+    "project": "samples/19-ticket-outcomes/SupportDesk.csproj"
+  },
+  {
+    "lesson": 21,
+    "project": "samples/20-ticket-refactoring/SupportDesk.csproj"
+  },
+  {
+    "lesson": 22,
+    "project": "samples/21-supportdesk-cli/SupportDesk.csproj"
+  },
+  {
+    "lesson": 23,
+    "project": "samples/22-http-basics/SupportDesk.csproj"
+  },
+  {
+    "lesson": 24,
+    "project": "samples/23-web-host/SupportDesk.csproj"
+  },
+  {
+    "lesson": 25,
+    "project": "samples/24-routing-binding/SupportDesk.csproj"
+  },
+  {
+    "lesson": 26,
+    "project": "samples/25-controllers/SupportDesk.csproj"
+  },
+  {
+    "lesson": 27,
+    "project": "samples/26-dto-mapping/SupportDesk.csproj"
+  },
+  {
+    "lesson": 28,
+    "project": "samples/27-validation/SupportDesk.csproj"
+  },
+  {
+    "lesson": 29,
+    "project": "samples/28-error-pipeline/SupportDesk.csproj"
+  },
+  {
+    "lesson": 30,
+    "project": "samples/29-options/SupportDesk.csproj"
+  },
+  {
+    "lesson": 31,
+    "project": "samples/30-request-scopes/SupportDesk.csproj"
+  },
+  {
+    "lesson": 32,
+    "project": "samples/31-rest-pagination/SupportDesk.csproj"
+  },
+  {
+    "lesson": 33,
+    "project": "samples/32-openapi/SupportDesk.csproj"
+  },
+  {
+    "lesson": 34,
+    "project": "samples/33-supportdesk-api/SupportDesk.csproj"
+  }
+]

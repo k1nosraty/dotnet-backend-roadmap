@@ -7,7 +7,14 @@ permissions:
   contents: read
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    name: verify (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHONUTF8: '1'
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -15,12 +22,15 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - name: Check lesson metadata and Markdown links
-        run: python3 scripts/check_content.py
+        run: python scripts/check_content.py
       - name: Build samples and check behavior
-        run: python3 scripts/smoke.py
+        run: python scripts/smoke.py
 
       - name: Check real HTTP requests against ASP.NET Core samples
-        run: python3 scripts/web_smoke.py
+        run: python scripts/web_smoke.py
 
       - name: Check controller API snapshots and published delivery
-        run: python3 scripts/controller_smoke.py
+        run: python scripts/controller_smoke.py
+
+      - name: Check domain contracts independently of HTTP
+        run: python scripts/domain_smoke.py

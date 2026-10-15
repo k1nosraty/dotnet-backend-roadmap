@@ -16,8 +16,8 @@ failureها قرارداد دارند و ساختار فایل‌ها باید �
 | ساخت | POST /api/tickets، ۲۰۱ و Location |
 | فهرست | GET /api/tickets، PageResponse |
 | جزئیات | GET /api/tickets/{id}، ۲۰۰ یا ۴۰۴ |
-| عنوان | PUT /api/tickets/{id}/title، ۲۰۰ |
-| یادداشت | POST /api/tickets/{id}/notes، ۲۰۰ با Ticket به‌روزشده |
+| عنوان | PUT /api/tickets/{id}/title، ۲۰۰ یا ۴۰۹ |
+| یادداشت | POST /api/tickets/{id}/notes، ۲۰۰ با Ticket به‌روزشده؛ ۴۰۹ در تعارض |
 | وضعیت | PUT /api/tickets/{id}/status، ۲۰۰ یا ۴۰۹ |
 | حذف | DELETE /api/tickets/{id}، ۲۰۴ یا ۴۰۴ |
 | زنده بودن | GET /health، ۲۰۰ |
@@ -40,6 +40,7 @@ failureها قرارداد دارند و ساختار فایل‌ها باید �
 ```
 
 CreateTicketRequest همچنان فقط title را می‌پذیرد.
+اولویت و گزارش گروهی CLI هنوز به این API منتقل نشده‌اند؛ ماتریس قابلیت‌ها در [فهرست بخش](../README.md) محدوده را روشن می‌کند.
 status اولیه را server تعیین می‌کند.
 فیلد notes آرایهٔ متن است، نه جدول تاریخچه با نویسنده و زمان.
 اگر به audit واقعی نیاز داریم، باید مدل مستقل و نیازمندی آن را در بخش بعد طراحی کنیم.
@@ -58,8 +59,10 @@ status اولیه را server تعیین می‌کند.
 
 نام‌ها در این قرارداد به بزرگی و کوچکی حروف حساس‌اند.
 ورودی ناشناخته با transition شناخته‌شده ولی غیرمجاز فرق دارد.
-عنوان و note بعد از Closed هم در محدودهٔ فعلی قابل تغییرند؛ policy منع آن پیاده نشده است.
-پیش از تغییر این تصمیم، سناریو و نیاز محصول را صریح بنویس.
+همان قواعد بخش دوم حفظ شده‌اند: Ticket بسته دیگر rename یا note تازه نمی‌پذیرد و این تلاش‌ها ۴۰۹ می‌دهند.
+هر note پس از Trim بین ۳ و ۵۰۰ واحد UTF-16 است؛ حداکثر پنج note و بدون تکرار با Ordinal داریم.
+syntax نامعتبر note پاسخ ۴۰۰ و تعارض با وضعیت، ظرفیت یا تکرار پاسخ ۴۰۹ دارد.
+تکرار PUT همان وضعیت همچنان no-op موفق است؛ این انتخاب HTTP با فرمان start/close تکراری CLI تفاوت صریح دارد.
 
 ## ۴. قانون در Domain
 
@@ -78,11 +81,15 @@ Domain نام HTTP و status code را نمی‌شناسد.
 null این متد داخلی یعنی transition مجاز نیست و store آن را به MutationKind.Conflict تبدیل می‌کند.
 در API بزرگ‌تر می‌توان نتیجهٔ domain با علت دقیق‌تری ساخت؛ اینجا یک نیاز محدود داریم.
 constructor خصوصی و propertyهای get-only اجازهٔ setter مستقیم روی Status نمی‌دهند.
+Create همچنین Id غیرمثبت و TicketTitle برابر null را رد می‌کند؛ caller داخلی نیز باید قرارداد را رعایت کند.
 مدل جدید ساخته می‌شود و مدل قبلی تا جایگزینی تغییر نمی‌کند.
 
 ## ۵. MutationResult و نتیجهٔ HTTP
 
 Application نتیجهٔ Success، Missing یا Conflict دارد.
+MutationResult یک کلاس با constructor خصوصی و factoryهای Success، Missing و Conflict است.
+Success(null) رد می‌شود و خواندن Value در failure خطای استفادهٔ caller است؛ مثل قرارداد Outcome درس ۰۲۰.
+record آزاد با Kind=Success و Value=null نمی‌سازیم و branch ناشناختهٔ enum را به موفقیت تبدیل نمی‌کنیم.
 controller Missing را ۴۰۴ و Conflict را ۴۰۹ می‌کند.
 نتیجهٔ Success حاوی Ticket است و به TicketResponse map می‌شود.
 failure متداول برای تغییر وضعیت exception نیست و از handler ۵۰۰ عبور نمی‌کند.
@@ -103,7 +110,7 @@ AddNote مدل تازه با collection تازه می‌سازد.
 mapping نیز برای response کپی آرایه می‌گیرد.
 این کار اجازه نمی‌دهد caller با cast کردن یک لیست مشترک، state store را بی‌قفل عوض کند.
 ردیابی note با متن صرف محدودیت دارد؛ دادهٔ واقعی باید policy اندازه و تاریخچهٔ مشخص داشته باشد.
-در این تمرین تعداد noteها سقف ندارد و تست بار production ادعا نشده است.
+در این تمرین سقف پنج note هم زیر همان lock بررسی می‌شود؛ این تست، بار production را ارزیابی نمی‌کند.
 
 ## ۸. مسیر کامل یک عملیات
 
@@ -131,7 +138,8 @@ Invoke-RestMethod -Uri "$base/api/tickets/$id"
 
 پاسخ نهایی باید Closed و دارای note ثبت‌شده باشد.
 PUT همان Closed را تکرار کن؛ note تازه یا Ticket تازه نباید ساخته شود.
-POST یک note یکسان دوباره می‌تواند note دوم بسازد؛ برای این عملیات idempotency key نداریم.
+POST دوبارهٔ همان note روی Ticket قابل ویرایش، طبق قاعدهٔ duplicate پاسخ ۴۰۹ می‌دهد و append نمی‌کند.
+این قاعده به معنی پیاده‌سازی idempotency key عمومی نیست؛ POST ساخت Ticket هنوز می‌تواند Ticket دوم بسازد.
 در Windows PowerShell قدیمی برای پاسخ failure از try/catch استفاده کن یا status را با curl.exe -i ببین.
 
 ## ۱۰. سناریوهای پذیرش
@@ -147,7 +155,10 @@ POST یک note یکسان دوباره می‌تواند note دوم بسازد�
 | status ناشناخته | ۴۰۰ |
 | تکرار PUT وضعیت فعلی | همان وضعیت، بدون append |
 | چند create parallel | Idهای یکتا |
-| چند note parallel | بدون گم شدن note |
+| note کوتاه‌تر از ۳ یا بلندتر از ۵۰۰ | ۴۰۰ و بدون mutation |
+| note تکراری پس از Trim | ۴۰۹ و noteهای قبلی ثابت |
+| چند note parallel | حداکثر پنج note؛ درخواست‌های بیش از ظرفیت ۴۰۹ |
+| rename یا note پس از Closed | ۴۰۹ و state ثابت |
 | restart | همهٔ دادهٔ حافظه‌ای پاک می‌شود |
 
 هم status و هم state پس از failure باید بررسی شوند.
@@ -178,11 +189,14 @@ POST یک note یکسان دوباره می‌تواند note دوم بسازد�
 ```powershell
 python scripts/check_content.py
 python scripts/controller_smoke.py
+python scripts/domain_smoke.py
 dotnet publish samples/33-supportdesk-api/SupportDesk.csproj -c Release -o exercises/published-api
 ```
 
 controller_smoke هر نه snapshot را build و قرارداد هر مرحله را بررسی می‌کند.
 تست‌ها options خراب، scope درخواست، pagination، سند OpenAPI و failure ۵۰۰ را هم پوشش می‌دهند.
+یک consumer مستقل قواعد Domain را بدون controller بررسی می‌کند، از جمله Id غیرمثبت، null و ممنوعیت ویرایش پس از Closed.
+این جداسازی نشان می‌دهد محافظت مدل فقط ناشی از guard HTTP نیست.
 نمونهٔ نهایی publish و از پوشهٔ خروجی اجرا می‌شود.
 خروجی framework-dependent است و runtime .NET 10 روی مقصد لازم دارد.
 publish دادهٔ حافظه را پایدار نمی‌کند.

@@ -42,7 +42,10 @@ public static TicketResponse ToResponse(this Ticket ticket) =>
     new(ticket.Id, ticket.Title);
 ```
 
-این extension در Mapping/TicketMapping.cs قرار دارد.
+این extension در Mapping/TicketMapping.cs داخل کلاس static قرار دارد.
+this روی اولین پارامتر یعنی با `ticket.ToResponse()` می‌توان همان `TicketMapping.ToResponse(ticket)` را صدا زد.
+namespace آن باید با using در scope باشد؛ این syntax عضو private به Ticket اضافه نمی‌کند و به invariantها دسترسی ویژه نمی‌دهد.
+[مرجع syntaxهای کاربردی](../../../handbook/csharp-syntax.md) نمونه‌های delegate، primary constructor و collection expression را کنار هم توضیح می‌دهد.
 controller پس از service از آن استفاده می‌کند.
 Domain به TicketResponse یا System.Text.Json وابسته نمی‌شود.
 Application هم برای تولید پاسخ HTTP ساخته نشده است.

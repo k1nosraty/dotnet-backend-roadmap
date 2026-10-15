@@ -31,6 +31,7 @@
 python scripts/check_content.py
 python scripts/web_smoke.py
 python scripts/controller_smoke.py
+python scripts/domain_smoke.py
 ```
 
 ساخت، status و header و JSON، ورودی خراب، تنظیمات نامعتبر، scope، pagination، سند OpenAPI، concurrency و publish بررسی می‌شوند.
@@ -44,3 +45,20 @@ python scripts/controller_smoke.py
 PostgreSQL و persistence از بخش بعد شروع می‌شوند؛ بخش چهارم هنوز برنامه‌ریزی‌شده است.
 
 [نقشهٔ کل دوره](../../ROADMAP.md)
+
+## مقایسهٔ محدودهٔ CLI و API نهایی
+
+| قابلیت | CLI درس ۰۲۲ | API درس ۰۳۴ |
+| --- | --- | --- |
+| عنوان و Id معتبر | دارد | دارد |
+| rename و note روی Closed | ممنوع | ممنوع |
+| note سه تا پانصد، پنج‌تایی و غیرتکراری | دارد | دارد |
+| close با note از InProgress | دارد | دارد |
+| تکرار درخواست وضعیت جاری | command تکراری رد می‌شود | PUT همان هدف no-op موفق است |
+| اولویت Low/Normal/High | دارد | هنوز منتقل نشده |
+| گزارش همهٔ وضعیت‌ها | دارد | هنوز منتقل نشده |
+| فیلتر و pagination HTTP | ندارد | دارد |
+| persistence پس از restart | JSON تک‌نویسنده | ندارد؛ PostgreSQL بخش چهارم |
+
+نمونه‌های میانی scope کوچک دارند؛ صرف انتقال presentation همهٔ قابلیت‌های CLI را خودکار منتقل نمی‌کند.
+قواعد مرتبطی که در تحویل API حضور دارند باید مانند بخش دوم در Domain حفظ شوند.

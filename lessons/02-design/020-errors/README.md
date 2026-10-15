@@ -74,6 +74,7 @@ public sealed class Outcome<T> where T : class
 constructor خصوصی است؛ factoryها تنها مسیر ساخت عادی‌اند.
 Success بدون value و Failure با value هم‌زمان در مسیر عمومی ساخته نمی‌شوند.
 where T : class برای کوچک نگه داشتن این نمونه است.
+اگر generic constraint یا delegateهای callback برایت تازه است، [مرجع syntax](../../../handbook/csharp-syntax.md) را کنار کد باز کن.
 برای نتیجهٔ عددی یا بدون payload، می‌توان نوع wrapper یا طراحی دیگری داشت؛ این Outcome راه‌حل جامع همهٔ پروژه‌ها نیست.
 
 ## ۴. قرارداد استفاده

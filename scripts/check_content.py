@@ -21,3 +21,18 @@ for path in root.rglob('*.md'):
         assert destination.exists(), f'Broken link: {path}: {target}'
 written = sum(item['status'] == 'written' for item in lessons)
 print(f'PASS: 90 curriculum entries, {written} written lessons, local links and code fences.')
+
+# A runnable project for every written lesson after environment setup, with no orphan snapshot.
+catalog = json.loads((root / 'samples/catalog.json').read_text(encoding='utf-8'))
+expected_ids = [item['id'] for item in lessons if item['status'] == 'written' and item['id'] != 1]
+assert [row['lesson'] for row in catalog] == expected_ids, 'Sample catalog does not cover written lessons.'
+projects = {path.relative_to(root).as_posix() for path in (root / 'samples').glob('*/SupportDesk.csproj')}
+assert {row['project'] for row in catalog} == projects, 'Orphan or missing sample project.'
+for row in catalog:
+    lesson_text = (root / lessons[row['lesson'] - 1]['path']).read_text(encoding='utf-8')
+    assert row['project'] in lesson_text, f"Lesson/sample command mismatch: {row}"
+for path in root.rglob('*.md'):
+    text = path.read_text(encoding='utf-8')
+    for project in re.findall(r'samples/[a-zA-Z0-9-]+/[a-zA-Z0-9.-]+\.csproj', text):
+        assert (root / project).is_file(), f'Broken project command: {path}: {project}'
+print(f'PASS: {len(catalog)} runnable sample projects match written lesson commands.')

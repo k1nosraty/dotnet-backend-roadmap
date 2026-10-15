@@ -26,7 +26,7 @@
 این نسخه شامل سه بخش اول کامل دوره در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: سی‌وچهار درس نوشته شده، سی‌وسه نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
 درس‌های آینده در نقشه وضعیت «برنامه‌ریزی‌شده» دارند و فایل آموزشی خالی برای آن‌ها ساخته نشده است.
 SDK در محیط محلی تهیهٔ این نسخه نصب نیست؛ بررسی ساختاری محلی انجام شده است.
-ساخت و بررسی رفتار نمونه‌ها در workflow «Check course» روی GitHub اجرا می‌شود؛ نتیجهٔ هر commit را در تب Actions ببین.
+ساخت و بررسی رفتار نمونه‌ها در workflow «Check course» روی Windows و Linux در GitHub اجرا می‌شود؛ نتیجهٔ هر commit را در تب Actions ببین.
 فرمان ساخت، سناریوهای بررسی و اسکریپت smoke در بسته وجود دارند.
 
 ```powershell
@@ -34,9 +34,10 @@ python scripts/check_content.py
 python scripts/smoke.py
 python scripts/web_smoke.py
 python scripts/controller_smoke.py
+python scripts/domain_smoke.py
 ```
 
-این چهار اسکریپت به Python 3 نیاز دارند؛ سه اسکریپت smoke به SDK 10 هم نیاز دارند. اجرای دستی نمونه‌ها فقط SDK می‌خواهد.
+این پنج اسکریپت به Python 3 نیاز دارند؛ چهار اسکریپت smoke به SDK 10 هم نیاز دارند. اجرای دستی نمونه‌ها فقط SDK می‌خواهد.
 
 ## مبنای فنی
 
@@ -71,6 +72,8 @@ python scripts/controller_smoke.py
 
 ## فایل‌های راهنما
 
+- [Git برای ثبت تمرین](handbook/git-practice.md)
+- [مرجع syntaxهای C#](handbook/csharp-syntax.md)
 - [چیدمان کلاس‌ها و پوشه‌ها](handbook/project-structure.md)
 - [سیاست انتخاب کتابخانه](handbook/libraries.md)
 - [شرح پروژهٔ اول](projects/01-support-desk/README.md)

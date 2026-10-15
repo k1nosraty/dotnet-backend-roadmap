@@ -45,6 +45,7 @@ public sealed class TicketsController(TicketService service, IOptions<TicketOpti
         return CreatedAtAction(nameof(GetById), new { id = ticket.Id }, ticket.ToResponse());
     }
     [HttpPut("{id:int}/title")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     [ProducesResponseType<TicketResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
@@ -53,9 +54,7 @@ public sealed class TicketsController(TicketService service, IOptions<TicketOpti
         if (id <= 0) return Problem(statusCode: 400, title: "ID must be positive");
         string? title = request.Title?.Trim();
         if (title is null || title.Length < 3 || title.Length > 120) return InvalidTitle();
-        var ticket = service.Rename(id, title);
-        if (ticket is null) return Problem(statusCode: 404, title: "Ticket not found");
-        return Ok(ticket.ToResponse());
+        return FromMutation(service.Rename(id, title));
     }
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -73,6 +72,7 @@ public sealed class TicketsController(TicketService service, IOptions<TicketOpti
         return ValidationProblem(ModelState);
     }
     [HttpPost("{id:int}/notes")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     [ProducesResponseType<TicketResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -80,9 +80,9 @@ public sealed class TicketsController(TicketService service, IOptions<TicketOpti
     {
         if (id <= 0) return Problem(statusCode: 400, title: "ID must be positive");
         string? text = request.Text?.Trim();
-        if (string.IsNullOrEmpty(text) || text.Length > 500)
+        if (text is null || text.Length < 3 || text.Length > 500)
         {
-            ModelState.AddModelError("text", "Note must contain 1-500 characters after trimming.");
+            ModelState.AddModelError("text", "Note must contain 3-500 characters after trimming.");
             return ValidationProblem(ModelState);
         }
         return FromMutation(service.AddNote(id, text));
@@ -102,7 +102,8 @@ public sealed class TicketsController(TicketService service, IOptions<TicketOpti
     private ActionResult<TicketResponse> FromMutation(MutationResult result) => result.Kind switch
     {
         MutationKind.Missing => Problem(statusCode: 404, title: "Ticket not found"),
-        MutationKind.Conflict => Problem(statusCode: 409, title: "Transition is not allowed; closing requires a note"),
-        _ => Ok(result.Value!.ToResponse())
+        MutationKind.Conflict => Problem(statusCode: 409, title: "Change conflicts with current ticket rules"),
+        MutationKind.Success => Ok(result.Value.ToResponse()),
+        _ => throw new InvalidOperationException("Unknown mutation result.")
     };
 }

@@ -119,6 +119,7 @@ singleton بودن به تنهایی thread safety ایجاد نمی‌کند؛ 
 
 All زیر lock یک آرایهٔ مرتب‌شده می‌سازد و live Dictionary را بیرون نمی‌دهد.
 Ticket رکوردی با propertyهای get-only و سازندهٔ خصوصی است.
+factory ساخت، Id غیرمثبت و title برابر null را حتی برای caller داخلی رد می‌کند؛ validation controller جای guard Domain را نمی‌گیرد.
 Rename مدل تازه‌ای می‌سازد؛ نتیجهٔ Find را نمی‌توان با setter تغییر داد.
 این انتخاب باعث می‌شود serialize پاسخ با mutation مستقیم entity مشترک درگیر نباشد.
 هرچند store هنوز تاریخچه، persistence و قابلیت چندسرور ندارد.
