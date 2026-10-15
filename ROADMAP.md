@@ -43,15 +43,15 @@
 | 023 | [HTTP و status code و idempotency](lessons/03-web/023-http/README.md) | نوشته‌شده |
 | 024 | [host و pipeline و تنظیمات اجرا](lessons/03-web/024-web-host/README.md) | نوشته‌شده |
 | 025 | [routing و binding](lessons/03-web/025-routing/README.md) | نوشته‌شده |
-| 026 | controller و action و قرارداد API | برنامه‌ریزی‌شده |
-| 027 | DTO و serialization و mapping دستی | برنامه‌ریزی‌شده |
-| 028 | validation و ProblemDetails | برنامه‌ریزی‌شده |
-| 029 | middleware و مدیریت خطا | برنامه‌ریزی‌شده |
-| 030 | configuration و options و secrets | برنامه‌ریزی‌شده |
-| 031 | DI scope و lifetime در درخواست | برنامه‌ریزی‌شده |
-| 032 | طراحی REST و pagination | برنامه‌ریزی‌شده |
-| 033 | OpenAPI و مصرف API | برنامه‌ریزی‌شده |
-| 034 | تحویل SupportDesk API در حافظه | برنامه‌ریزی‌شده |
+| 026 | [controller و action و قرارداد API](lessons/03-web/026-controllers/README.md) | نوشته‌شده |
+| 027 | [DTO و serialization و mapping دستی](lessons/03-web/027-dto/README.md) | نوشته‌شده |
+| 028 | [validation و ProblemDetails](lessons/03-web/028-validation/README.md) | نوشته‌شده |
+| 029 | [middleware و مدیریت خطا](lessons/03-web/029-middleware/README.md) | نوشته‌شده |
+| 030 | [configuration و options و secrets](lessons/03-web/030-configuration/README.md) | نوشته‌شده |
+| 031 | [DI scope و lifetime در درخواست](lessons/03-web/031-di-scopes/README.md) | نوشته‌شده |
+| 032 | [طراحی REST و pagination](lessons/03-web/032-rest/README.md) | نوشته‌شده |
+| 033 | [OpenAPI و مصرف API](lessons/03-web/033-openapi/README.md) | نوشته‌شده |
+| 034 | [تحویل SupportDesk API در حافظه](lessons/03-web/034-api-delivery/README.md) | نوشته‌شده |
 
 ## PostgreSQL و دسترسی به داده
 

@@ -153,55 +153,55 @@
     "id": 26,
     "title": "controller و action و قرارداد API",
     "path": "lessons/03-web/026-controllers/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 27,
     "title": "DTO و serialization و mapping دستی",
     "path": "lessons/03-web/027-dto/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 28,
     "title": "validation و ProblemDetails",
     "path": "lessons/03-web/028-validation/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 29,
     "title": "middleware و مدیریت خطا",
     "path": "lessons/03-web/029-middleware/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 30,
     "title": "configuration و options و secrets",
     "path": "lessons/03-web/030-configuration/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 31,
     "title": "DI scope و lifetime در درخواست",
     "path": "lessons/03-web/031-di-scopes/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 32,
     "title": "طراحی REST و pagination",
     "path": "lessons/03-web/032-rest/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 33,
     "title": "OpenAPI و مصرف API",
     "path": "lessons/03-web/033-openapi/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 34,
     "title": "تحویل SupportDesk API در حافظه",
     "path": "lessons/03-web/034-api-delivery/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 35,

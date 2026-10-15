@@ -37,6 +37,17 @@
 - [ ] ۰۲۴: host، middleware و precedence تنظیمات را مشاهده کردم.
 - [ ] ۰۲۵: routing، binding و validation را با سناریوهای ۴۰۰ و ۴۰۴ تفکیک کردم.
 
+- [ ] ۰۲۶: Controller، Application و Data Access را جدا و مسیر Location را بررسی کردم.
+- [ ] ۰۲۷: request و response و entity را جدا و mapping و PUT عنوان را پیاده کردم.
+- [ ] ۰۲۸: annotation، guard و ProblemDetails را با ورودی خراب بررسی کردم.
+- [ ] ۰۲۹: خطای عمومی ۵۰۰ و تطبیق requestId در header و body را تست کردم.
+- [ ] ۰۳۰: Options و validation هنگام startup و مرز secrets را بررسی کردم.
+- [ ] ۰۳۱: scope درخواست، captive dependency و عمر store را عملی مشاهده کردم.
+- [ ] ۰۳۲: filter، count و pagination مرتب و مرز overflow را بررسی کردم.
+- [ ] ۰۳۳: سند OpenAPI را با statusها و schema واقعی API مقایسه کردم.
+- [ ] ۰۳۴: API یکپارچه را با note، status، concurrency و publish تحویل دادم.
+- [ ] دفاع از طراحی و ارزیابی پایان بخش سوم را مستقل انجام دادم.
+
 ## گزارش هر جلسه
 
 | تاریخ | درس | چیزی که ساختم | خطایی که رفع کردم | سؤال باقی‌مانده |

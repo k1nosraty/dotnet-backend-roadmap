@@ -1,6 +1,6 @@
 # درس ۰۲۵ — routing و binding ورودی
 
-[قبلی](../024-web-host/README.md) · [خانه](../../../README.md)
+[قبلی](../024-web-host/README.md) · [خانه](../../../README.md) · [بعدی](../026-controllers/README.md)
 
 ## خروجی درس
 
@@ -230,5 +230,5 @@ requestهای معتبر، غایب و خراب را با status و اثر رو�
 
 ## قدم بعد
 
-درس ۰۲۶ به controller، action و قرارداد API اختصاص دارد و هنوز نوشته نشده است.
+[درس ۰۲۶](../026-controllers/README.md) به controller، action و قرارداد API اختصاص دارد.
 قبل از آن، جدول ورودی و status endpointهای تمرین خودت را کامل کن.

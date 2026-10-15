@@ -81,7 +81,7 @@ with server('28-error-pipeline', environment='Development') as base:
     status, headers, data = request(base, '/diagnostics/failure')
     value = json.loads(data)
     assert status == 500 and 'application/problem+json' in headers.get('Content-Type', '')
-    assert value['requestId'] == headers['X-Request-ID']
+    assert value['requestId'] == headers['X-Request-ID'], (value, dict(headers))
     assert b'course-internal-sentinel' not in data and b'stackTrace' not in data
     assert get_json(base, '/health')['status'] == 'ok'
 
@@ -166,8 +166,7 @@ with tempfile.TemporaryDirectory(prefix='supportdesk-api-publish-') as directory
         '-c','Release','-o',str(output),'--nologo'], check=True)
     env = os.environ.copy()
     env.update(DOTNET_ENVIRONMENT='Production', ASPNETCORE_ENVIRONMENT='Production')
-    # server() accepts an absolute path as name, so use the same launch/cleanup helpers.
-    # It expects Debug layout; published layout differs, launch the published DLL explicitly.
+    # Published layout differs from Debug; launch this DLL from its own output directory.
     import re
     with (Path(directory)/'publish.log').open('w') as log:
         process = subprocess.Popen(['dotnet',str(output/'SupportDesk.dll'),'--urls','http://127.0.0.1:0'],
@@ -191,4 +190,3 @@ with tempfile.TemporaryDirectory(prefix='supportdesk-api-publish-') as directory
             try:process.wait(timeout=8)
             except subprocess.TimeoutExpired:process.kill();process.wait(timeout=5)
 print('PASS: section three API, scopes, startup validation, pagination, OpenAPI, domain conflicts, concurrency and published DLL.')
-
