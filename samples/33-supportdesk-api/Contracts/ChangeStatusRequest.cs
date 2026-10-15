@@ -1,3 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 namespace SupportDesk.Contracts;
-public sealed record ChangeStatusRequest([property: Required] string? Status);
+public sealed class ChangeStatusRequest
+{
+    [Required]
+    public string? Status { get; init; }
+}
