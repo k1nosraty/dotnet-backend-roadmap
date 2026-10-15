@@ -34,3 +34,36 @@ jobs:
 
       - name: Check domain contracts independently of HTTP
         run: python scripts/domain_smoke.py
+
+      - name: Build PostgreSQL lesson samples on Windows
+        if: runner.os == 'Windows'
+        run: python scripts/postgres_smoke.py --build-only
+
+  postgres:
+    name: PostgreSQL 18 integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      database:
+        image: postgres:18
+        env:
+          POSTGRES_USER: course
+          POSTGRES_PASSWORD: course-ci-only
+          POSTGRES_DB: supportdesk_lab
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U course -d supportdesk_lab"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PYTHONUTF8: '1'
+      SUPPORTDESK_PG: Host=127.0.0.1;Port=5432;Database=supportdesk_lab;Username=course;Password=course-ci-only;Timeout=10;Command Timeout=20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Run SQL and Npgsql lessons against real PostgreSQL
+        run: python scripts/postgres_smoke.py

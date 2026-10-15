@@ -48,6 +48,13 @@
 - [ ] ۰۳۴: API یکپارچه را با note، status، concurrency و publish تحویل دادم.
 - [ ] دفاع از طراحی و ارزیابی پایان بخش سوم را مستقل انجام دادم.
 
+- [ ] ۰۳۵: database، schema، کلید، NULL و constraint را روی PostgreSQL بررسی کردم.
+- [ ] ۰۳۶: CRUD پارامتری Npgsql و متن فارسی و کوتیشن را بدون concatenation اجرا کردم.
+- [ ] ۰۳۷: JOIN، COUNT و aggregate را با parent بدون child و fan-out تحلیل کردم.
+- [ ] ۰۳۸: plan و buffers را پیش و پس از index بدون فرض plan ثابت مقایسه کردم.
+- [ ] ۰۳۹: دو session واقعی، rollback، 40001 و انتظار row lock را مشاهده کردم.
+- [ ] ۰۴۰: schema درخواست و note را با FK، UNIQUE، policy حذف و مرز invariantها طراحی کردم.
+
 ## گزارش هر جلسه
 
 | تاریخ | درس | چیزی که ساختم | خطایی که رفع کردم | سؤال باقی‌مانده |

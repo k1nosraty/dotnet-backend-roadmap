@@ -57,12 +57,12 @@
 
 | درس | موضوع | وضعیت |
 | --- | --- | --- |
-| 035 | مدل رابطه‌ای و کلید و constraint | برنامه‌ریزی‌شده |
-| 036 | SQL و CRUD پارامتری | برنامه‌ریزی‌شده |
-| 037 | JOIN و aggregation | برنامه‌ریزی‌شده |
-| 038 | index و EXPLAIN و طرح query | برنامه‌ریزی‌شده |
-| 039 | transaction و isolation | برنامه‌ریزی‌شده |
-| 040 | طراحی schema برای درخواست و پیام | برنامه‌ریزی‌شده |
+| 035 | [مدل رابطه‌ای و کلید و constraint](lessons/04-data/035-relational/README.md) | نوشته‌شده |
+| 036 | [SQL و CRUD پارامتری](lessons/04-data/036-sql-basics/README.md) | نوشته‌شده |
+| 037 | [JOIN و aggregation](lessons/04-data/037-joins/README.md) | نوشته‌شده |
+| 038 | [index و EXPLAIN و طرح query](lessons/04-data/038-indexes/README.md) | نوشته‌شده |
+| 039 | [transaction و isolation](lessons/04-data/039-transactions/README.md) | نوشته‌شده |
+| 040 | [طراحی schema برای درخواست و پیام](lessons/04-data/040-schema/README.md) | نوشته‌شده |
 | 041 | EF Core و DbContext و provider | برنامه‌ریزی‌شده |
 | 042 | migration و تکامل schema | برنامه‌ریزی‌شده |
 | 043 | relationship و delete behavior | برنامه‌ریزی‌شده |

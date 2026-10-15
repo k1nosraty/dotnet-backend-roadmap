@@ -25,6 +25,7 @@
 | ابزار | هدف آموزشی | درس | گزینهٔ مقایسه |
 | --- | --- | --- | --- |
 | Microsoft.AspNetCore.OpenApi | تولید سند قرارداد API | ۰۳۳ | سند دستی |
+| Npgsql driver 10.0.3 | SQL پارامتری و transaction مستقیم PostgreSQL | ۰۳۶، ۰۳۹ | ORM در مرحلهٔ بعد |
 | EF Core + Npgsql provider | persistence رابطه‌ای با PostgreSQL | ۰۴۱ تا ۰۴۶ | SQL مستقیم |
 | Dapper | query با کنترل مستقیم SQL | ۰۴۷ | projection در EF Core |
 | FluentValidation | قواعد اعتبارسنجی خوانا و قابل تست | ۰۵۸ | validation دستی |
@@ -61,3 +62,11 @@ retry تنها برای عملیات مناسب و با توجه به idempotenc
 [درس ۰۳۳](../lessons/03-web/033-openapi/README.md) Microsoft.AspNetCore.OpenApi نسخهٔ ثابت 10.0.13 را نصب و سند تولیدشده را با HTTP مقایسه می‌کند.
 نسخهٔ OpenAPI در ۲۰۲۶/۱۰/۱۵ از [NuGet رسمی](https://www.nuget.org/packages/Microsoft.AspNetCore.OpenApi/10.0.13) بررسی شده است؛ سازگاری و audit وابستگی‌های transitive در CI بررسی می‌شود.
 UI مستندات یا ابزار mapping خارجی در این مرحله نصب نشده‌اند؛ نیاز و هزینهٔ آن‌ها پیش از افزودن ارزیابی می‌شود.
+
+
+## ابزارهای اجراشده در ابتدای data
+
+Npgsql 10.0.3 در [درس ۳۶](../lessons/04-data/036-sql-basics/README.md) با CRUD، parameter، reader، token و ownership معرفی شده است.
+[درس ۳۹](../lessons/04-data/039-transactions/README.md) از connection و transaction همان driver برای isolation واقعی استفاده می‌کند.
+Npgsql با Npgsql.EntityFrameworkCore.PostgreSQL یک package نیست؛ provider EF Core در درس ۴۱ اضافه می‌شود.
+نسخهٔ مستقیم driver و منابع رسمی در زمان تهیهٔ این درس‌ها بررسی شده‌اند؛ ارتقا نیاز به بررسی سازگاری و اجرای مجدد integration دارد.

@@ -207,37 +207,37 @@
     "id": 35,
     "title": "مدل رابطه‌ای و کلید و constraint",
     "path": "lessons/04-data/035-relational/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 36,
     "title": "SQL و CRUD پارامتری",
     "path": "lessons/04-data/036-sql-basics/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 37,
     "title": "JOIN و aggregation",
     "path": "lessons/04-data/037-joins/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 38,
     "title": "index و EXPLAIN و طرح query",
     "path": "lessons/04-data/038-indexes/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 39,
     "title": "transaction و isolation",
     "path": "lessons/04-data/039-transactions/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 40,
     "title": "طراحی schema برای درخواست و پیام",
     "path": "lessons/04-data/040-schema/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 41,

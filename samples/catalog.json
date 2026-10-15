@@ -130,5 +130,29 @@
   {
     "lesson": 34,
     "project": "samples/33-supportdesk-api/SupportDesk.csproj"
+  },
+  {
+    "lesson": 35,
+    "project": "samples/34-relational/SupportDesk.csproj"
+  },
+  {
+    "lesson": 36,
+    "project": "samples/35-sql-crud/SupportDesk.csproj"
+  },
+  {
+    "lesson": 37,
+    "project": "samples/36-joins/SupportDesk.csproj"
+  },
+  {
+    "lesson": 38,
+    "project": "samples/37-index-plans/SupportDesk.csproj"
+  },
+  {
+    "lesson": 39,
+    "project": "samples/38-transactions/SupportDesk.csproj"
+  },
+  {
+    "lesson": 40,
+    "project": "samples/39-ticket-schema/SupportDesk.csproj"
   }
 ]
