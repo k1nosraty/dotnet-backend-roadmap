@@ -68,6 +68,7 @@ builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 ```
 
 ApiExceptionHandler قرارداد IExceptionHandler را پیاده می‌کند.
+ValueTask<bool> خروجی asynchronous همین قرارداد framework است؛ [مرجع syntax](../../../handbook/csharp-syntax.md) فرق کاربرد آن و Task و callback را توضیح می‌دهد.
 این handler می‌تواند با true اعلام کند exception را پاسخ داده است.
 اگر false برگرداند، handlerهای بعدی یا رفتار middleware تصمیم می‌گیرند.
 در این نمونه تمام exceptionهای غیرمنتظرهٔ قابل رسیدن به این handler به یک ۵۰۰ عمومی تبدیل می‌شوند.

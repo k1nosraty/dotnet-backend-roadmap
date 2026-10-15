@@ -122,6 +122,30 @@ if (status is "Open" or "InProgress") { /* یک نام مجاز */ }
 `AddTicket command => ...` در switch expression یک type pattern و معرفی متغیر همان branch است.
 برای هر ورودی ناشناخته، branch روشن یا failure لازم است؛ default را بی‌دلیل success نکن.
 
+## ۸. event و اتصال handler
+
+در نمونهٔ Ctrl+C، `Console.CancelKeyPress += handler` تابع را مشترک event می‌کند.
+وقتی event رخ دهد framework آن تابع را فراخوانی می‌کند؛ `+=` اینجا افزایش عدد نیست.
+`Console.CancelKeyPress -= handler` در finally اشتراک همان delegate را حذف می‌کند.
+handler فقط درخواست لغو می‌دهد و فایل را مستقیم ذخیره نمی‌کند.
+نگه داشتن اشتراک event بلندعمر می‌تواند عمر referenceها را طولانی کند؛ مالک اتصال باید مسیر جدا شدن را هم بداند.
+
+## ۹. ValueTask در قرارداد framework
+
+IExceptionHandler از ValueTask<bool> استفاده می‌کند؛ مقدار bool می‌گوید exception مدیریت شده است یا نه.
+این نوع مانند Task<bool> نمایندهٔ تکمیل عملیات است و نتیجهٔ آماده یا مسیر asynchronous را می‌تواند پوشش دهد.
+در پیاده‌سازی نمونه همان قرارداد framework را نگه می‌داریم و با await کار می‌کنیم.
+برای متدهای عادی application بدون نیاز و اندازه‌گیری، Task را خودکار با ValueTask جایگزین نکن.
+در مصرف معمول ValueTask را یک بار await کن و آن را مانند Task قابل ذخیره و await تکراری فرض نکن.
+
+## ۱۰. lock و state مشترک
+
+`lock (gate)` یک critical section می‌سازد؛ callerهایی که همان gate را قفل می‌کنند هم‌زمان وارد آن بخش نمی‌شوند.
+قفل کردن روی دو object متفاوت هماهنگی ایجاد نمی‌کند.
+در store، lookup و بررسی ظرفیت و جایگزینی زیر یک قفل‌اند تا check و mutation از هم جدا نشوند.
+داخل lock معمول C# نمی‌توان await نوشت؛ I/O طولانی را داخل این callback کوتاه نمی‌گذاریم.
+این قفل بین processها یا سرورهای متفاوت مشترک نیست.
+
 ## تمرین کوتاه
 
 یک lambda فیلتر LINQ را به متد نام‌دار تبدیل کن و خروجی را مقایسه کن.
@@ -136,3 +160,6 @@ mapping extension را یک بار به شکل static صدا بزن.
 - [Primary constructors](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/tutorials/primary-constructors)
 - [Extension methods](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods)
 - [Collection expressions](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/collection-expressions)
+
+- [ValueTask](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.valuetask-1?view=net-10.0)
+- [Lock](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/lock)
