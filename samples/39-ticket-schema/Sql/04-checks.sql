@@ -8,7 +8,7 @@ BEGIN
     BEGIN INSERT INTO notes(ticket_id,body) VALUES (1,'Resolution recorded'); EXCEPTION WHEN unique_violation THEN rejected:=true; END;
     IF NOT rejected THEN RAISE EXCEPTION 'Duplicate accepted'; END IF;
     rejected := false;
-    BEGIN DELETE FROM tickets WHERE id=1; EXCEPTION WHEN foreign_key_violation THEN rejected:=true; END;
+    BEGIN DELETE FROM tickets WHERE id=1; EXCEPTION WHEN restrict_violation THEN rejected:=true; END;
     IF NOT rejected THEN RAISE EXCEPTION 'Restrict ignored'; END IF;
     rejected := false;
     BEGIN UPDATE tickets SET priority='Urgent'; EXCEPTION WHEN check_violation THEN rejected:=true; END;
