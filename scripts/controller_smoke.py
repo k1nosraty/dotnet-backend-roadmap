@@ -61,7 +61,8 @@ for i, name in enumerate(SAMPLES):
                 status, hdr, data = request(base, '/api/tickets', 'POST', raw, {'Content-Type': 'application/json'})
                 assert status == 400 and 'application/problem+json' in hdr.get('Content-Type', ''), (raw, status, data)
                 assert json.loads(data)['errors'], data
-            assert request(base, '/api/tickets', 'POST')[0] == 400
+            status, hdr, data = request(base, '/api/tickets', 'POST', headers={'Content-Type': 'application/json'})
+            assert status == 400, (status, hdr, data)
             assert request(base, '/api/tickets', 'POST', b'abc', {'Content-Type': 'text/plain'})[0] == 415
             assert len(rows(base)) == 1
         if i >= 3:
@@ -190,3 +191,4 @@ with tempfile.TemporaryDirectory(prefix='supportdesk-api-publish-') as directory
             try:process.wait(timeout=8)
             except subprocess.TimeoutExpired:process.kill();process.wait(timeout=5)
 print('PASS: section three API, scopes, startup validation, pagination, OpenAPI, domain conflicts, concurrency and published DLL.')
+
