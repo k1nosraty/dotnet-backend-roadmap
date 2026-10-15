@@ -23,4 +23,4 @@
 ## تحویل پایان بخش
 
 [CLI یکپارچه](../../samples/21-supportdesk-cli/README.md) و [ارزیابی درس ۰۲۲](022-cli-delivery/README.md) معیار تحویل‌اند.
-بخش سوم HTTP هنوز شروع نشده است.
+[بخش سوم HTTP](../03-web/README.md) با درس ۰۲۳ شروع شده است.

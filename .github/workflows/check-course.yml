@@ -18,3 +18,6 @@ jobs:
         run: python3 scripts/check_content.py
       - name: Build samples and check behavior
         run: python3 scripts/smoke.py
+
+      - name: Check real HTTP requests against ASP.NET Core samples
+        run: python3 scripts/web_smoke.py

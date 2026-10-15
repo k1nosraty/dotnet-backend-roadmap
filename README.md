@@ -17,11 +17,12 @@
 10. [درس ۰۱۳: کپسوله‌سازی و قواعد مدل](lessons/02-design/013-encapsulation/README.md) را انجام بده.
 11. [درس‌های ۰۱۴ تا ۰۲۲](lessons/02-design/README.md) را ادامه بده.
 12. [SupportDesk CLI یکپارچه](samples/21-supportdesk-cli/README.md) را اجرا و ارزیابی پایان بخش دوم را انجام بده.
-13. پیشرفت خودت را در [PROGRESS.md](PROGRESS.md) ثبت کن.
+13. [بخش سوم: HTTP و ASP.NET Core](lessons/03-web/README.md) را از درس ۰۲۳ شروع کن.
+14. پیشرفت خودت را در [PROGRESS.md](PROGRESS.md) ثبت کن.
 
 ## وضعیت واقعی محتوا
 
-این نسخه شامل بخش اول و دوم کامل دوره در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: بیست‌ودو درس نوشته شده، بیست‌ویک نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
+این نسخه شامل بخش اول و دوم کامل دوره در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: بیست‌وپنج درس نوشته شده، بیست‌وچهار نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
 درس‌های آینده در نقشه وضعیت «برنامه‌ریزی‌شده» دارند و فایل آموزشی خالی برای آن‌ها ساخته نشده است.
 SDK در محیط محلی تهیهٔ این نسخه نصب نیست؛ بررسی ساختاری محلی انجام شده است.
 ساخت و بررسی رفتار نمونه‌ها در workflow «Check course» روی GitHub اجرا می‌شود؛ نتیجهٔ هر commit را در تب Actions ببین.
@@ -30,6 +31,7 @@ SDK در محیط محلی تهیهٔ این نسخه نصب نیست؛ بررس
 ```powershell
 python scripts/check_content.py
 python scripts/smoke.py
+python scripts/web_smoke.py
 ```
 
 این دو اسکریپت به Python 3 نیاز دارند؛ smoke به SDK 10 هم نیاز دارد. اجرای دستی نمونه‌ها فقط SDK می‌خواهد.

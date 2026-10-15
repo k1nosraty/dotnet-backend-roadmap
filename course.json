@@ -135,19 +135,19 @@
     "id": 23,
     "title": "HTTP و status code و idempotency",
     "path": "lessons/03-web/023-http/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 24,
     "title": "host و pipeline و تنظیمات اجرا",
     "path": "lessons/03-web/024-web-host/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 25,
     "title": "routing و binding",
     "path": "lessons/03-web/025-routing/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 26,

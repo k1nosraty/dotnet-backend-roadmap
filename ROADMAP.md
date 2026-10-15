@@ -40,9 +40,9 @@
 
 | درس | موضوع | وضعیت |
 | --- | --- | --- |
-| 023 | HTTP و status code و idempotency | برنامه‌ریزی‌شده |
-| 024 | host و pipeline و تنظیمات اجرا | برنامه‌ریزی‌شده |
-| 025 | routing و binding | برنامه‌ریزی‌شده |
+| 023 | [HTTP و status code و idempotency](lessons/03-web/023-http/README.md) | نوشته‌شده |
+| 024 | [host و pipeline و تنظیمات اجرا](lessons/03-web/024-web-host/README.md) | نوشته‌شده |
+| 025 | [routing و binding](lessons/03-web/025-routing/README.md) | نوشته‌شده |
 | 026 | controller و action و قرارداد API | برنامه‌ریزی‌شده |
 | 027 | DTO و serialization و mapping دستی | برنامه‌ریزی‌شده |
 | 028 | validation و ProblemDetails | برنامه‌ریزی‌شده |
