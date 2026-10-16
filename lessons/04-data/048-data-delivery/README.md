@@ -102,6 +102,8 @@ DB constraint فقط حداقل‌های schema و FK و unique و status معت
 ready یک query کوچک روی جدول واقعی می‌زند؛ باز شدن connection به‌تنهایی کافی نیست.
 اگر migration اجرا نشده باشد، /health همچنان 200 و /health/ready برابر 503 است.
 اگر server خاموش باشد، درخواست دیتابیس با ProblemDetails عمومی و requestId جواب می‌گیرد.
+EF ممکن است خطای اتصال گذرا را در InvalidOperationException بپیچد؛ DatabaseFailure علت‌های typed را بررسی می‌کند.
+همهٔ InvalidOperationExceptionها قطعی دیتابیس نیستند؛ خطای برنامه همچنان 500 است.
 handler نوع خطا و request ID را ثبت می‌کند و متن SQL/credential را به پاسخ نمی‌فرستد.
 logging خام EF/Npgsql در تنظیمات نمونه خاموش است تا جزئیات command به log عادی نرود.
 برای observability واقعی، در فصل مربوطه log و trace کنترل‌شده اضافه می‌کنیم.
@@ -152,3 +154,5 @@ python scripts/ef_smoke.py
 [Npgsql EF provider](https://www.npgsql.org/efcore/)
 
 [بخش چهارم](../README.md) · [نقشهٔ دوره](../../../ROADMAP.md)
+
+[رفتار execution strategy در کد رسمی Npgsql](https://github.com/npgsql/efcore.pg/blob/main/src/EFCore.PG/Storage/Internal/NpgsqlExecutionStrategy.cs)

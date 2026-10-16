@@ -52,7 +52,7 @@ app.MapGet("/health/ready", async (DeskContext db, CancellationToken ct) =>
         _ = await db.Tickets.AsNoTracking().Select(t => t.Id).Take(1).ToArrayAsync(ct);
         return Results.Ok(new { status = "ready" });
     }
-    catch (Exception ex) when (ex is Npgsql.NpgsqlException || ex is TimeoutException)
+    catch (Exception ex) when (DatabaseFailure.IsUnavailable(ex))
     { return Results.Problem(statusCode: 503, title: "Database unavailable"); }
 });
 if (app.Environment.IsDevelopment())

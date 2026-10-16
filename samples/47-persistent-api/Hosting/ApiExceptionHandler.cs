@@ -9,8 +9,7 @@ public sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger,
     {
         // Do not log exception messages: SQL diagnostics can contain data or connection details.
         logger.LogError("Request {RequestId} failed with {ErrorType}", context.TraceIdentifier, exception.GetType().Name);
-        bool unavailable = exception is Npgsql.NpgsqlException or TimeoutException
-            || exception is Microsoft.EntityFrameworkCore.DbUpdateException { InnerException: Npgsql.NpgsqlException };
+        bool unavailable = DatabaseFailure.IsUnavailable(exception);
         int status = unavailable ? 503 : 500;
         context.Response.StatusCode = status;
         await problems.WriteAsync(new ProblemDetailsContext

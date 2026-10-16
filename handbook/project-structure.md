@@ -104,3 +104,11 @@ Program.cs برای اتصال interface به implementation می‌تواند �
 [درس ۰۲۶](../lessons/03-web/026-controllers/README.md) دلیل معرفی این مرزها و [درس ۰۳۴](../lessons/03-web/034-api-delivery/README.md) دفاع و ارزیابی آن‌ها را دارد.
 Data/DbContext جدول مفهومی بالا مربوط به مرحلهٔ دیتابیس آینده است؛ نمونهٔ بخش سوم هنوز حافظه‌ای است.
 پوشه dependency را در زمان کامپایل محدود نمی‌کند؛ تفکیک assembly و تست معماری در بخش پنجم بررسی می‌شود.
+
+## مرز واقعی دسترسی به داده در بخش چهارم
+
+[درس ۴۶](../lessons/04-data/046-data-access/README.md) قرارداد query را در Application و implementation آن را در Persistence قرار می‌دهد. خروجی DTO materialize شده است و IQueryable از مرز عبور نمی‌کند.
+
+در [API پایدار درس ۴۸](../lessons/04-data/048-data-delivery/README.md)، Controller فقط HTTP را ترجمه می‌کند؛ TicketService رفتار دامنه را اجرا می‌کند؛ ITicketData قرارداد ذخیره است؛ EfTicketData تغییر را با token و SaveChanges اتمی ذخیره می‌کند. TicketRow و NoteRow برای EF هستند و به‌جای DTO یا Domain استفاده نمی‌شوند.
+
+پوشهٔ Migrations تاریخچهٔ schema است؛ Infrastructure/Lab در آزمایش‌های قبلی فقط مالک schema موقتی بود و جای adapter دیتابیس سرویس نیست. جداسازی فعلی منطقی و داخل یک assembly است؛ enforcement وابستگی‌ها با چند پروژه در بخش معماری می‌آید.

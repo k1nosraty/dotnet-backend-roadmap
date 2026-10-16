@@ -24,7 +24,7 @@ return await Lab.RunAsync("lab44", args, async (source, ct) =>
  var summaries = await query.ToArrayAsync(ct);
  Lab.Check(counter.Reads == 1 && summaries.All(t => t.NoteCount == 1), "One server projection");
  Lab.Check(!read.ChangeTracker.Entries().Any(), "DTO projection tracks no entities");
- var detached = await read.Tickets.AsNoTracking().FirstAsync(ct);
+ var detached = await read.Tickets.AsNoTracking().OrderBy(t => t.Id).FirstAsync(ct);
  detached.Title = "Not persisted";
  Lab.Check(await read.SaveChangesAsync(ct) == 0, "Detached mutation is not saved");
  Console.WriteLine("PASS: N+1=4, projection=1, no tracked DTOs");

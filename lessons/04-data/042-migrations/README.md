@@ -25,7 +25,7 @@ migration و designer و snapshot را با هم commit کن؛ ویرایش تا
 InitialCreate جدول tickets با Id و Title و Status را می‌سازد.
 AddPriority ستون Priority با default برابر Normal اضافه می‌کند.
 دادهٔ قبلی حذف نمی‌شود و مقدار آن ستون برای تیکت قدیمی Normal می‌شود.
-در Program ابتدا فقط migration اول اجرا می‌شود، یک تیکت با SQL پارامتری‌نبودنِ ثابت آموزشی درج می‌شود، سپس migration دوم اجرا می‌شود.
+در Program ابتدا فقط migration اول اجرا می‌شود، یک تیکت با SQL ثابت آموزشی درج می‌شود، سپس migration دوم اجرا می‌شود.
 SQL اینجا ورودی کاربر ندارد؛ در قابلیت واقعی همهٔ مقدارهای بیرونی باید parameter باشند.
 context تا پایان upgrade نباید entity نسخهٔ جدید را از جدول قدیمی query کند.
 

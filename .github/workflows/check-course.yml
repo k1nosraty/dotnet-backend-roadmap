@@ -69,8 +69,6 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-      - name: Bootstrap reference migrations for review
-        run: python scripts/scaffold_reference.py
       - name: Run SQL and Npgsql lessons against real PostgreSQL
         run: python scripts/postgres_smoke.py
 
