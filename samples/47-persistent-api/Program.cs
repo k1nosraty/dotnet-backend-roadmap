@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using SupportDesk.Hosting;
 using SupportDesk.Configuration;
 
-var builder = WebApplication.CreateBuilder(args);
+bool maintenance = args.Contains("--migrate");
+var builder = WebApplication.CreateBuilder(args.Where(a => a != "--migrate").ToArray());
 builder.Services.AddControllers();
 string connection = Environment.GetEnvironmentVariable("SUPPORTDESK_PG")
     ?? throw new InvalidOperationException("Set SUPPORTDESK_PG for the dedicated application database.");
@@ -29,7 +30,7 @@ builder.Services.AddScoped<RequestStamp>();
 builder.Services.AddOpenApi();
 var app = builder.Build();
 // Explicit maintenance command; ordinary startup never changes the schema.
-if (args.Contains("--migrate"))
+if (maintenance)
 {
     await using var scope = app.Services.CreateAsyncScope();
     var db = scope.ServiceProvider.GetRequiredService<DeskContext>();

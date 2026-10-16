@@ -14,6 +14,7 @@ for name in ['41-migrations','47-persistent-api']:
     folder=ROOT/'samples'/name
     if (folder/'Migrations').exists():
         raise SystemExit('Refusing to overwrite committed migrations: '+name)
+    subprocess.run(['dotnet','restore',str(folder/'SupportDesk.csproj')],cwd=ROOT,check=True)
     if name=='41-migrations':
         model=folder/'Persistence/DeskContext.cs'
         original=model.read_text()
