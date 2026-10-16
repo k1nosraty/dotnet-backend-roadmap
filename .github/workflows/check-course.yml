@@ -39,6 +39,10 @@ jobs:
         if: runner.os == 'Windows'
         run: python scripts/postgres_smoke.py --build-only
 
+      - name: Build EF and Dapper samples on Windows
+        if: runner.os == 'Windows'
+        run: python scripts/ef_smoke.py --build-only
+
   postgres:
     name: PostgreSQL 18 integration
     runs-on: ubuntu-latest
@@ -65,5 +69,10 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+      - name: Bootstrap reference migrations for review
+        run: python scripts/scaffold_reference.py
       - name: Run SQL and Npgsql lessons against real PostgreSQL
         run: python scripts/postgres_smoke.py
+
+      - name: Check EF migrations, concurrency and persistent HTTP API
+        run: python scripts/ef_smoke.py

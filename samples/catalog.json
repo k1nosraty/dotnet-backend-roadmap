@@ -154,5 +154,37 @@
   {
     "lesson": 40,
     "project": "samples/39-ticket-schema/SupportDesk.csproj"
+  },
+  {
+    "lesson": 41,
+    "project": "samples/40-ef-core/SupportDesk.csproj"
+  },
+  {
+    "lesson": 42,
+    "project": "samples/41-migrations/SupportDesk.csproj"
+  },
+  {
+    "lesson": 43,
+    "project": "samples/42-relationships/SupportDesk.csproj"
+  },
+  {
+    "lesson": 44,
+    "project": "samples/43-tracking/SupportDesk.csproj"
+  },
+  {
+    "lesson": 45,
+    "project": "samples/44-concurrency/SupportDesk.csproj"
+  },
+  {
+    "lesson": 46,
+    "project": "samples/45-data-access/SupportDesk.csproj"
+  },
+  {
+    "lesson": 47,
+    "project": "samples/46-dapper/SupportDesk.csproj"
+  },
+  {
+    "lesson": 48,
+    "project": "samples/47-persistent-api/SupportDesk.csproj"
   }
 ]

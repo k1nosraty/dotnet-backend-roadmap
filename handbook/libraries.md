@@ -70,3 +70,12 @@ Npgsql 10.0.3 در [درس ۳۶](../lessons/04-data/036-sql-basics/README.md) ب
 [درس ۳۹](../lessons/04-data/039-transactions/README.md) از connection و transaction همان driver برای isolation واقعی استفاده می‌کند.
 Npgsql با Npgsql.EntityFrameworkCore.PostgreSQL یک package نیست؛ provider EF Core در درس ۴۱ اضافه می‌شود.
 نسخهٔ مستقیم driver و منابع رسمی در زمان تهیهٔ این درس‌ها بررسی شده‌اند؛ ارتقا نیاز به بررسی سازگاری و اجرای مجدد integration دارد.
+
+## ابزارهای دیتابیس در درس‌های ۴۱ تا ۴۸
+
+- EF Core 10.0.13: mapping، tracker و واحد کار؛ [درس ۴۱](../lessons/04-data/041-ef-core/README.md).
+- Npgsql.EntityFrameworkCore.PostgreSQL 10.0.3: provider PostgreSQL، جدا از driver Npgsql.
+- Microsoft.EntityFrameworkCore.Design و ابزار محلی dotnet-ef 10.0.13: scaffold و migration؛ [درس ۴۲](../lessons/04-data/042-migrations/README.md).
+- Dapper 2.1.66: query هدفمند با SQL و mapping به DTO؛ [درس ۴۷](../lessons/04-data/047-dapper/README.md). این نسخهٔ مرجع pin شده است، نه ادعای آخرین نسخه.
+
+نسخه‌های Microsoft و provider شمارهٔ patch مستقل دارند. انتخاب ابزار با مسئله و SQL واقعی انجام می‌شود؛ افزودن همهٔ کتابخانه‌ها هدف دوره نیست.

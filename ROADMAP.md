@@ -63,14 +63,14 @@
 | 038 | [index و EXPLAIN و طرح query](lessons/04-data/038-indexes/README.md) | نوشته‌شده |
 | 039 | [transaction و isolation](lessons/04-data/039-transactions/README.md) | نوشته‌شده |
 | 040 | [طراحی schema برای درخواست و پیام](lessons/04-data/040-schema/README.md) | نوشته‌شده |
-| 041 | EF Core و DbContext و provider | برنامه‌ریزی‌شده |
-| 042 | migration و تکامل schema | برنامه‌ریزی‌شده |
-| 043 | relationship و delete behavior | برنامه‌ریزی‌شده |
-| 044 | tracking و projection و N+1 | برنامه‌ریزی‌شده |
-| 045 | هم‌زمانی و optimistic concurrency | برنامه‌ریزی‌شده |
-| 046 | مرز data access و بحث repository | برنامه‌ریزی‌شده |
-| 047 | Dapper و SQL برای query هدفمند | برنامه‌ریزی‌شده |
-| 048 | تحویل API پایدار و بررسی خرابی دیتابیس | برنامه‌ریزی‌شده |
+| 041 | [EF Core و DbContext و provider](lessons/04-data/041-ef-core/README.md) | نوشته‌شده |
+| 042 | [migration و تکامل schema](lessons/04-data/042-migrations/README.md) | نوشته‌شده |
+| 043 | [relationship و delete behavior](lessons/04-data/043-relationships/README.md) | نوشته‌شده |
+| 044 | [tracking و projection و N+1](lessons/04-data/044-tracking/README.md) | نوشته‌شده |
+| 045 | [هم‌زمانی و optimistic concurrency](lessons/04-data/045-concurrency/README.md) | نوشته‌شده |
+| 046 | [مرز data access و بحث repository](lessons/04-data/046-data-access/README.md) | نوشته‌شده |
+| 047 | [Dapper و SQL برای query هدفمند](lessons/04-data/047-dapper/README.md) | نوشته‌شده |
+| 048 | [تحویل API پایدار و بررسی خرابی دیتابیس](lessons/04-data/048-data-delivery/README.md) | نوشته‌شده |
 
 ## ساختار پروژه و معماری
 

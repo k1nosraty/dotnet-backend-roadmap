@@ -243,49 +243,49 @@
     "id": 41,
     "title": "EF Core و DbContext و provider",
     "path": "lessons/04-data/041-ef-core/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 42,
     "title": "migration و تکامل schema",
     "path": "lessons/04-data/042-migrations/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 43,
     "title": "relationship و delete behavior",
     "path": "lessons/04-data/043-relationships/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 44,
     "title": "tracking و projection و N+1",
     "path": "lessons/04-data/044-tracking/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 45,
     "title": "هم‌زمانی و optimistic concurrency",
     "path": "lessons/04-data/045-concurrency/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 46,
     "title": "مرز data access و بحث repository",
     "path": "lessons/04-data/046-data-access/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 47,
     "title": "Dapper و SQL برای query هدفمند",
     "path": "lessons/04-data/047-dapper/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 48,
     "title": "تحویل API پایدار و بررسی خرابی دیتابیس",
     "path": "lessons/04-data/048-data-delivery/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 49,

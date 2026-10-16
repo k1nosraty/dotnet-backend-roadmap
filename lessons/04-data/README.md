@@ -1,7 +1,6 @@
 # بخش چهارم — PostgreSQL و دسترسی به داده
 
-شش درس ۳۵ تا ۴۰ آماده‌اند؛ شش درس بعدی ۴۱ تا ۴۶ و دو درس تحویل/ابزار ۴۷ و ۴۸ هنوز برنامه‌ریزی‌شده‌اند.
-این بخش در مجموع ۱۴ درس دارد و هنوز کامل نشده است.
+تمام ۱۴ درس ۳۵ تا ۴۸ نوشته شده‌اند؛ خروجی بخش، API با ذخیره‌سازی PostgreSQL و migration و کنترل تعارض است.
 پیش‌نیاز این گروه، سه بخش اول و آماده‌سازی PostgreSQL است.
 
 | درس | موضوع | وضعیت |
@@ -12,30 +11,33 @@
 | 038 | [index و EXPLAIN و طرح query](038-indexes/README.md) | نوشته‌شده |
 | 039 | [transaction و isolation](039-transactions/README.md) | نوشته‌شده |
 | 040 | [طراحی schema برای درخواست و پیام](040-schema/README.md) | نوشته‌شده |
-| 041 | EF Core و DbContext و provider | برنامه‌ریزی‌شده |
-| 042 | migration و تکامل schema | برنامه‌ریزی‌شده |
-| 043 | relationship و delete behavior | برنامه‌ریزی‌شده |
-| 044 | tracking و projection و N+1 | برنامه‌ریزی‌شده |
-| 045 | هم‌زمانی و optimistic concurrency | برنامه‌ریزی‌شده |
-| 046 | مرز data access و بحث repository | برنامه‌ریزی‌شده |
-| 047 | Dapper و SQL برای query هدفمند | برنامه‌ریزی‌شده |
-| 048 | تحویل API پایدار و بررسی خرابی دیتابیس | برنامه‌ریزی‌شده |
+| 041 | [EF Core و DbContext و provider](041-ef-core/README.md) | نوشته‌شده |
+| 042 | [migration و تکامل schema](042-migrations/README.md) | نوشته‌شده |
+| 043 | [relationship و delete behavior](043-relationships/README.md) | نوشته‌شده |
+| 044 | [tracking و projection و N+1](044-tracking/README.md) | نوشته‌شده |
+| 045 | [هم‌زمانی و optimistic concurrency](045-concurrency/README.md) | نوشته‌شده |
+| 046 | [مرز data access و بحث repository](046-data-access/README.md) | نوشته‌شده |
+| 047 | [Dapper و SQL برای query هدفمند](047-dapper/README.md) | نوشته‌شده |
+| 048 | [تحویل API پایدار و بررسی خرابی دیتابیس](048-data-delivery/README.md) | نوشته‌شده |
 
 ## مسیر اجرا
 
 [محیط PostgreSQL](../../handbook/postgresql-lab.md) را با نصب محلی یا Docker آماده کن.
-هر درس یک project مستقل net10.0 با Npgsql 10.0.3 دارد.
-runner در هر اجرا schema تازه می‌سازد و در پایان فقط همان schema را پاک می‌کند؛ --keep برای بازرسی دستی است.
+هر درس یک project مستقل net10.0 دارد؛ Npgsql 10.0.3 و EF Core 10.0.13 و provider 10.0.3 در نمونه‌های مرتبط pin شده‌اند.
+نمونه‌های آزمایشی ۳۵ تا ۴۷ schema تازه می‌سازند و فقط همان را پاک می‌کنند؛ --keep برای بازرسی دستی است.
+API درس ۴۸ با schema ثابت کار می‌کند و آن را خودکار حذف نمی‌کند.
 فایل‌های SQL و سناریوهای C# در پوشهٔ نمونهٔ همان درس قرار دارند.
 
 ```powershell
 python scripts/check_content.py
 python scripts/postgres_smoke.py
+python scripts/ef_smoke.py
 ```
 
 بررسی زنده روی PostgreSQL 18 در job جدا اجرا می‌شود؛ build نمونه‌ها روی Windows نیز بررسی می‌شود.
 --build-only فقط کامپایل است و هیچ تضمینی دربارهٔ اجرای SQL نمی‌دهد.
-API درس ۳۴ هنوز حافظه‌ای است؛ اتصال API، EF Core و migration در ادامهٔ بخش انجام می‌شوند.
+API درس ۳۴ یک snapshot حافظه‌ای باقی می‌ماند؛ نسخهٔ پایدار مستقل در درس ۴۸ قرار دارد.
+اجرای ef_smoke به SDK و PostgreSQL و برای آزمایش API به psql نیاز دارد؛ تنظیمات آن در README نمونه آمده است.
 
 ## مرزهای مهم
 
