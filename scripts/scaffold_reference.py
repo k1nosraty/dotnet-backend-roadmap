@@ -8,6 +8,7 @@ import json
 import subprocess
 ROOT=Path(__file__).resolve().parents[1]
 def ef(name, migration):
+    subprocess.run(['dotnet','build',str(ROOT/'samples'/name/'SupportDesk.csproj'),'--nologo'],cwd=ROOT,check=True)
     subprocess.run(['dotnet','ef','migrations','add',migration,'--project',str(ROOT/'samples'/name/'SupportDesk.csproj'),'--output-dir','Migrations'],cwd=ROOT,check=True)
 subprocess.run(['dotnet','tool','restore'],cwd=ROOT,check=True)
 for name in ['41-migrations','47-persistent-api']:

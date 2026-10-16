@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Migrations;
 using SupportDesk.Infrastructure;
 using SupportDesk.Persistence;
 return await Lab.RunAsync("lab42", args, async (source, ct) =>
