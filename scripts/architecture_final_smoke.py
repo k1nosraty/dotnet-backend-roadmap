@@ -160,7 +160,7 @@ with tempfile.TemporaryDirectory(prefix='teamdesk-delivery-') as directory:
         for status,body,headers in created:
             location=next(v for k,v in headers.items() if k.lower()=='location')
             assert send(base,location)[1]==body
-        target=ids[0]
+        target=min(ids)  # Preserve this resource while deleting the highest identity.
         assert send(base,f'/api/tickets/{target}/resolve',{'resolution':'Fixed cable'},'POST')[0]==409
         assert send(base,f'/api/tickets/{target}/status',{'status':'InProgress'},'PUT')[0]==200
         def resolve(i):return send(base,f'/api/tickets/{target}/resolve',{'resolution':f'Fixed cable {i}'},'POST')[0]
