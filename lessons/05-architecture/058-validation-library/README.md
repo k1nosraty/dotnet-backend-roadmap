@@ -59,6 +59,7 @@ public sealed class ResolveTicketValidator : AbstractValidator<ResolveTicketComm
 RuleFor مشخص می‌کند کدام property بررسی می‌شود.
 Must برای طول پس از Trim است؛ Transform که در بعضی مثال‌های قدیمی می‌بینی در خانوادهٔ ۱۲ حذف شده است.
 validator state را تغییر نمی‌دهد و I/O انجام نمی‌دهد.
+در فراخوانی تست، `new ResolveTicketCommand(...)` را صریح بنویس؛ `new(...)` کنار overloadهای ValidateAsync ممکن است خطای ابهام CS0121 بدهد.
 خروجی normalization همچنان در command handler برای رفتار Domain مصرف می‌شود.
 مدل null به‌عنوان root validator قرارداد دیگری دارد؛ endpoint یک request لازم دارد و use case هم ArgumentNullException guard دارد.
 
