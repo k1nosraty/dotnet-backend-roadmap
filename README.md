@@ -20,11 +20,12 @@
 13. [بخش سوم: HTTP و ASP.NET Core](lessons/03-web/README.md) را از درس ۰۲۳ شروع کن.
 14. [تحویل SupportDesk API](lessons/03-web/034-api-delivery/README.md) و ارزیابی پایان بخش سوم را انجام بده.
 15. [بخش چهارم: PostgreSQL و SQL](lessons/04-data/README.md) را با [آماده‌سازی دیتابیس](handbook/postgresql-lab.md) شروع کن.
-16. پیشرفت خودت را در [PROGRESS.md](PROGRESS.md) ثبت کن.
+16. [شروع بخش پنجم: معماری و مرزها](lessons/05-architecture/README.md) را از درس ۰۴۹ ادامه بده.
+17. پیشرفت خودت را در [PROGRESS.md](PROGRESS.md) ثبت کن.
 
 ## وضعیت واقعی محتوا
 
-این نسخه شامل چهار بخش اول کامل دوره در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: چهل‌وهشت درس نوشته شده، چهل‌وهفت نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
+این نسخه شامل چهار بخش اول کامل و درس‌های ۴۹ تا ۵۲ بخش پنجم در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۵۲ درس نوشته شده، ۵۱ نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
 درس‌های آینده در نقشه وضعیت «برنامه‌ریزی‌شده» دارند و فایل آموزشی خالی برای آن‌ها ساخته نشده است.
 SDK در محیط محلی تهیهٔ این نسخه نصب نیست؛ بررسی ساختاری محلی انجام شده است.
 ساخت و بررسی رفتار نمونه‌ها در workflow «Check course» روی Windows و Linux در GitHub اجرا می‌شود؛ نتیجهٔ هر commit را در تب Actions ببین.
@@ -36,12 +37,13 @@ python scripts/smoke.py
 python scripts/web_smoke.py
 python scripts/controller_smoke.py
 python scripts/domain_smoke.py
+python scripts/architecture_smoke.py
 # برای نمونه‌های PostgreSQL پس از آماده‌سازی server و SUPPORTDESK_PG:
 python scripts/postgres_smoke.py
 python scripts/ef_smoke.py
 ```
 
-این هفت اسکریپت به Python 3 نیاز دارند؛ اسکریپت‌های smoke به SDK 10 هم نیاز دارند. postgres_smoke به PostgreSQL واقعی و متغیر SUPPORTDESK_PG نیز نیاز دارد. ef_smoke برای بخش API علاوه بر این‌ها psql می‌خواهد؛ متغیرهای اتصال تست در README نمونهٔ تحویل توضیح داده شده‌اند. اجرای دستی درس‌های دیتابیس نیز PostgreSQL و اتصال تنظیم‌شده می‌خواهد.
+این هشت اسکریپت به Python 3 نیاز دارند؛ اسکریپت‌های smoke به SDK 10 هم نیاز دارند. postgres_smoke به PostgreSQL واقعی و متغیر SUPPORTDESK_PG نیز نیاز دارد. ef_smoke برای بخش API علاوه بر این‌ها psql می‌خواهد؛ متغیرهای اتصال تست در README نمونهٔ تحویل توضیح داده شده‌اند. اجرای دستی درس‌های دیتابیس نیز PostgreSQL و اتصال تنظیم‌شده می‌خواهد.
 
 ## مبنای فنی
 

@@ -291,25 +291,25 @@
     "id": 49,
     "title": "تشخیص مسئولیت کلاس‌ها",
     "path": "lessons/05-architecture/049-responsibilities/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 50,
     "title": "ساختار پوشه‌ای بر اساس لایه یا قابلیت",
     "path": "lessons/05-architecture/050-folders/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 51,
     "title": "جداسازی assembly و جهت وابستگی",
     "path": "lessons/05-architecture/051-projects/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 52,
     "title": "application service و orchestration",
     "path": "lessons/05-architecture/052-application-services/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 53,

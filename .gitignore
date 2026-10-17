@@ -6,3 +6,4 @@ obj/
 exercises/
 __pycache__/
 *.pyc
+artifacts/

@@ -186,5 +186,21 @@
   {
     "lesson": 48,
     "project": "samples/47-persistent-api/SupportDesk.csproj"
+  },
+  {
+    "lesson": 49,
+    "project": "samples/48-responsibilities/SupportDesk.csproj"
+  },
+  {
+    "lesson": 50,
+    "project": "samples/49-folders/SupportDesk.csproj"
+  },
+  {
+    "lesson": 51,
+    "project": "samples/50-projects/SupportDesk.csproj"
+  },
+  {
+    "lesson": 52,
+    "project": "samples/51-application-services/SupportDesk.csproj"
   }
 ]

@@ -112,3 +112,11 @@ Data/DbContext جدول مفهومی بالا مربوط به مرحلهٔ دی�
 در [API پایدار درس ۴۸](../lessons/04-data/048-data-delivery/README.md)، Controller فقط HTTP را ترجمه می‌کند؛ TicketService رفتار دامنه را اجرا می‌کند؛ ITicketData قرارداد ذخیره است؛ EfTicketData تغییر را با token و SaveChanges اتمی ذخیره می‌کند. TicketRow و NoteRow برای EF هستند و به‌جای DTO یا Domain استفاده نمی‌شوند.
 
 پوشهٔ Migrations تاریخچهٔ schema است؛ Infrastructure/Lab در آزمایش‌های قبلی فقط مالک schema موقتی بود و جای adapter دیتابیس سرویس نیست. جداسازی فعلی منطقی و داخل یک assembly است؛ enforcement وابستگی‌ها با چند پروژه در بخش معماری می‌آید.
+
+## آغاز معماری اجرایی
+
+[درس ۴۹](../lessons/05-architecture/049-responsibilities/README.md) مسئولیت را با دلیل تغییر مشخص می‌کند؛ [درس ۵۰](../lessons/05-architecture/050-folders/README.md) همان رفتار را با چیدمان ترکیبی feature و لایه مقایسه می‌کند.
+
+[درس ۵۱](../lessons/05-architecture/051-projects/README.md) Domain، Application و Infrastructure را به سه کتابخانه منتقل می‌کند و host فقط اتصال و نمایش را برعهده دارد. Domain reference پروژه ندارد؛ Application به Domain و Infrastructure به قرارداد Application و Domain وابسته است. host در composition root factory زیرساخت را می‌شناسد؛ implementation داخلی مستقیماً در دسترس آن نیست.
+
+[درس ۵۲](../lessons/05-architecture/052-application-services/README.md) نمونهٔ orchestration با دو تغییر Domain و یک save اتمی است. ثبت یادداشت و بستن به دو commit جدا تبدیل نمی‌شوند. این snapshotها برای تمرکز بر معماری حافظه‌ای‌اند؛ دوام و SQL به آزمایش‌های PostgreSQL قبلی تعلق دارند.

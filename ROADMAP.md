@@ -76,10 +76,10 @@
 
 | درس | موضوع | وضعیت |
 | --- | --- | --- |
-| 049 | تشخیص مسئولیت کلاس‌ها | برنامه‌ریزی‌شده |
-| 050 | ساختار پوشه‌ای بر اساس لایه یا قابلیت | برنامه‌ریزی‌شده |
-| 051 | جداسازی assembly و جهت وابستگی | برنامه‌ریزی‌شده |
-| 052 | application service و orchestration | برنامه‌ریزی‌شده |
+| 049 | [تشخیص مسئولیت کلاس‌ها](lessons/05-architecture/049-responsibilities/README.md) | نوشته‌شده |
+| 050 | [ساختار پوشه‌ای بر اساس لایه یا قابلیت](lessons/05-architecture/050-folders/README.md) | نوشته‌شده |
+| 051 | [جداسازی assembly و جهت وابستگی](lessons/05-architecture/051-projects/README.md) | نوشته‌شده |
+| 052 | [application service و orchestration](lessons/05-architecture/052-application-services/README.md) | نوشته‌شده |
 | 053 | قواعد domain و aggregate | برنامه‌ریزی‌شده |
 | 054 | port و adapter و مرز infrastructure | برنامه‌ریزی‌شده |
 | 055 | mapping و هزینهٔ abstraction | برنامه‌ریزی‌شده |
