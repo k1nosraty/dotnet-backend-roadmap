@@ -186,5 +186,53 @@
   {
     "lesson": 48,
     "project": "samples/47-persistent-api/SupportDesk.csproj"
+  },
+  {
+    "lesson": 49,
+    "project": "samples/48-responsibilities/SupportDesk.csproj"
+  },
+  {
+    "lesson": 50,
+    "project": "samples/49-folders/SupportDesk.csproj"
+  },
+  {
+    "lesson": 51,
+    "project": "samples/50-projects/SupportDesk.csproj"
+  },
+  {
+    "lesson": 52,
+    "project": "samples/51-application-services/SupportDesk.csproj"
+  },
+  {
+    "lesson": 53,
+    "project": "samples/52-domain-aggregate/SupportDesk.csproj"
+  },
+  {
+    "lesson": 54,
+    "project": "samples/53-ports-adapters/SupportDesk.csproj"
+  },
+  {
+    "lesson": 55,
+    "project": "samples/54-explicit-mapping/SupportDesk.csproj"
+  },
+  {
+    "lesson": 56,
+    "project": "samples/55-vertical-slices/SupportDesk.csproj"
+  },
+  {
+    "lesson": 57,
+    "project": "samples/56-command-query/SupportDesk.csproj"
+  },
+  {
+    "lesson": 58,
+    "project": "samples/57-fluent-validation/SupportDesk.csproj"
+  },
+  {
+    "lesson": 59,
+    "project": "samples/58-architecture-tests/SupportDesk.csproj"
+  },
+  {
+    "lesson": 60,
+    "project": "samples/59-teamdesk/SupportDesk.csproj"
   }
 ]

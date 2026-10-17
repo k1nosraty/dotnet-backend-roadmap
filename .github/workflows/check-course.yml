@@ -23,6 +23,11 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Check lesson metadata and Markdown links
         run: python scripts/check_content.py
+      - name: Check architecture snapshots, compile boundaries and publish
+        run: |
+          python scripts/architecture_smoke.py
+          python scripts/architecture_next_smoke.py
+
       - name: Build samples and check behavior
         run: python scripts/smoke.py
 
@@ -74,3 +79,23 @@ jobs:
 
       - name: Check EF migrations, concurrency and persistent HTTP API
         run: python scripts/ef_smoke.py
+
+  architecture-final:
+    name: Architecture delivery (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Check course links and sample catalog
+        run: python scripts/check_content.py
+      - name: Check final architecture, validation and published TeamDesk
+        run: python scripts/architecture_final_smoke.py
