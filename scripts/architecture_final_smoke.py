@@ -124,18 +124,29 @@ with tempfile.TemporaryDirectory(prefix='teamdesk-delivery-') as directory:
             assert send(base,'/api/tickets/1')[1]==initial['items'][0]
         print(f'PASS: {name} real read-only HTTP and validation.')
 
-    # Audit the pinned dependency; this is advisory data at execution time, not a forever guarantee.
-    report=json.loads(invoke(['dotnet','list',str(SAMPLES/NAMES[-1]/'SupportDesk.csproj'),
-                              'package','--vulnerable','--include-transitive','--format','json']))
-    assert report.get('projects'), 'NuGet report did not include any project.'
-    assert not report.get('errors'), report
-    for problem in report.get('problems', []):
-        assert str(problem.get('severity', '')).lower() != 'error', problem
-    for project in report['projects']:
-        assert project.get('frameworks'), 'NuGet project has no framework results.'
+    # Validate coverage with an UNFILTERED inventory. A clean --vulnerable report
+    # legitimately omits frameworks that have no vulnerable packages.
+    package_command = ['dotnet', 'list', str(SAMPLES/NAMES[-1]/'SupportDesk.csproj'), 'package']
+    inventory = json.loads(invoke(package_command + ['--include-transitive', '--format', 'json', '--output-version', '1']))
+    report = json.loads(invoke(package_command + ['--vulnerable', '--include-transitive', '--format', 'json', '--output-version', '1']))
+    for result in [inventory, report]:
+        assert result.get('version') == 1 and result.get('projects'), 'Incomplete NuGet report.'
+        assert not result.get('errors'), result
+        for problem in result.get('problems', []):
+            assert str(problem.get('severity', '')).lower() != 'error', problem
+    inventory_paths = {str(Path(p['path']).resolve()) for p in inventory['projects']}
+    assert {str(Path(p['path']).resolve()) for p in report['projects']} == inventory_paths
+    packages = []
+    for project in inventory['projects']:
+        assert project.get('frameworks'), 'Unfiltered dependency inventory has no frameworks.'
         for framework in project['frameworks']:
-            for group in ['topLevelPackages','transitivePackages']:
-                assert not any(p.get('vulnerabilities') for p in framework.get(group,[])),framework
+            for group in ['topLevelPackages', 'transitivePackages']:
+                packages.extend(framework.get(group, []))
+    assert any(p.get('id') == 'FluentValidation' and p.get('resolvedVersion') == '12.2.0' for p in packages), packages
+    for project in report['projects']:
+        for framework in project.get('frameworks', []):
+            for group in ['topLevelPackages', 'transitivePackages']:
+                assert not any(p.get('vulnerabilities') for p in framework.get(group, [])), framework
     print('PASS: NuGet vulnerability report has no reported vulnerable dependencies.')
 
     output=folder/'published'
