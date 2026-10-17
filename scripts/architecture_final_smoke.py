@@ -127,8 +127,13 @@ with tempfile.TemporaryDirectory(prefix='teamdesk-delivery-') as directory:
     # Audit the pinned dependency; this is advisory data at execution time, not a forever guarantee.
     report=json.loads(invoke(['dotnet','list',str(SAMPLES/NAMES[-1]/'SupportDesk.csproj'),
                               'package','--vulnerable','--include-transitive','--format','json']))
-    for project in report.get('projects',[]):
-        for framework in project.get('frameworks',[]):
+    assert report.get('projects'), 'NuGet report did not include any project.'
+    assert not report.get('errors'), report
+    for problem in report.get('problems', []):
+        assert str(problem.get('severity', '')).lower() != 'error', problem
+    for project in report['projects']:
+        assert project.get('frameworks'), 'NuGet project has no framework results.'
+        for framework in project['frameworks']:
             for group in ['topLevelPackages','transitivePackages']:
                 assert not any(p.get('vulnerabilities') for p in framework.get(group,[])),framework
     print('PASS: NuGet vulnerability report has no reported vulnerable dependencies.')

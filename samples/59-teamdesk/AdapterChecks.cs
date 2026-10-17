@@ -63,6 +63,8 @@ internal static class AdapterChecks
                 JsonSerializer.Serialize(new { FormatVersion = 2, NextId = 2, Tickets = new object?[] { null } }),
                 Document(1, "Closed", []), Document(0, "Open", []), Document(1, "Open", ["Same", "Same"]),
                 Document(1, "Deleted", []), Document(1, "Open", [], 0),
+                CounterDocument(3, 2), CounterDocument(2, 0), CounterDocument(2, -1),
+                CounterDocument(2, 1), CounterDocument(2, (long)int.MaxValue + 2),
                 JsonSerializer.Serialize(new { FormatVersion = 2, NextId = 2, Tickets = new[] {
                     new { Id = 1, Title = "Network", Status = "Open", Notes = Array.Empty<string>(), Version = 1 },
                     new { Id = 1, Title = "Network", Status = "Open", Notes = Array.Empty<string>(), Version = 1 } } })
@@ -81,6 +83,10 @@ internal static class AdapterChecks
         }
         finally { Directory.Delete(folder, recursive: true); }
     }
+    private static string CounterDocument(int format, long nextId) =>
+        JsonSerializer.Serialize(new { FormatVersion = format, NextId = nextId, Tickets = new[] {
+            new { Id = 1, Title = "Network", Status = "Open", Notes = Array.Empty<string>(), Version = 1 } } });
+
     private static string Document(int id, string status, string[] notes, long version = 1) =>
         JsonSerializer.Serialize(new { FormatVersion = 2, NextId = 2, Tickets = new[] {
             new { Id = id, Title = "Network", Status = status, Notes = notes, Version = version } } });
