@@ -178,4 +178,4 @@ Load را به store حافظه‌ای واقعی واگذار می‌کند و�
 - [مرجع تنظیمات projectهای SDK](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props)
 
 [قبلی](../051-projects/README.md) · [فهرست بخش](../README.md)
-درس 053 دربارهٔ aggregate مرحلهٔ بعد است و هنوز نوشته نشده است.
+[درس بعد: قواعد Domain و aggregate](../053-domain/README.md).

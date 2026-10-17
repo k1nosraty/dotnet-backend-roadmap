@@ -120,3 +120,9 @@ Data/DbContext جدول مفهومی بالا مربوط به مرحلهٔ دی�
 [درس ۵۱](../lessons/05-architecture/051-projects/README.md) Domain، Application و Infrastructure را به سه کتابخانه منتقل می‌کند و host فقط اتصال و نمایش را برعهده دارد. Domain reference پروژه ندارد؛ Application به Domain و Infrastructure به قرارداد Application و Domain وابسته است. host در composition root factory زیرساخت را می‌شناسد؛ implementation داخلی مستقیماً در دسترس آن نیست.
 
 [درس ۵۲](../lessons/05-architecture/052-application-services/README.md) نمونهٔ orchestration با دو تغییر Domain و یک save اتمی است. ثبت یادداشت و بستن به دو commit جدا تبدیل نمی‌شوند. این snapshotها برای تمرکز بر معماری حافظه‌ای‌اند؛ دوام و SQL به آزمایش‌های PostgreSQL قبلی تعلق دارند.
+
+## aggregate، adapter و featureهای اجرایی
+
+[درس ۵۳](../lessons/05-architecture/053-domain/README.md) مرز تغییر Ticket و noteها و بازسازی معتبر را بررسی می‌کند. [درس ۵۴](../lessons/05-architecture/054-ports/README.md) همان use case را با دو adapter حافظه و JSON اجرا می‌کند؛ lock فایل فقط درون process است و جای concurrency دیتابیس نیست.
+
+[درس ۵۵](../lessons/05-architecture/055-mapping/README.md) request، command، Domain، row فایل و response را با mapping صریح جدا می‌کند. [درس ۵۶](../lessons/05-architecture/056-vertical-slices/README.md) ساختار ترکیبی feature را دارد: endpoint در Features نام قابلیت و handler در Application/Features همان قابلیت است؛ Domain و adapter مشترک در assembly مستقل می‌مانند. این نمونه هنوز CQRS کامل یا تحویل TeamDesk نیست.

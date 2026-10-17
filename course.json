@@ -315,25 +315,25 @@
     "id": 53,
     "title": "قواعد domain و aggregate",
     "path": "lessons/05-architecture/053-domain/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 54,
     "title": "port و adapter و مرز infrastructure",
     "path": "lessons/05-architecture/054-ports/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 55,
     "title": "mapping و هزینهٔ abstraction",
     "path": "lessons/05-architecture/055-mapping/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 56,
     "title": "vertical slice و مقایسهٔ عملی",
     "path": "lessons/05-architecture/056-vertical-slices/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 57,

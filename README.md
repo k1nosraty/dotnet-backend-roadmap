@@ -25,7 +25,7 @@
 
 ## وضعیت واقعی محتوا
 
-این نسخه شامل چهار بخش اول کامل و درس‌های ۴۹ تا ۵۲ بخش پنجم در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۵۲ درس نوشته شده، ۵۱ نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
+این نسخه شامل چهار بخش اول کامل و درس‌های ۴۹ تا ۵۶ بخش پنجم در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۵۶ درس نوشته شده، ۵۵ نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
 درس‌های آینده در نقشه وضعیت «برنامه‌ریزی‌شده» دارند و فایل آموزشی خالی برای آن‌ها ساخته نشده است.
 SDK در محیط محلی تهیهٔ این نسخه نصب نیست؛ بررسی ساختاری محلی انجام شده است.
 ساخت و بررسی رفتار نمونه‌ها در workflow «Check course» روی Windows و Linux در GitHub اجرا می‌شود؛ نتیجهٔ هر commit را در تب Actions ببین.
@@ -38,12 +38,13 @@ python scripts/web_smoke.py
 python scripts/controller_smoke.py
 python scripts/domain_smoke.py
 python scripts/architecture_smoke.py
+python scripts/architecture_next_smoke.py
 # برای نمونه‌های PostgreSQL پس از آماده‌سازی server و SUPPORTDESK_PG:
 python scripts/postgres_smoke.py
 python scripts/ef_smoke.py
 ```
 
-این هشت اسکریپت به Python 3 نیاز دارند؛ اسکریپت‌های smoke به SDK 10 هم نیاز دارند. postgres_smoke به PostgreSQL واقعی و متغیر SUPPORTDESK_PG نیز نیاز دارد. ef_smoke برای بخش API علاوه بر این‌ها psql می‌خواهد؛ متغیرهای اتصال تست در README نمونهٔ تحویل توضیح داده شده‌اند. اجرای دستی درس‌های دیتابیس نیز PostgreSQL و اتصال تنظیم‌شده می‌خواهد.
+این نه اسکریپت به Python 3 نیاز دارند؛ اسکریپت‌های smoke به SDK 10 هم نیاز دارند. postgres_smoke به PostgreSQL واقعی و متغیر SUPPORTDESK_PG نیز نیاز دارد. ef_smoke برای بخش API علاوه بر این‌ها psql می‌خواهد؛ متغیرهای اتصال تست در README نمونهٔ تحویل توضیح داده شده‌اند. اجرای دستی درس‌های دیتابیس نیز PostgreSQL و اتصال تنظیم‌شده می‌خواهد.
 
 ## مبنای فنی
 

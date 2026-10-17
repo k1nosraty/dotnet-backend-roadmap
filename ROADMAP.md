@@ -80,10 +80,10 @@
 | 050 | [ساختار پوشه‌ای بر اساس لایه یا قابلیت](lessons/05-architecture/050-folders/README.md) | نوشته‌شده |
 | 051 | [جداسازی assembly و جهت وابستگی](lessons/05-architecture/051-projects/README.md) | نوشته‌شده |
 | 052 | [application service و orchestration](lessons/05-architecture/052-application-services/README.md) | نوشته‌شده |
-| 053 | قواعد domain و aggregate | برنامه‌ریزی‌شده |
-| 054 | port و adapter و مرز infrastructure | برنامه‌ریزی‌شده |
-| 055 | mapping و هزینهٔ abstraction | برنامه‌ریزی‌شده |
-| 056 | vertical slice و مقایسهٔ عملی | برنامه‌ریزی‌شده |
+| 053 | [قواعد domain و aggregate](lessons/05-architecture/053-domain/README.md) | نوشته‌شده |
+| 054 | [port و adapter و مرز infrastructure](lessons/05-architecture/054-ports/README.md) | نوشته‌شده |
+| 055 | [mapping و هزینهٔ abstraction](lessons/05-architecture/055-mapping/README.md) | نوشته‌شده |
+| 056 | [vertical slice و مقایسهٔ عملی](lessons/05-architecture/056-vertical-slices/README.md) | نوشته‌شده |
 | 057 | تفکیک command و query بدون اجبار ابزار | برنامه‌ریزی‌شده |
 | 058 | FluentValidation پس از بررسی سازگاری | برنامه‌ریزی‌شده |
 | 059 | تست وابستگی‌های معماری و ADR | برنامه‌ریزی‌شده |

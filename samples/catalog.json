@@ -202,5 +202,21 @@
   {
     "lesson": 52,
     "project": "samples/51-application-services/SupportDesk.csproj"
+  },
+  {
+    "lesson": 53,
+    "project": "samples/52-domain-aggregate/SupportDesk.csproj"
+  },
+  {
+    "lesson": 54,
+    "project": "samples/53-ports-adapters/SupportDesk.csproj"
+  },
+  {
+    "lesson": 55,
+    "project": "samples/54-explicit-mapping/SupportDesk.csproj"
+  },
+  {
+    "lesson": 56,
+    "project": "samples/55-vertical-slices/SupportDesk.csproj"
   }
 ]
