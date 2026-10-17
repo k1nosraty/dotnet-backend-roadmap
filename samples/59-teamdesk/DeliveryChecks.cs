@@ -20,6 +20,9 @@ internal static class DeliveryChecks
         if (second.Ticket!.Id <= id) throw new Exception("Deleted identity reused.");
         var invalid = await create.ExecuteAsync(new("ab"),CancellationToken.None);
         if (invalid.Code != OperationCode.Invalid) throw new Exception("Invalid create.");
+        var exhausted = StoreFactory.CreateServices([Ticket.Create(int.MaxValue, TicketTitle.Create("Last identity"))]);
+        if ((await new CreateTicket(exhausted.Lifecycle).ExecuteAsync(new("No identity left"), CancellationToken.None)).Code != OperationCode.Conflict)
+            throw new Exception("Exhausted identity counter accepted a create.");
         Console.WriteLine("PASS: TeamDesk lifecycle, stale delete and monotonic identities");
     }
 }

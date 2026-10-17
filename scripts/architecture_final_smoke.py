@@ -139,6 +139,18 @@ with tempfile.TemporaryDirectory(prefix='teamdesk-delivery-') as directory:
     assert 'PASS: TeamDesk lifecycle' in invoke(['dotnet',str(dll),'--check'],cwd=folder)
     path=folder/'teamdesk.json'
     with server(dll,folder,path) as base:
+        assert send(base,'/api/tickets/1/title',{'title':'Renamed seed'},'PUT')[0]==200
+        assert send(base,'/api/tickets/1/notes',{'text':'ab'},'POST')[0]==400
+        assert send(base,'/api/tickets/1/notes',{'text':'First note'},'POST')[0]==200
+        assert send(base,'/api/tickets/1/notes',{'text':'  First note  '},'POST')[0]==409
+        for i in range(4):
+            assert send(base,'/api/tickets/1/notes',{'text':f'Extra note {i}'},'POST')[0]==200
+        assert send(base,'/api/tickets/1/notes',{'text':'Sixth note'},'POST')[0]==409
+        assert send(base,'/api/tickets/1/status',{'status':'Unknown'},'PUT')[0]==400
+        assert send(base,'/api/tickets/1/close',method='POST')[0]==200
+        assert send(base,'/api/tickets/1/title',{'title':'Blocked rename'},'PUT')[0]==409
+        assert send(base,'/api/tickets/1/notes',{'text':'Blocked note'},'POST')[0]==409
+        assert send(base,'/api/tickets/1')[1]['noteCount']==5
         assert send(base,'/api/tickets',{'title':'ab'},'POST')[0]==400
         def create(i):return send(base,'/api/tickets',{'title':f'Network {i}'},'POST')
         with ThreadPoolExecutor(max_workers=8) as pool:created=list(pool.map(create,range(8)))
