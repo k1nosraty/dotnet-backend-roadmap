@@ -22,6 +22,9 @@ internal static class AdapterChecks
                 string path = Path.Combine(folder, adapter + ".json");
                 ITicketStore store = adapter == "memory" ? StoreFactory.Create([seed]) : StoreFactory.CreateFile(path, [seed]);
                 Check(await store.LoadAsync(999, Ct) is null, "missing load");
+                var absent = Ticket.Create(999, TicketTitle.Create("Missing ticket"));
+                Check(await store.SaveAsync(new TicketSnapshot(absent, 1), absent, Ct) == SaveOutcome.Missing,
+                    "save cannot insert a missing aggregate");
                 var old = (await store.LoadAsync(1, Ct))!;
                 var result = await new ResolveTicket(store).ExecuteAsync(new(1, "اتصال اصلاح شد"), Ct);
                 var saved = (await store.LoadAsync(1, Ct))!;

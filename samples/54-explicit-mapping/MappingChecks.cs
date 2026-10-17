@@ -10,14 +10,15 @@ internal static class MappingChecks
     {
         var seed = Ticket.Create(1, TicketTitle.Create("Network issue")).ChangeStatus("InProgress")!.AddNote("Private detail")!;
         var response = TicketMapping.ToResponse(seed);
-        string[] keys = JsonDocument.Parse(JsonSerializer.Serialize(response)).RootElement
+        using var document = JsonDocument.Parse(JsonSerializer.Serialize(response));
+        string[] keys = document.RootElement
             .EnumerateObject().Select(p => p.Name).OrderBy(x => x).ToArray();
         if (!keys.SequenceEqual(new[] { "Id", "NoteCount", "Status", "Title" }))
             throw new Exception("Unexpected response shape.");
         var store = StoreFactory.Create([seed]);
         // Serializer ignores unknown fields by default. They cannot become Domain setters.
         var incoming = JsonSerializer.Deserialize<RenameRequest>(
-            "{\"Title\":\"  New title  ",\"Status\":\"Closed\",\"Version\":999,\"Id\":99}")!;
+            """{"Title":"  New title  ","Status":"Closed","Version":999,"Id":99}""")!;
         var command = RequestMapping.ToCommand(1, incoming);
         var result = await new RenameTicket(store).ExecuteAsync(command, CancellationToken.None);
         var changed = (await store.LoadAsync(1, CancellationToken.None))!;

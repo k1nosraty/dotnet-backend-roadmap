@@ -23,6 +23,11 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Check lesson metadata and Markdown links
         run: python scripts/check_content.py
+      - name: Check architecture snapshots, compile boundaries and publish
+        run: |
+          python scripts/architecture_smoke.py
+          python scripts/architecture_next_smoke.py
+
       - name: Build samples and check behavior
         run: python scripts/smoke.py
 
@@ -34,11 +39,6 @@ jobs:
 
       - name: Check domain contracts independently of HTTP
         run: python scripts/domain_smoke.py
-
-      - name: Check architecture snapshots, compile boundaries and publish
-        run: |
-          python scripts/architecture_smoke.py
-          python scripts/architecture_next_smoke.py
 
       - name: Build PostgreSQL lesson samples on Windows
         if: runner.os == 'Windows'
