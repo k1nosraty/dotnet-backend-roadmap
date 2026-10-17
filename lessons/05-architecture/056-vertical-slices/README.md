@@ -160,4 +160,4 @@ body فقط text بگیرد و از همان Ticket.AddNote استفاده کن�
 - [فیلدهای ناشناختهٔ JSON](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/missing-members)
 
 [قبلی](../055-mapping/README.md) · [فهرست بخش](../README.md)
-درس 057 دربارهٔ command و query مرحلهٔ بعد است و هنوز نوشته نشده است.
+[درس بعد: تفکیک command و query](../057-cqrs/README.md).

@@ -85,3 +85,11 @@
 - [ ] 054: یک use case را با دو adapter و قرارداد مشترک و حفظ فایل خراب اجرا کردم.
 - [ ] 055: شکل request، command، Domain، storage و response را با mapping صریح جدا کردم.
 - [ ] 056: featureها را از endpoint تا handler دنبال و رقابت HTTP و publish را بررسی کردم.
+
+## پایان بخش پنجم
+
+- [ ] 057: port خواندن را از write جدا و query بدون تغییر state و صفحه‌بندی مرتب را اجرا کردم.
+- [ ] 058: FluentValidation ثابت را صریح اجرا و مرز validator و invariant را توضیح دادم.
+- [ ] 059: policy پروژه و assembly و آزمایش منفی آن را اجرا و ADR با جایگزین و پیامد نوشتم.
+- [ ] 060: TeamDesk معماری را با CRUD، query، validation، restart، شناسهٔ پایدار و دفاع از تصمیم‌ها تحویل دادم.
+- [ ] تمرین مستقل پایان بخش پنجم را بدون کپی مستقیم handler انجام دادم.

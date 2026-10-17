@@ -126,3 +126,9 @@ Data/DbContext جدول مفهومی بالا مربوط به مرحلهٔ دی�
 [درس ۵۳](../lessons/05-architecture/053-domain/README.md) مرز تغییر Ticket و noteها و بازسازی معتبر را بررسی می‌کند. [درس ۵۴](../lessons/05-architecture/054-ports/README.md) همان use case را با دو adapter حافظه و JSON اجرا می‌کند؛ lock فایل فقط درون process است و جای concurrency دیتابیس نیست.
 
 [درس ۵۵](../lessons/05-architecture/055-mapping/README.md) request، command، Domain، row فایل و response را با mapping صریح جدا می‌کند. [درس ۵۶](../lessons/05-architecture/056-vertical-slices/README.md) ساختار ترکیبی feature را دارد: endpoint در Features نام قابلیت و handler در Application/Features همان قابلیت است؛ Domain و adapter مشترک در assembly مستقل می‌مانند. این نمونه هنوز CQRS کامل یا تحویل TeamDesk نیست.
+
+## تحویل معماری TeamDesk
+
+[درس‌های ۵۷ تا ۶۰](../lessons/05-architecture/README.md) خواندن را با ITicketQueries و پاسخ‌های materialize شده از تغییر aggregate جدا می‌کنند. FluentValidation در Application و adapterها در Infrastructure می‌مانند؛ host محل composition و ترجمهٔ HTTP است. policy پروژه و assembly و ADRها در نمونهٔ درس ۵۹ قرار دارند.
+
+[تحویل درس ۶۰](../lessons/05-architecture/060-teamdesk/README.md) CRUD و query و validation را یکپارچه و NextId فایل را مستقل از حذف حفظ می‌کند. این نسخه تک‌workspace و تک‌process آموزشی است؛ سازمان و کاربر و مجوز در فصل امنیت اضافه می‌شوند.

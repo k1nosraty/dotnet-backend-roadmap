@@ -218,5 +218,21 @@
   {
     "lesson": 56,
     "project": "samples/55-vertical-slices/SupportDesk.csproj"
+  },
+  {
+    "lesson": 57,
+    "project": "samples/56-command-query/SupportDesk.csproj"
+  },
+  {
+    "lesson": 58,
+    "project": "samples/57-fluent-validation/SupportDesk.csproj"
+  },
+  {
+    "lesson": 59,
+    "project": "samples/58-architecture-tests/SupportDesk.csproj"
+  },
+  {
+    "lesson": 60,
+    "project": "samples/59-teamdesk/SupportDesk.csproj"
   }
 ]

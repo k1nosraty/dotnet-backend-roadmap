@@ -339,25 +339,25 @@
     "id": 57,
     "title": "تفکیک command و query بدون اجبار ابزار",
     "path": "lessons/05-architecture/057-cqrs/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 58,
     "title": "FluentValidation پس از بررسی سازگاری",
     "path": "lessons/05-architecture/058-validation-library/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 59,
     "title": "تست وابستگی‌های معماری و ADR",
     "path": "lessons/05-architecture/059-architecture-tests/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 60,
     "title": "بازآرایی TeamDesk و دفاع از معماری",
     "path": "lessons/05-architecture/060-teamdesk/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 61,

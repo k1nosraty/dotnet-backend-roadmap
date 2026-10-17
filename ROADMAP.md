@@ -84,10 +84,10 @@
 | 054 | [port و adapter و مرز infrastructure](lessons/05-architecture/054-ports/README.md) | نوشته‌شده |
 | 055 | [mapping و هزینهٔ abstraction](lessons/05-architecture/055-mapping/README.md) | نوشته‌شده |
 | 056 | [vertical slice و مقایسهٔ عملی](lessons/05-architecture/056-vertical-slices/README.md) | نوشته‌شده |
-| 057 | تفکیک command و query بدون اجبار ابزار | برنامه‌ریزی‌شده |
-| 058 | FluentValidation پس از بررسی سازگاری | برنامه‌ریزی‌شده |
-| 059 | تست وابستگی‌های معماری و ADR | برنامه‌ریزی‌شده |
-| 060 | بازآرایی TeamDesk و دفاع از معماری | برنامه‌ریزی‌شده |
+| 057 | [تفکیک command و query بدون اجبار ابزار](lessons/05-architecture/057-cqrs/README.md) | نوشته‌شده |
+| 058 | [FluentValidation پس از بررسی سازگاری](lessons/05-architecture/058-validation-library/README.md) | نوشته‌شده |
+| 059 | [تست وابستگی‌های معماری و ADR](lessons/05-architecture/059-architecture-tests/README.md) | نوشته‌شده |
+| 060 | [بازآرایی TeamDesk و دفاع از معماری](lessons/05-architecture/060-teamdesk/README.md) | نوشته‌شده |
 
 ## امنیت و مدیریت کاربران
 
