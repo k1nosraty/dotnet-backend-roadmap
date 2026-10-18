@@ -1,6 +1,6 @@
 # بخش ششم — امنیت و مدیریت حساب
 
-درس‌های ۶۱ تا ۶۸ آماده‌اند؛ درس‌های ۶۹ و ۷۰ هنوز برنامه‌ریزی‌شده‌اند.
+ده درس ۶۱ تا ۷۰ بخش ششم آماده‌اند؛ این تحویل، آموزش و lab است و گواهی امنیت production نیست.
 پیش‌نیاز، تحویل معماری بخش پنجم و PostgreSQL بخش چهارم است.
 
 | درس | موضوع | وضعیت |
@@ -13,6 +13,8 @@
 | 066 | [کنترل مالکیت و جلوگیری از IDOR](066-ownership/README.md) | نوشته‌شده |
 | 067 | [CORS و CSRF و injection](067-web-security/README.md) | نوشته‌شده |
 | 068 | [rate limiting و کنترل سوءاستفاده](068-rate-limits/README.md) | نوشته‌شده |
+| 069 | [secrets و audit و دادهٔ حساس](069-secrets/README.md) | نوشته‌شده |
+| 070 | [بازبینی امنیت و سناریوهای منفی](070-security-review/README.md) | نوشته‌شده |
 
 ## ترتیب اجرا
 
@@ -27,9 +29,11 @@ python scripts/security_smoke.py --build-only
 python scripts/security_smoke.py
 python scripts/security_next_smoke.py --build-only
 python scripts/security_next_smoke.py
+python scripts/security_final_smoke.py --build-only
+python scripts/security_final_smoke.py
 ```
 
-SDK 10 و Python 3 لازم است. --build-only همهٔ چهار نمونه را build می‌کند و header جعلی و default deny درس ۶۱ را با HTTP بررسی می‌کند؛ SQL و login واقعی را اجرا نمی‌کند.
+SDK 10 و Python 3 لازم است. هر runner با --build-only نمونه‌های مربوط به خودش و boundary ناشناس را می‌سازد و بررسی می‌کند؛ SQL و login واقعی اجرا نمی‌شوند. runner نهایی startup نامعتبر و CLI review را نیز بررسی می‌کند.
 اجرای کامل به PostgreSQL واقعی و psql نیاز دارد.
 
 ## اتصال آزمایش
@@ -45,7 +49,7 @@ SDK 10 و Python 3 لازم است. --build-only همهٔ چهار نمونه ر
 - SUPPORTDESK_TEST_PGPASSWORD
 
 فقط schema تصادفیِ ساخته‌شده توسط تست حذف می‌شود؛ هیچ database یا schema موجود برنامه حذف نمی‌شود.
-schemaهای auth62 و auth63 توسط Lab و schemaهای auth64 تا auth68 توسط اسکریپت و فرمان init محلی مدیریت می‌شوند.
+schemaهای auth62 و auth63 توسط Lab و schemaهای auth64 تا auth70 توسط اسکریپت و فرمان init محلی مدیریت می‌شوند.
 مدیریت migration محیط واقعی با این آزمایش fresh-schema جایگزین نشده است.
 
 ## مرزهای تأیید
@@ -61,3 +65,9 @@ hash و token دست‌ساز نداریم؛ Identity و Data Protection امک�
 
 security_next_smoke چهار host را build و anonymous/credential جعلی را بررسی می‌کند. حالت کامل، publish مستقل، شش حساب PostgreSQL، شرط role و permission، حذف grant با token قبلی، دسترسی بین مالکان و سازمان‌ها، رد mass assignment، جست‌وجوی مخرب، CORS، CSRF و درخواست‌های هم‌زمان و 429 را اجرا می‌کند.
 تست CORS از HTTP header استفاده می‌کند؛ آزمون browser و انقضای واقعی پنجره و load گسترده و چند replica اجرا نمی‌شوند.
+
+## تحویل پایان امنیت
+
+درس ۶۹ audit ماندگارِ اتمیک با mutation و رویدادهای کم‌داده و validation تنظیمات را اضافه می‌کند. درس ۷۰ route metadata واقعی و رد public route ناخواسته را بررسی می‌کند و ماتریس تهدید و ریسک باقی‌مانده و تمرین پایان بخش دارد.
+security_final_smoke در حالت کامل، rollback پس از خرابی audit، استقلال permission audit، جداسازی tenant، اسکن canary در app log و audit و restart را با PostgreSQL و publish واقعی بررسی می‌کند.
+هیچ‌کدام از این runnerها آزمون نفوذ کامل، browser test یا گواهی آماده بودن محصول نیستند؛ دامنهٔ محدود و موارد اجرا‌نشده در درس ۷۰ آمده است.

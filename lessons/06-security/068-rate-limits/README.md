@@ -160,4 +160,4 @@ password و token در خروجی تست چاپ نمی‌شوند.
 - [Forwarded headers و proxy](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-10.0)
 
 [قبلی](../067-web-security/README.md) · [فهرست بخش](../README.md)
-درس‌های ۶۹ و ۷۰ هنوز نوشته نشده‌اند.
+[ادامه: درس ۶۹ و secrets و audit](../069-secrets/README.md).

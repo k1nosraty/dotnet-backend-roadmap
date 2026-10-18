@@ -93,3 +93,7 @@ Npgsql با Npgsql.EntityFrameworkCore.PostgreSQL یک package نیست؛ provid
 ## authorization و کنترل درخواست
 
 [درس‌های ۶۵ تا ۶۸](../lessons/06-security/README.md) از IAuthorizationService، requirement/handler و AddRateLimiter خود ASP.NET Core استفاده می‌کنند؛ package خارجی برای role، CORS یا rate limit اضافه نشده است. AddRoles، UserManager و RoleManager روی همان store PostgreSQL ثبت می‌شوند. query جست‌وجو و ExecuteUpdate از EF Core موجود استفاده می‌کنند. شمارندهٔ limiter محلی و مستقل برای هر process است؛ قابلیت توزیع‌شده ادعا نمی‌شود.
+
+## audit و بازبینی امنیت
+
+[درس ۶۹](../lessons/06-security/069-secrets/README.md) از JSON console و ILogger استاندارد و transaction همان EF Core استفاده می‌کند؛ package جدیدی اضافه نشده است. جدول audit با write محلی اتمیک است؛ console، سرویس خارجی و ذخیرهٔ غیرقابل تغییر ادعا نمی‌شوند. [درس ۷۰](../lessons/06-security/070-security-review/README.md) metadata واقعی RouteEndpoint و policy و rate limit را بدون بستهٔ تست جدید بررسی می‌کند. xUnit و integration tooling موضوع بخش بعد هستند.

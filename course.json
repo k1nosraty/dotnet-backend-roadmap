@@ -411,13 +411,13 @@
     "id": 69,
     "title": "secrets و audit و دادهٔ حساس",
     "path": "lessons/06-security/069-secrets/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 70,
     "title": "بازبینی امنیت و سناریوهای منفی",
     "path": "lessons/06-security/070-security-review/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 71,

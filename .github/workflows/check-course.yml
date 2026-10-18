@@ -86,6 +86,9 @@ jobs:
       - name: Check real grants, ownership, web security and request budgets
         run: python scripts/security_next_smoke.py
 
+      - name: Check transactional audit, safe logs and final security review
+        run: python scripts/security_final_smoke.py
+
   architecture-final:
     name: Architecture delivery (${{ matrix.os }})
     strategy:
@@ -126,3 +129,6 @@ jobs:
 
       - name: Build authorization samples and check anonymous boundaries
         run: python scripts/security_next_smoke.py --build-only
+
+      - name: Build final security labs and reject unsafe configuration
+        run: python scripts/security_final_smoke.py --build-only

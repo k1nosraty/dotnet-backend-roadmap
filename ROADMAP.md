@@ -101,8 +101,8 @@
 | 066 | [کنترل مالکیت و جلوگیری از IDOR](lessons/06-security/066-ownership/README.md) | نوشته‌شده |
 | 067 | [CORS و CSRF و injection](lessons/06-security/067-web-security/README.md) | نوشته‌شده |
 | 068 | [rate limiting و کنترل سوءاستفاده](lessons/06-security/068-rate-limits/README.md) | نوشته‌شده |
-| 069 | secrets و audit و دادهٔ حساس | برنامه‌ریزی‌شده |
-| 070 | بازبینی امنیت و سناریوهای منفی | برنامه‌ریزی‌شده |
+| 069 | [secrets و audit و دادهٔ حساس](lessons/06-security/069-secrets/README.md) | نوشته‌شده |
+| 070 | [بازبینی امنیت و سناریوهای منفی](lessons/06-security/070-security-review/README.md) | نوشته‌شده |
 
 ## تست و عیب‌یابی
 
