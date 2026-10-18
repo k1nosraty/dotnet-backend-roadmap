@@ -18,5 +18,5 @@ return await Lab.RunAsync("auth62", args, async (source, ct) =>
     // Only the fresh schema owned by Lab is touched. No application database is dropped.
     await db.GetService<IRelationalDatabaseCreator>().CreateTablesAsync(ct);
     await AccountChecks.RunAsync(scope.ServiceProvider);
-    
+
 });
