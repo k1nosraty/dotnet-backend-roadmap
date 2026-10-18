@@ -108,10 +108,10 @@
 
 | درس | موضوع | وضعیت |
 | --- | --- | --- |
-| 071 | unit test و xUnit | برنامه‌ریزی‌شده |
-| 072 | boundary و negative case و test double | برنامه‌ریزی‌شده |
-| 073 | integration و WebApplicationFactory | برنامه‌ریزی‌شده |
-| 074 | تست دیتابیس و Testcontainers | برنامه‌ریزی‌شده |
+| 071 | [unit test و xUnit](lessons/07-testing/071-unit/README.md) | نوشته‌شده |
+| 072 | [boundary و negative case و test double](lessons/07-testing/072-test-design/README.md) | نوشته‌شده |
+| 073 | [integration و WebApplicationFactory](lessons/07-testing/073-integration/README.md) | نوشته‌شده |
+| 074 | [تست دیتابیس و Testcontainers](lessons/07-testing/074-database-tests/README.md) | نوشته‌شده |
 | 075 | HttpClientFactory و timeout و resilience | برنامه‌ریزی‌شده |
 | 076 | BackgroundService و scope و shutdown | برنامه‌ریزی‌شده |
 | 077 | ILogger و structured logging و Serilog | برنامه‌ریزی‌شده |

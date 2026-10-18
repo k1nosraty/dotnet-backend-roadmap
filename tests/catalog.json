@@ -1,0 +1,18 @@
+[
+  {
+    "lesson": 71,
+    "project": "tests/071-unit-tests/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 72,
+    "project": "tests/072-test-design/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 73,
+    "project": "tests/073-http-testing/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 74,
+    "project": "tests/074-database-testing/SupportDesk.Tests.csproj"
+  }
+]

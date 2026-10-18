@@ -7,3 +7,4 @@ exercises/
 __pycache__/
 *.pyc
 artifacts/
+TestResults/

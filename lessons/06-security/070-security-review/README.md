@@ -167,4 +167,4 @@ scope خواندن و نوشتن و audit و eventهای کم‌داده و CSRF
 - [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)
 
 [قبلی](../069-secrets/README.md) · [فهرست بخش](../README.md)
-بخش ششم پایان یافت؛ درس‌های بخش هفتم از ۷۱ هنوز نوشته نشده‌اند.
+[ادامه: درس ۷۱ و unit test](../../07-testing/071-unit/README.md). درس‌های ۷۱ تا ۷۴ آماده‌اند.

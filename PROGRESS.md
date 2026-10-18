@@ -113,3 +113,10 @@
 - [ ] 069: configuration خطرناک را بدون نشت secret رد کردم و audit اتمیک و rollback و حداقل دادهٔ log را آزمودم.
 - [ ] 070: route inventory واقعی و سناریوهای منفی را اجرا و ریسک‌های باقی‌مانده را ثبت کردم.
 - [ ] تمرین مستقل note را با مالکیت، audit و تست منفی و fault injection تحویل دادم.
+
+## آغاز تست و عیب‌یابی
+
+- [ ] 071: Fact و Theory و مرزهای Domain را اجرا و یک regression عمدی را با assertion پیدا کردم.
+- [ ] 072: invalid و missing و conflict و commit failure و cancellation را با test double مستقل سنجیدم.
+- [ ] 073: pipeline HTTP و binding و مالکیت و رقابت را با WAF و هویت فقط در test assembly آزمودم.
+- [ ] 074: fixture PostgreSQL واقعی، constraint و rollback و CAS و دوام در restart host را اجرا کردم.

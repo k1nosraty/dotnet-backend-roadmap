@@ -423,25 +423,25 @@
     "id": 71,
     "title": "unit test و xUnit",
     "path": "lessons/07-testing/071-unit/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 72,
     "title": "boundary و negative case و test double",
     "path": "lessons/07-testing/072-test-design/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 73,
     "title": "integration و WebApplicationFactory",
     "path": "lessons/07-testing/073-integration/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 74,
     "title": "تست دیتابیس و Testcontainers",
     "path": "lessons/07-testing/074-database-tests/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 75,

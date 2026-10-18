@@ -23,13 +23,15 @@
 16. [شروع بخش پنجم: معماری و مرزها](lessons/05-architecture/README.md) را از درس ۰۴۹ ادامه بده.
 17. [تحویل معماری TeamDesk](lessons/05-architecture/060-teamdesk/README.md) و ارزیابی بخش پنجم را انجام بده.
 18. [بخش امنیت](lessons/06-security/README.md) را از مدل تهدید درس ۰۶۱ آغاز کن.
-19. پیشرفت خودت را در [PROGRESS.md](PROGRESS.md) ثبت کن.
+19. [بخش هفتم: تست و عیب‌یابی](lessons/07-testing/README.md) را با unit test از درس ۷۱ ادامه بده.
+20. پیشرفت خودت را در [PROGRESS.md](PROGRESS.md) ثبت کن.
 
 ## وضعیت واقعی محتوا
 
-این نسخه شامل شش بخش اول کامل، شامل امنیت تا درس ۷۰، در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۷۰ درس نوشته شده، ۶۹ نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
+این نسخه شامل شش بخش اول کامل و درس‌های ۷۱ تا ۷۴ بخش تست و عیب‌یابی در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۷۴ درس نوشته شده، ۷۳ نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
 درس‌های آینده در نقشه وضعیت «برنامه‌ریزی‌شده» دارند و فایل آموزشی خالی برای آن‌ها ساخته نشده است.
 ساخت و بررسی رفتار نمونه‌ها در workflow «Check course» روی Windows و Linux در GitHub اجرا می‌شود؛ نتیجهٔ هر commit را در تب Actions ببین.
+چهار پروژهٔ مجزای xUnit در پوشهٔ tests وجود دارد؛ در شمار نمونه‌های اجرایی بالا شمرده نشده‌اند.
 فرمان ساخت، سناریوهای بررسی و اسکریپت smoke در بسته وجود دارند.
 
 ```powershell
@@ -47,9 +49,11 @@ python scripts/ef_smoke.py
 python scripts/security_smoke.py
 python scripts/security_next_smoke.py
 python scripts/security_final_smoke.py
+# تست‌های xUnit و WAF؛ برای اجرای PostgreSQL کانتینری، --with-docker اضافه کن:
+python scripts/testing_smoke.py
 ```
 
-این سیزده اسکریپت به Python 3 نیاز دارند؛ اسکریپت‌های smoke به SDK 10 هم نیاز دارند. postgres_smoke به PostgreSQL واقعی و متغیر SUPPORTDESK_PG نیز نیاز دارد. ef_smoke برای بخش API علاوه بر این‌ها psql می‌خواهد؛ متغیرهای اتصال تست در README نمونهٔ تحویل توضیح داده شده‌اند. security_smoke و security_next_smoke و security_final_smoke در حالت کامل PostgreSQL و psql و متغیرهای اتصال تست مطابق فهرست بخش امنیت می‌خواهند. اجرای دستی درس‌های دیتابیس نیز PostgreSQL و اتصال تنظیم‌شده می‌خواهد.
+این چهارده اسکریپت به Python 3 نیاز دارند؛ اسکریپت‌های smoke به SDK 10 هم نیاز دارند. postgres_smoke به PostgreSQL واقعی و متغیر SUPPORTDESK_PG نیز نیاز دارد. ef_smoke برای بخش API علاوه بر این‌ها psql می‌خواهد؛ متغیرهای اتصال تست در README نمونهٔ تحویل توضیح داده شده‌اند. security_smoke و security_next_smoke و security_final_smoke در حالت کامل PostgreSQL و psql و متغیرهای اتصال تست مطابق فهرست بخش امنیت می‌خواهند. اجرای دستی درس‌های دیتابیس نیز PostgreSQL و اتصال تنظیم‌شده می‌خواهد.
 
 ## مبنای فنی
 
