@@ -234,5 +234,45 @@
   {
     "lesson": 60,
     "project": "samples/59-teamdesk/SupportDesk.csproj"
+  },
+  {
+    "lesson": 61,
+    "project": "samples/60-threat-model/SupportDesk.csproj"
+  },
+  {
+    "lesson": 62,
+    "project": "samples/61-identity/SupportDesk.csproj"
+  },
+  {
+    "lesson": 63,
+    "project": "samples/62-password-recovery/SupportDesk.csproj"
+  },
+  {
+    "lesson": 64,
+    "project": "samples/63-cookie-bearer/SupportDesk.csproj"
+  },
+  {
+    "lesson": 65,
+    "project": "samples/64-policies/SupportDesk.csproj"
+  },
+  {
+    "lesson": 66,
+    "project": "samples/65-resource-ownership/SupportDesk.csproj"
+  },
+  {
+    "lesson": 67,
+    "project": "samples/66-web-security/SupportDesk.csproj"
+  },
+  {
+    "lesson": 68,
+    "project": "samples/67-rate-limits/SupportDesk.csproj"
+  },
+  {
+    "lesson": 69,
+    "project": "samples/68-secrets-audit/SupportDesk.csproj"
+  },
+  {
+    "lesson": 70,
+    "project": "samples/69-security-review/SupportDesk.csproj"
   }
 ]

@@ -80,6 +80,15 @@ jobs:
       - name: Check EF migrations, concurrency and persistent HTTP API
         run: python scripts/ef_smoke.py
 
+      - name: Check real Identity and cookie-bearer security lessons
+        run: python scripts/security_smoke.py
+
+      - name: Check real grants, ownership, web security and request budgets
+        run: python scripts/security_next_smoke.py
+
+      - name: Check transactional audit, safe logs and final security review
+        run: python scripts/security_final_smoke.py
+
   architecture-final:
     name: Architecture delivery (${{ matrix.os }})
     strategy:
@@ -99,3 +108,27 @@ jobs:
         run: python scripts/check_content.py
       - name: Check final architecture, validation and published TeamDesk
         run: python scripts/architecture_final_smoke.py
+
+  security-build:
+    name: Security build (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build security samples and test the fail-closed boundary
+        run: python scripts/security_smoke.py --build-only
+
+      - name: Build authorization samples and check anonymous boundaries
+        run: python scripts/security_next_smoke.py --build-only
+
+      - name: Build final security labs and reject unsafe configuration
+        run: python scripts/security_final_smoke.py --build-only
