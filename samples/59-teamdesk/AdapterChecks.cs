@@ -55,6 +55,32 @@ internal static class AdapterChecks
             Check(outcomes.Count(x => x == SaveOutcome.Saved) == 1 &&
                   outcomes.Count(x => x == SaveOutcome.Conflict) == 1, "two instances coordinate in one process");
 
+            if (OperatingSystem.IsWindows())
+            {
+                string sharedPath = Path.Combine(folder, "shared.json");
+                var shared = StoreFactory.CreateFile(sharedPath, [seed]);
+                var before = (await shared.LoadAsync(1, Ct))!;
+                // Permit reads but deliberately prevent replacement until the reader closes.
+                var reader = new FileStream(sharedPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                var release = new Thread(() => { Thread.Sleep(100); reader.Dispose(); });
+                release.Start();
+                try
+                {
+                    Check(await shared.SaveAsync(before, before.Value.AddNote("After reader")!, Ct) == SaveOutcome.Saved,
+                        "temporary Windows sharing conflict is retried");
+                }
+                finally { release.Join(); reader.Dispose(); }
+                Check((await shared.LoadAsync(1, Ct))!.Version == 2, "retried replacement persists once");
+                byte[] preserved = File.ReadAllBytes(sharedPath);
+                using (var held = new FileStream(sharedPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    var current = (await shared.LoadAsync(1, Ct))!;
+                    try { await shared.SaveAsync(current, current.Value, Ct); throw new Exception("Expected sharing failure."); }
+                    catch (IOException) { }
+                }
+                Check(File.ReadAllBytes(sharedPath).SequenceEqual(preserved), "persistent sharing conflict preserves original");
+            }
+
             string broken = Path.Combine(folder, "broken.json");
             var holding = StoreFactory.CreateFile(broken, [seed]);
             var expected = (await holding.LoadAsync(1, Ct))!;

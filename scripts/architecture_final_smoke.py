@@ -97,7 +97,12 @@ def server(dll,folder,data_path=None):
                     if send(base,'/api/tickets/999')[0]==404:break
                 except (OSError,error.URLError):time.sleep(0.1)
             else:raise AssertionError('Server readiness timeout.')
-            yield base
+            try:
+                yield base
+            except Exception:
+                log.flush()
+                print((folder/'server.log').read_text(encoding='utf-8'), file=sys.stderr)
+                raise
         finally:
             process.terminate()
             try:process.wait(timeout=15)
