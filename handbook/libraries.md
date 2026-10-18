@@ -85,3 +85,7 @@ Npgsql با Npgsql.EntityFrameworkCore.PostgreSQL یک package نیست؛ provid
 [درس ۵۸](../lessons/05-architecture/058-validation-library/README.md) FluentValidation 12.2.0 را در Application و بدون package auto-validation معرفی می‌کند. در 2026-10-17 [NuGet رسمی](https://www.nuget.org/packages/FluentValidation/12.2.0)، target .NET 8 یا بالاتر، سازگاری محاسبه‌شده با net10.0 و license Apache-2.0 بررسی شدند. نسخه pin شده است؛ build و audit زمان اجرا در CI انجام می‌شوند. ruleهای نمونه pure هستند و با ValidateAsync صریح اجرا می‌شوند. Domain وابسته به validator نیست؛ روش حذف و جایگزینی با guard دستی در متن درس آمده است.
 
 برای تفکیک command/query mediator اجباری نداریم. تست referenceها با XML پروژه و reflection assembly انجام می‌شود؛ ابزار تست معماری خارجی در این مرحله اضافه نشده است.
+
+## Identity و authentication
+
+[درس‌های ۶۲ تا ۶۴](../lessons/06-security/README.md) Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.13 و EF Core 10.0.13 را با provider PostgreSQL 10.0.3 استفاده می‌کنند. hash، token provider، cookie و bearer handler از framework هستند؛ کتابخانهٔ JWT یا رمزنگاری دست‌ساز اضافه نشده است. schemaهای نمونه آزمایشی و تازه‌اند؛ روش مهاجرت محصول همان بخش data است. Data Protection نمونهٔ کنسولی ephemeral و نمونهٔ HTTP دارای key ring خصوصی و پایدار است.

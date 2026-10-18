@@ -363,25 +363,25 @@
     "id": 61,
     "title": "مدل تهدید و مرز اعتماد",
     "path": "lessons/06-security/061-threat-model/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 62,
     "title": "Identity و مدیریت امن حساب",
     "path": "lessons/06-security/062-identity/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 63,
     "title": "hash رمز و سیاست بازیابی",
     "path": "lessons/06-security/063-passwords/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 64,
     "title": "cookie و bearer و انتخاب روش",
     "path": "lessons/06-security/064-authentication/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 65,

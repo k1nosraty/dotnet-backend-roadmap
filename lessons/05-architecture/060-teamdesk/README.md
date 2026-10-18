@@ -175,4 +175,4 @@ JSON این درس برای تمرکز روی معماری و اجرای بی‌
 - [مرزهای معماری](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures)
 
 [قبلی](../059-architecture-tests/README.md) · [فهرست بخش پنجم](../README.md)
-همهٔ درس‌های ۴۹ تا ۶۰ نوشته شده‌اند. بخش بعد با مدل تهدید و امنیت از درس ۶۱ شروع می‌شود و هنوز نوشته نشده است.
+همهٔ درس‌های ۴۹ تا ۶۰ نوشته شده‌اند. [بخش بعد از مدل تهدید و امنیت در درس ۶۱ آغاز می‌شود](../../06-security/061-threat-model/README.md).

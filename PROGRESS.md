@@ -93,3 +93,10 @@
 - [ ] 059: policy پروژه و assembly و آزمایش منفی آن را اجرا و ADR با جایگزین و پیامد نوشتم.
 - [ ] 060: TeamDesk معماری را با CRUD، query، validation، restart، شناسهٔ پایدار و دفاع از تصمیم‌ها تحویل دادم.
 - [ ] تمرین مستقل پایان بخش پنجم را بدون کپی مستقیم handler انجام دادم.
+
+## آغاز امنیت
+
+- [ ] 061: دارایی‌ها، actorها و مرز اعتماد را نوشتم و header جعلی را با default deny رد کردم.
+- [ ] 062: حساب Identity را در PostgreSQL ساختم و normalization، تأیید و lockout را بررسی کردم.
+- [ ] 063: hash salted، rehash، reset token کاربر دیگر و replay و تغییر stamp را آزمودم.
+- [ ] 064: cookie و bearer و CSRF و refresh و logout و key ring در restart را بررسی کردم.

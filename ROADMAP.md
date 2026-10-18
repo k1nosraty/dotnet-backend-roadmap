@@ -93,10 +93,10 @@
 
 | درس | موضوع | وضعیت |
 | --- | --- | --- |
-| 061 | مدل تهدید و مرز اعتماد | برنامه‌ریزی‌شده |
-| 062 | Identity و مدیریت امن حساب | برنامه‌ریزی‌شده |
-| 063 | hash رمز و سیاست بازیابی | برنامه‌ریزی‌شده |
-| 064 | cookie و bearer و انتخاب روش | برنامه‌ریزی‌شده |
+| 061 | [مدل تهدید و مرز اعتماد](lessons/06-security/061-threat-model/README.md) | نوشته‌شده |
+| 062 | [Identity و مدیریت امن حساب](lessons/06-security/062-identity/README.md) | نوشته‌شده |
+| 063 | [hash رمز و سیاست بازیابی](lessons/06-security/063-passwords/README.md) | نوشته‌شده |
+| 064 | [cookie و bearer و انتخاب روش](lessons/06-security/064-authentication/README.md) | نوشته‌شده |
 | 065 | policy و نقش و مجوز | برنامه‌ریزی‌شده |
 | 066 | کنترل مالکیت و جلوگیری از IDOR | برنامه‌ریزی‌شده |
 | 067 | CORS و CSRF و injection | برنامه‌ریزی‌شده |

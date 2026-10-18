@@ -234,5 +234,21 @@
   {
     "lesson": 60,
     "project": "samples/59-teamdesk/SupportDesk.csproj"
+  },
+  {
+    "lesson": 61,
+    "project": "samples/60-threat-model/SupportDesk.csproj"
+  },
+  {
+    "lesson": 62,
+    "project": "samples/61-identity/SupportDesk.csproj"
+  },
+  {
+    "lesson": 63,
+    "project": "samples/62-password-recovery/SupportDesk.csproj"
+  },
+  {
+    "lesson": 64,
+    "project": "samples/63-cookie-bearer/SupportDesk.csproj"
   }
 ]

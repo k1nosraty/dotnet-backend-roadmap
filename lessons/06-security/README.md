@@ -1,0 +1,52 @@
+# بخش ششم — امنیت و مدیریت حساب
+
+درس‌های ۶۱ تا ۶۴ آماده‌اند؛ درس‌های ۶۵ تا ۷۰ هنوز برنامه‌ریزی‌شده‌اند.
+پیش‌نیاز، تحویل معماری بخش پنجم و PostgreSQL بخش چهارم است.
+
+| درس | موضوع | وضعیت |
+| --- | --- | --- |
+| 061 | [مدل تهدید و مرز اعتماد](061-threat-model/README.md) | نوشته‌شده |
+| 062 | [Identity و مدیریت امن حساب](062-identity/README.md) | نوشته‌شده |
+| 063 | [hash رمز و سیاست بازیابی](063-passwords/README.md) | نوشته‌شده |
+| 064 | [cookie و bearer و انتخاب روش](064-authentication/README.md) | نوشته‌شده |
+
+## ترتیب اجرا
+
+ابتدا مدل تهدید و default deny، سپس چرخهٔ حساب در PostgreSQL، بعد hash و reset، و در پایان cookie و bearer را انجام بده.
+درس‌های ۶۲ و ۶۳ آزمایش کنسولی‌اند؛ درس ۶۴ یک host مستقل authentication با schema و key ring اختصاصی است.
+این نمونه‌ها عمداً routeهای تیکتِ بدون مجوز نسخهٔ قبلی را به‌صورت عمومی کپی نمی‌کنند.
+حساب، role و مجوز منبع سه مسئلهٔ متفاوت‌اند؛ دو مورد آخر هنوز کامل نشده‌اند.
+
+```powershell
+python scripts/check_content.py
+python scripts/security_smoke.py --build-only
+python scripts/security_smoke.py
+```
+
+SDK 10 و Python 3 لازم است. --build-only همهٔ چهار نمونه را build می‌کند و header جعلی و default deny درس ۶۱ را با HTTP بررسی می‌کند؛ SQL و login واقعی را اجرا نمی‌کند.
+اجرای کامل به PostgreSQL واقعی و psql نیاز دارد.
+
+## اتصال آزمایش
+
+[راهنمای PostgreSQL](../../handbook/postgresql-lab.md) را بخوان و SUPPORTDESK_PG را برای database اختصاصی تنظیم کن.
+برای cleanup schemaهای تصادفی HTTP، psql از پیش‌فرض‌های CI یعنی host=127.0.0.1، port=5432، database=supportdesk_lab، user=course و password=course-ci-only استفاده می‌کند.
+اگر اتصال محلی تو فرق دارد، این envها را هم با همان server و database و role هماهنگ کن:
+
+- SUPPORTDESK_TEST_PGHOST
+- SUPPORTDESK_TEST_PGPORT
+- SUPPORTDESK_TEST_PGDATABASE
+- SUPPORTDESK_TEST_PGUSER
+- SUPPORTDESK_TEST_PGPASSWORD
+
+فقط schema تصادفیِ ساخته‌شده توسط تست حذف می‌شود؛ هیچ database یا schema موجود برنامه حذف نمی‌شود.
+schemaهای auth62 و auth63 توسط Lab و schema auth64 توسط اسکریپت و فرمان init محلی مدیریت می‌شوند.
+مدیریت migration محیط واقعی با این آزمایش fresh-schema جایگزین نشده است.
+
+## مرزهای تأیید
+
+hash و token دست‌ساز نداریم؛ Identity و Data Protection امکانات اصلی را فراهم می‌کنند.
+نمونهٔ cookie از همین مرحله CSRF می‌خواهد. protected bearer این نمونه JWT استاندارد یا سرویس کامل OAuth/OIDC نیست.
+ارسال ایمیل واقعی، ثبت‌نام self-service، MFA کامل، نقش، مالکیت، rate limit، تنظیم proxy و مدیریت production کلید هنوز تحویل نشده‌اند.
+تست‌ها password یا token چاپ نمی‌کنند؛ فایل کلید و schema تست موقت‌اند.
+
+[بخش پنجم](../05-architecture/README.md) · [نقشهٔ دوره](../../ROADMAP.md)
