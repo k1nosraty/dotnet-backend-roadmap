@@ -13,6 +13,8 @@ using SupportDesk.Persistence;
 
 bool initialize = args.Contains("--init-lab");
 var builder = WebApplication.CreateBuilder(args.Where(a => a != "--init-lab").ToArray());
+// Keep binding failures as client errors in Development as well as Production.
+builder.Services.Configure<Microsoft.AspNetCore.Routing.RouteHandlerOptions>(o => o.ThrowOnBadRequest = false);
 builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.None);
 builder.Logging.AddFilter("Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware", LogLevel.None);
 string connection = Environment.GetEnvironmentVariable("SUPPORTDESK_PG") ?? throw new InvalidOperationException("Set SUPPORTDESK_PG.");

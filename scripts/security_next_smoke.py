@@ -136,7 +136,9 @@ for lesson,name in enumerate(NAMES,65):
                     assert send(client(),base,path,headers={**auth(peer),'X-Owner-Id':ticket,'X-Tenant':'alpha'})[0]==404
                     assert send(client(),base,path+'/title','POST',{'title':'Renamed by owner'},auth(owner))[0]==204
                     assert send(client(),base,path,headers=auth(owner))[1]['title']=='Renamed by owner'
-                    assert send(client(),base,'/api/tickets','POST',{'title':'Forged','ownerId':'peer','tenantId':'beta'},auth(owner))[0]==400
+                    forged_input=send(client(),base,'/api/tickets','POST',{'title':'Forged','ownerId':'peer','tenantId':'beta'},auth(owner))
+                    assert forged_input[0]==400,f'Ownership-field binding returned {forged_input[0]} instead of 400.'
+                    assert send(client(),base,'/api/tickets','POST','not-a-ticket-object',auth(owner))[0]==400
                     assert send(client(),base,path+'/title','POST',{'title':'Forged','tenantId':'beta'},auth(owner))[0]==400
                     assert len(send(client(),base,'/api/tickets',headers=auth(owner))[1])==1
                     sql(f"UPDATE {schema}.\"AspNetUserClaims\" SET \"ClaimValue\"='beta' WHERE \"ClaimType\"='tenant' AND \"UserId\"=(SELECT \"Id\" FROM {schema}.\"AspNetUsers\" WHERE \"Email\"='owner@example.test')")
@@ -156,6 +158,7 @@ for lesson,name in enumerate(NAMES,65):
                     status,_,headers=send(client(),base,path,headers={**auth(owner),'Origin':evil})
                     assert status==200 and not headers.get('Access-Control-Allow-Origin'),'CORS was confused with server authorization.'
                     assert send(client(),base,path,headers={'Origin':allowed})[0]==401
+                    assert send(client(),base,'/api/tickets/search?term='+('x'*121),headers=auth(owner))[0]==400
                     for term in ["' OR 1=1 --",'%', '_']:
                         assert send(client(),base,'/api/tickets/search?'+parse.urlencode({'term':term}),headers=auth(owner))[1]==[],'Search input changed query meaning.'
                     assert len(send(client(),base,'/api/tickets/search?term=Renamed',headers=auth(owner))[1])==1

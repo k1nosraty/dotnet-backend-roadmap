@@ -27,6 +27,7 @@ TenantId نیز از claim فعلیِ server-side در دیتابیس می‌آ�
 
 همهٔ این routeها BearerOnly هستند؛ cookie تنها برای mutation کافی نیست.
 body با فیلد ownerId یا tenantId به‌دلیل قرارداد DTO صریح و Disallow برای اعضای ناشناخته، 400 می‌گیرد.
+RouteHandlerOptions.ThrowOnBadRequest را صریح false کرده‌ایم تا خطای binding در Development نیز 400 بماند و middleware خطای عمومی آن را 500 نکند.
 به entity دارای OwnerId از body bind نمی‌کنیم و entity client را Attach/Update نمی‌کنیم.
 پاسخ فقط Id و Title دارد؛ اطلاعات داخلی حساب و سازمان serialize نمی‌شوند.
 
