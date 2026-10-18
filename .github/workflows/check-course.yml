@@ -83,6 +83,9 @@ jobs:
       - name: Check real Identity and cookie-bearer security lessons
         run: python scripts/security_smoke.py
 
+      - name: Check real grants, ownership, web security and request budgets
+        run: python scripts/security_next_smoke.py
+
   architecture-final:
     name: Architecture delivery (${{ matrix.os }})
     strategy:
@@ -120,3 +123,6 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Build security samples and test the fail-closed boundary
         run: python scripts/security_smoke.py --build-only
+
+      - name: Build authorization samples and check anonymous boundaries
+        run: python scripts/security_next_smoke.py --build-only

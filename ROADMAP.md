@@ -97,10 +97,10 @@
 | 062 | [Identity و مدیریت امن حساب](lessons/06-security/062-identity/README.md) | نوشته‌شده |
 | 063 | [hash رمز و سیاست بازیابی](lessons/06-security/063-passwords/README.md) | نوشته‌شده |
 | 064 | [cookie و bearer و انتخاب روش](lessons/06-security/064-authentication/README.md) | نوشته‌شده |
-| 065 | policy و نقش و مجوز | برنامه‌ریزی‌شده |
-| 066 | کنترل مالکیت و جلوگیری از IDOR | برنامه‌ریزی‌شده |
-| 067 | CORS و CSRF و injection | برنامه‌ریزی‌شده |
-| 068 | rate limiting و کنترل سوءاستفاده | برنامه‌ریزی‌شده |
+| 065 | [policy و نقش و مجوز](lessons/06-security/065-authorization/README.md) | نوشته‌شده |
+| 066 | [کنترل مالکیت و جلوگیری از IDOR](lessons/06-security/066-ownership/README.md) | نوشته‌شده |
+| 067 | [CORS و CSRF و injection](lessons/06-security/067-web-security/README.md) | نوشته‌شده |
+| 068 | [rate limiting و کنترل سوءاستفاده](lessons/06-security/068-rate-limits/README.md) | نوشته‌شده |
 | 069 | secrets و audit و دادهٔ حساس | برنامه‌ریزی‌شده |
 | 070 | بازبینی امنیت و سناریوهای منفی | برنامه‌ریزی‌شده |
 

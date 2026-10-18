@@ -89,3 +89,7 @@ Npgsql با Npgsql.EntityFrameworkCore.PostgreSQL یک package نیست؛ provid
 ## Identity و authentication
 
 [درس‌های ۶۲ تا ۶۴](../lessons/06-security/README.md) Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.13 و EF Core 10.0.13 را با provider PostgreSQL 10.0.3 استفاده می‌کنند. hash، token provider، cookie و bearer handler از framework هستند؛ کتابخانهٔ JWT یا رمزنگاری دست‌ساز اضافه نشده است. schemaهای نمونه آزمایشی و تازه‌اند؛ روش مهاجرت محصول همان بخش data است. Data Protection نمونهٔ کنسولی ephemeral و نمونهٔ HTTP دارای key ring خصوصی و پایدار است.
+
+## authorization و کنترل درخواست
+
+[درس‌های ۶۵ تا ۶۸](../lessons/06-security/README.md) از IAuthorizationService، requirement/handler و AddRateLimiter خود ASP.NET Core استفاده می‌کنند؛ package خارجی برای role، CORS یا rate limit اضافه نشده است. AddRoles، UserManager و RoleManager روی همان store PostgreSQL ثبت می‌شوند. query جست‌وجو و ExecuteUpdate از EF Core موجود استفاده می‌کنند. شمارندهٔ limiter محلی و مستقل برای هر process است؛ قابلیت توزیع‌شده ادعا نمی‌شود.

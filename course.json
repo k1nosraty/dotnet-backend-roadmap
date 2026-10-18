@@ -387,25 +387,25 @@
     "id": 65,
     "title": "policy و نقش و مجوز",
     "path": "lessons/06-security/065-authorization/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 66,
     "title": "کنترل مالکیت و جلوگیری از IDOR",
     "path": "lessons/06-security/066-ownership/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 67,
     "title": "CORS و CSRF و injection",
     "path": "lessons/06-security/067-web-security/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 68,
     "title": "rate limiting و کنترل سوءاستفاده",
     "path": "lessons/06-security/068-rate-limits/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 69,

@@ -250,5 +250,21 @@
   {
     "lesson": 64,
     "project": "samples/63-cookie-bearer/SupportDesk.csproj"
+  },
+  {
+    "lesson": 65,
+    "project": "samples/64-policies/SupportDesk.csproj"
+  },
+  {
+    "lesson": 66,
+    "project": "samples/65-resource-ownership/SupportDesk.csproj"
+  },
+  {
+    "lesson": 67,
+    "project": "samples/66-web-security/SupportDesk.csproj"
+  },
+  {
+    "lesson": 68,
+    "project": "samples/67-rate-limits/SupportDesk.csproj"
   }
 ]

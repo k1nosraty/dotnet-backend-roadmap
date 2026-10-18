@@ -100,3 +100,10 @@
 - [ ] 062: حساب Identity را در PostgreSQL ساختم و normalization، تأیید و lockout را بررسی کردم.
 - [ ] 063: hash salted، rehash، reset token کاربر دیگر و replay و تغییر stamp را آزمودم.
 - [ ] 064: cookie و bearer و CSRF و refresh و logout و key ring در restart را بررسی کردم.
+
+## مجوز و مرزهای وب
+
+- [ ] 065: نقش و permission را با هم سنجیدم و حذف grant را با token قبلی آزمایش کردم.
+- [ ] 066: دسترسی هم‌سازمان و سازمان دیگر و تغییر owner/tenant از body را رد کردم.
+- [ ] 067: CORS را از authentication جدا و CSRF و query پارامتری و پاسخ JSON را آزمودم.
+- [ ] 068: تعداد موفق و 429 در رقابت، استقلال userها و مقاومت در برابر header جعلی را بررسی کردم.

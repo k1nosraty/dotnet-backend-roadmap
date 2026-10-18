@@ -170,4 +170,4 @@ JWT دست‌ساز یا header role را به‌عنوان میان‌بر اض
 - [CSRF](https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-10.0)
 
 [قبلی](../063-passwords/README.md) · [فهرست بخش](../README.md)
-درس‌های ۶۵ تا ۷۰ ادامهٔ بخش‌اند و هنوز نوشته نشده‌اند.
+[ادامه: درس ۶۵ و policy](../065-authorization/README.md). درس‌های ۶۹ و ۷۰ هنوز نوشته نشده‌اند.
