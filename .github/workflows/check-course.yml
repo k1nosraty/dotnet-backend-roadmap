@@ -132,3 +132,37 @@ jobs:
 
       - name: Build final security labs and reject unsafe configuration
         run: python scripts/security_final_smoke.py --build-only
+
+  testing:
+    name: xUnit and WAF (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Check lessons, samples and test catalog
+        run: python scripts/check_content.py
+      - name: Execute unit, doubles, WAF, mutation and published-gate tests
+        run: python scripts/testing_smoke.py
+
+  testing-database:
+    name: Testcontainers PostgreSQL 18.6
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Execute actual isolated PostgreSQL container tests
+        run: python scripts/testing_smoke.py --docker-only

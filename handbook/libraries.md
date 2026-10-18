@@ -97,3 +97,8 @@ Npgsql با Npgsql.EntityFrameworkCore.PostgreSQL یک package نیست؛ provid
 ## audit و بازبینی امنیت
 
 [درس ۶۹](../lessons/06-security/069-secrets/README.md) از JSON console و ILogger استاندارد و transaction همان EF Core استفاده می‌کند؛ package جدیدی اضافه نشده است. جدول audit با write محلی اتمیک است؛ console، سرویس خارجی و ذخیرهٔ غیرقابل تغییر ادعا نمی‌شوند. [درس ۷۰](../lessons/06-security/070-security-review/README.md) metadata واقعی RouteEndpoint و policy و rate limit را بدون بستهٔ تست جدید بررسی می‌کند. xUnit و integration tooling موضوع بخش بعد هستند.
+
+## ابزار تست در درس‌های ۷۱ تا ۷۴
+
+[بخش هفتم](../lessons/07-testing/README.md) xUnit v2 با نسخهٔ مرجع 2.9.3، adapter xunit.runner.visualstudio 3.1.5 و Microsoft.NET.Test.Sdk 18.0.1 دارد. نسخهٔ adapter با framework یکی نیست و شماره‌ها ادعای جدیدترین نسخه نیستند. packageها فقط در test projectها ثبت شده‌اند.
+Microsoft.AspNetCore.Mvc.Testing 10.0.13 برای WAF و TestServer و Testcontainers.PostgreSql 4.15.0 برای lifecycle PostgreSQL 18.6 معرفی می‌شوند. Npgsql 10.0.3 در adapter واقعی sample قرار دارد. source packageهای رسمی و APIها در 2026-10-18 بررسی شدند و build و اجرای CI سازگاری عملی را می‌سنجند. mocking library یا coverage collector صرفاً برای افزایش تعداد package اضافه نشده است.

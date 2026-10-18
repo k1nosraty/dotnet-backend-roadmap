@@ -274,5 +274,21 @@
   {
     "lesson": 70,
     "project": "samples/69-security-review/SupportDesk.csproj"
+  },
+  {
+    "lesson": 71,
+    "project": "samples/70-unit-tests/SupportDesk.csproj"
+  },
+  {
+    "lesson": 72,
+    "project": "samples/71-test-design/SupportDesk.csproj"
+  },
+  {
+    "lesson": 73,
+    "project": "samples/72-http-testing/SupportDesk.csproj"
+  },
+  {
+    "lesson": 74,
+    "project": "samples/73-database-testing/SupportDesk.csproj"
   }
 ]
