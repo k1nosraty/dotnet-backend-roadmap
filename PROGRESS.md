@@ -120,3 +120,11 @@
 - [ ] 072: invalid و missing و conflict و commit failure و cancellation را با test double مستقل سنجیدم.
 - [ ] 073: pipeline HTTP و binding و مالکیت و رقابت را با WAF و هویت فقط در test assembly آزمودم.
 - [ ] 074: fixture PostgreSQL واقعی، constraint و rollback و CAS و دوام در restart host را اجرا کردم.
+
+## پایان تست و عیب‌یابی
+
+- [ ] 075: تلاش محدود HTTP، پاسخ دائمی، timeout و لغو caller را با pipeline واقعی و transport ساختگی آزمودم.
+- [ ] 076: scope هر job، backpressure، complete و shutdown و dispose را با signal قطعی بررسی کردم.
+- [ ] 077: template ثابت، JSON قابل جست‌وجو، عدم نشت scope و حذف payload از مسیر log را آزمودم.
+- [ ] 078: خطای overflow را بازتولید کردم و breakpoint، regression و ارتباط span والد را توضیح دادم.
+- [ ] تمرین مستقل span هر job را با توقف worker و بدون اطلاعات حساس تحویل دادم.

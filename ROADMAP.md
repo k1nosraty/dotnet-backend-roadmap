@@ -112,10 +112,10 @@
 | 072 | [boundary و negative case و test double](lessons/07-testing/072-test-design/README.md) | نوشته‌شده |
 | 073 | [integration و WebApplicationFactory](lessons/07-testing/073-integration/README.md) | نوشته‌شده |
 | 074 | [تست دیتابیس و Testcontainers](lessons/07-testing/074-database-tests/README.md) | نوشته‌شده |
-| 075 | HttpClientFactory و timeout و resilience | برنامه‌ریزی‌شده |
-| 076 | BackgroundService و scope و shutdown | برنامه‌ریزی‌شده |
-| 077 | ILogger و structured logging و Serilog | برنامه‌ریزی‌شده |
-| 078 | debugger و trace و بازتولید خطا | برنامه‌ریزی‌شده |
+| 075 | [HttpClientFactory و timeout و resilience](lessons/07-testing/075-http-resilience/README.md) | نوشته‌شده |
+| 076 | [BackgroundService و scope و shutdown](lessons/07-testing/076-background-work/README.md) | نوشته‌شده |
+| 077 | [ILogger و structured logging و Serilog](lessons/07-testing/077-logging/README.md) | نوشته‌شده |
+| 078 | [debugger و trace و بازتولید خطا](lessons/07-testing/078-debugging/README.md) | نوشته‌شده |
 
 ## محیط واقعی و عملیات
 

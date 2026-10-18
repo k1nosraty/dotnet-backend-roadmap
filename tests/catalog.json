@@ -14,5 +14,21 @@
   {
     "lesson": 74,
     "project": "tests/074-database-testing/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 75,
+    "project": "tests/075-http-resilience/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 76,
+    "project": "tests/076-background-work/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 77,
+    "project": "tests/077-logging/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 78,
+    "project": "tests/078-debugging/SupportDesk.Tests.csproj"
   }
 ]

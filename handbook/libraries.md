@@ -102,3 +102,8 @@ Npgsql با Npgsql.EntityFrameworkCore.PostgreSQL یک package نیست؛ provid
 
 [بخش هفتم](../lessons/07-testing/README.md) xUnit v2 با نسخهٔ مرجع 2.9.3، adapter xunit.runner.visualstudio 3.1.5 و Microsoft.NET.Test.Sdk 18.0.1 دارد. نسخهٔ adapter با framework یکی نیست و شماره‌ها ادعای جدیدترین نسخه نیستند. packageها فقط در test projectها ثبت شده‌اند.
 Microsoft.AspNetCore.Mvc.Testing 10.0.13 برای WAF و TestServer و Testcontainers.PostgreSql 4.15.0 برای lifecycle PostgreSQL 18.6 معرفی می‌شوند. Npgsql 10.0.3 در adapter واقعی sample قرار دارد. source packageهای رسمی و APIها در 2026-10-18 بررسی شدند و build و اجرای CI سازگاری عملی را می‌سنجند. mocking library یا coverage collector صرفاً برای افزایش تعداد package اضافه نشده است.
+
+## HTTP و logging در درس‌های ۷۵ تا ۷۸
+
+Microsoft.Extensions.Http.Resilience نسخهٔ مرجع 10.11.0 برای pipeline استاندارد HTTP در درس ۷۵ ثبت شده است؛ نسخهٔ Extensions مستقل از patch runtime است. Serilog.Extensions.Hosting 10.0.0 در درس ۷۷، ILogger را به Serilog متصل می‌کند. JsonFormatter و sink کوچک روی TextWriter برای مشاهدهٔ stdout به‌کار می‌روند؛ package مقصد شبکه‌ای یا فایل اضافه نشده است.
+نسخه‌ها و API از Microsoft Learn، NuGet و مخزن رسمی Serilog در 2026-10-18 بررسی شده‌اند. این‌ها نسخهٔ pinشدهٔ نمونه هستند؛ ادعای آخرین نسخه یا آمادگی محصول نیستند. درس‌های ۷۶ و ۷۸ از Channel و BackgroundService و ActivitySource موجود در framework استفاده می‌کنند. همهٔ نمونه‌های جدید FrameworkReference به Microsoft.AspNetCore.App دارند و SDK/runtime 10 لازم است.

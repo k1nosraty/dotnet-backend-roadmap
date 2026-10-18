@@ -152,6 +152,8 @@ jobs:
         run: python scripts/check_content.py
       - name: Execute unit, doubles, WAF, mutation and published-gate tests
         run: python scripts/testing_smoke.py
+      - name: Execute HTTP resilience, worker shutdown, structured logs and debugging regression
+        run: python scripts/testing_next_smoke.py
 
   testing-database:
     name: Testcontainers PostgreSQL 18.6
