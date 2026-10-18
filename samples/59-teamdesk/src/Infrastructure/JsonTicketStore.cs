@@ -139,13 +139,15 @@ internal sealed class JsonTicketStore : ITicketStore, ITicketQueries, ITicketLif
             File.WriteAllText(temporary, JsonSerializer.Serialize(document));
             ct.ThrowIfCancellationRequested();
             // Windows readers (including file scanners) may briefly deny delete sharing.
-            // Retry only sharing/lock violations; permission and other I/O errors still fail.
+            // MoveFile may report access denied for a held destination as well as sharing errors.
+            // All retries are bounded; persistent permission failures still fail.
             for (int attempt = 0; ; attempt++)
             {
                 ct.ThrowIfCancellationRequested();
                 try { File.Move(temporary, path, overwrite: true); break; }
-                catch (IOException ex) when (OperatingSystem.IsWindows() && attempt < 20 &&
-                    (ex.HResult & 0xffff) is 32 or 33)
+                catch (Exception ex) when (OperatingSystem.IsWindows() && attempt < 20 &&
+                    (ex is IOException or UnauthorizedAccessException) &&
+                    (ex.HResult & 0xffff) is 5 or 32 or 33)
                 {
                     if (ct.WaitHandle.WaitOne(TimeSpan.FromMilliseconds(25)))
                         ct.ThrowIfCancellationRequested();

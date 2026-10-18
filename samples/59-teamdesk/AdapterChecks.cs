@@ -76,7 +76,7 @@ internal static class AdapterChecks
                 {
                     var current = (await shared.LoadAsync(1, Ct))!;
                     try { await shared.SaveAsync(current, current.Value, Ct); throw new Exception("Expected sharing failure."); }
-                    catch (IOException) { }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
                 }
                 Check(File.ReadAllBytes(sharedPath).SequenceEqual(preserved), "persistent sharing conflict preserves original");
             }
