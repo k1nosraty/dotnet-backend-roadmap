@@ -143,6 +143,10 @@ for lesson,name in enumerate(NAMES,69):
                 owner,peer,other,staff,roleonly=[login(x) for x in ['owner','peer','other','staff','roleonly']]
                 for token in [owner,peer,other,roleonly]:
                     assert send(client(),base,'/api/staff/audit',headers=auth(token))[0]==403
+                # A permission alone must not replace the required SupportAgent role.
+                sql(f"INSERT INTO {schema}.\"AspNetUserClaims\" (\"UserId\",\"ClaimType\",\"ClaimValue\") SELECT \"Id\",'permission','audit.read' FROM {schema}.\"AspNetUsers\" WHERE \"Email\"='owner@example.test'")
+                assert send(client(),base,'/api/staff/audit',headers=auth(owner))[0]==403
+                sql(f"DELETE FROM {schema}.\"AspNetUserClaims\" WHERE \"ClaimType\"='permission' AND \"ClaimValue\"='audit.read' AND \"UserId\"=(SELECT \"Id\" FROM {schema}.\"AspNetUsers\" WHERE \"Email\"='owner@example.test')")
                 assert send(client(),base,'/api/staff/audit',headers=auth(staff))[1]==[]
                 assert send(client(),base,'/auth/login','POST',{'email':bad_email,'password':password})[0]==401
                 assert send(client(),base,'/api/me',headers=auth(bad_token))[0]==401
