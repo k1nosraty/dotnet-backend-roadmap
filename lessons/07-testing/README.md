@@ -1,6 +1,6 @@
 # بخش هفتم — تست و عیب‌یابی
 
-درس‌های ۷۱ تا ۷۴ آماده‌اند؛ ۷۵ تا ۷۸ هنوز برنامه‌ریزی‌شده‌اند.
+هر هشت درس ۷۱ تا ۷۸ آماده‌اند؛ بخش تست و عیب‌یابی کامل شده است.
 پیش‌نیاز، معماری بخش پنجم و بازبینی امنیت بخش ششم است.
 
 | درس | موضوع | وضعیت |
@@ -9,12 +9,17 @@
 | 072 | [boundary و negative case و test double](072-test-design/README.md) | نوشته‌شده |
 | 073 | [integration و WebApplicationFactory](073-integration/README.md) | نوشته‌شده |
 | 074 | [تست دیتابیس و Testcontainers](074-database-tests/README.md) | نوشته‌شده |
+| 075 | [HttpClientFactory و timeout و resilience](075-http-resilience/README.md) | نوشته‌شده |
+| 076 | [BackgroundService و scope و shutdown](076-background-work/README.md) | نوشته‌شده |
+| 077 | [ILogger و structured logging و Serilog](077-logging/README.md) | نوشته‌شده |
+| 078 | [debugger و trace و بازتولید خطا](078-debugging/README.md) | نوشته‌شده |
 
 ## اجرای مرحله‌ای
 
 ```powershell
 python scripts/check_content.py
 python scripts/testing_smoke.py
+python scripts/testing_next_smoke.py
 python scripts/testing_smoke.py --with-docker
 ```
 
@@ -33,3 +38,5 @@ TestServer از pipeline واقعی app استفاده می‌کند ولی TLS/
 bootstrap schema خالی، تست migration یا backup/restore نیست. ریسک‌های شبکه، deployment و load را جدا بررسی کن.
 
 [فهرست تست‌ها](../../tests/catalog.json) · [بخش ششم](../06-security/README.md) · [نقشهٔ دوره](../../ROADMAP.md)
+
+درس‌های ۷۵ تا ۷۸ چهار lab کوچک مستقل دارند. testing_next_smoke تست‌های HTTP pipeline، cancellation و scope worker، JSON log و regression عددی را اجرا می‌کند؛ Docker لازم ندارد. transport HTTP ساختگی است؛ تست شبکهٔ واقعی ادعا نمی‌شود.

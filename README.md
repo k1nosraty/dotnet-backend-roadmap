@@ -28,10 +28,10 @@
 
 ## وضعیت واقعی محتوا
 
-این نسخه شامل شش بخش اول کامل و درس‌های ۷۱ تا ۷۴ بخش تست و عیب‌یابی در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۷۴ درس نوشته شده، ۷۳ نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
+این نسخه شامل هفت بخش اول کامل در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۷۸ درس نوشته شده، ۷۷ نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
 درس‌های آینده در نقشه وضعیت «برنامه‌ریزی‌شده» دارند و فایل آموزشی خالی برای آن‌ها ساخته نشده است.
 ساخت و بررسی رفتار نمونه‌ها در workflow «Check course» روی Windows و Linux در GitHub اجرا می‌شود؛ نتیجهٔ هر commit را در تب Actions ببین.
-چهار پروژهٔ مجزای xUnit در پوشهٔ tests وجود دارد؛ در شمار نمونه‌های اجرایی بالا شمرده نشده‌اند.
+هشت پروژهٔ مجزای xUnit در پوشهٔ tests وجود دارد؛ در شمار نمونه‌های اجرایی بالا شمرده نشده‌اند.
 فرمان ساخت، سناریوهای بررسی و اسکریپت smoke در بسته وجود دارند.
 
 ```powershell
@@ -51,9 +51,10 @@ python scripts/security_next_smoke.py
 python scripts/security_final_smoke.py
 # تست‌های xUnit و WAF؛ برای اجرای PostgreSQL کانتینری، --with-docker اضافه کن:
 python scripts/testing_smoke.py
+python scripts/testing_next_smoke.py
 ```
 
-این چهارده اسکریپت به Python 3 نیاز دارند؛ اسکریپت‌های smoke به SDK 10 هم نیاز دارند. postgres_smoke به PostgreSQL واقعی و متغیر SUPPORTDESK_PG نیز نیاز دارد. ef_smoke برای بخش API علاوه بر این‌ها psql می‌خواهد؛ متغیرهای اتصال تست در README نمونهٔ تحویل توضیح داده شده‌اند. security_smoke و security_next_smoke و security_final_smoke در حالت کامل PostgreSQL و psql و متغیرهای اتصال تست مطابق فهرست بخش امنیت می‌خواهند. اجرای دستی درس‌های دیتابیس نیز PostgreSQL و اتصال تنظیم‌شده می‌خواهد.
+این پانزده اسکریپت به Python 3 نیاز دارند؛ اسکریپت‌های smoke به SDK 10 هم نیاز دارند. postgres_smoke به PostgreSQL واقعی و متغیر SUPPORTDESK_PG نیز نیاز دارد. ef_smoke برای بخش API علاوه بر این‌ها psql می‌خواهد؛ متغیرهای اتصال تست در README نمونهٔ تحویل توضیح داده شده‌اند. security_smoke و security_next_smoke و security_final_smoke در حالت کامل PostgreSQL و psql و متغیرهای اتصال تست مطابق فهرست بخش امنیت می‌خواهند. اجرای دستی درس‌های دیتابیس نیز PostgreSQL و اتصال تنظیم‌شده می‌خواهد.
 
 ## مبنای فنی
 

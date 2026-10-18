@@ -125,5 +125,4 @@ backup/restore، چند replica، outage شبکه و تست load در این د�
 - [نسخهٔ مرجع Testcontainers.PostgreSql](https://www.nuget.org/packages/Testcontainers.PostgreSql/4.15.0)
 - [Integration tests](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0)
 
-[قبلی](../073-integration/README.md) · [فهرست بخش](../README.md)
-درس‌های ۷۵ تا ۷۸ هنوز نوشته نشده‌اند.
+[قبلی](../073-integration/README.md) · [بعدی](../075-http-resilience/README.md) · [فهرست بخش](../README.md)

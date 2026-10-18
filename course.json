@@ -447,25 +447,25 @@
     "id": 75,
     "title": "HttpClientFactory و timeout و resilience",
     "path": "lessons/07-testing/075-http-resilience/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 76,
     "title": "BackgroundService و scope و shutdown",
     "path": "lessons/07-testing/076-background-work/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 77,
     "title": "ILogger و structured logging و Serilog",
     "path": "lessons/07-testing/077-logging/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 78,
     "title": "debugger و trace و بازتولید خطا",
     "path": "lessons/07-testing/078-debugging/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 79,

@@ -290,5 +290,21 @@
   {
     "lesson": 74,
     "project": "samples/73-database-testing/SupportDesk.csproj"
+  },
+  {
+    "lesson": 75,
+    "project": "samples/74-http-resilience/SupportDesk.csproj"
+  },
+  {
+    "lesson": 76,
+    "project": "samples/75-background-work/SupportDesk.csproj"
+  },
+  {
+    "lesson": 77,
+    "project": "samples/76-structured-logging/SupportDesk.csproj"
+  },
+  {
+    "lesson": 78,
+    "project": "samples/77-debugging/SupportDesk.csproj"
   }
 ]
