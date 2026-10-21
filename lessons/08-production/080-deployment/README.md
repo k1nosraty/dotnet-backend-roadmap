@@ -33,7 +33,7 @@ dotnet test tests/080-proxy-tls/SupportDesk.Tests.csproj
 | client به proxy | HTTPS | localhost:8443 روی میزبان |
 | proxy به app | HTTP | app:8080 در شبکهٔ داخلی Docker |
 
-پورت app روی میزبان publish نشده است. در این lab، TLS در proxy تمام می‌شود.
+پورت app روی میزبان publish نشده است. app فقط به شبکهٔ داخلی lab وصل است؛ proxy علاوه بر lab به شبکهٔ edge وصل است تا پورت میزبان واقعاً قابل دسترسی باشد. در این lab، TLS در proxy تمام می‌شود.
 برای شبکهٔ نامطمئن یا عبور بین hostها باید رمزنگاری اتصال داخلی را هم جدا بررسی کنی؛ این نمونه شبکهٔ محلی Docker دارد.
 
 ## ۳. اجرای TLS محلی
