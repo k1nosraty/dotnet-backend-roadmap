@@ -72,7 +72,7 @@ Caddy مقدار X-Forwarded-Proto را بر اساس اتصال واقعی clie
 
 در Program.cs فقط یک peer با IP مشخص معتبر است؛ تنظیم Compose آن را 172.31.79.10 گذاشته است.
 KnownProxies شامل همین آدرس و شکل IPv4-mapped آن است و ForwardLimit برابر یک است.
-همهٔ شبکه‌ها را trusted نکرده‌ایم. Host forwarding فعال نیست و AllowedHosts فقط localhost را می‌پذیرد.
+همهٔ شبکه‌ها را trusted نکرده‌ایم. Host forwarding فعال نیست و AllowedHosts فقط localhost را می‌پذیرد. در Caddy نیز strict_sni_host روشن است: نام Host باید با نام SNI اتصال TLS یکسان باشد؛ عدم تطابق پاسخ 421 می‌گیرد.
 
 | درخواست | نتیجهٔ مورد انتظار |
 | --- | --- |

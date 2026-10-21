@@ -80,7 +80,7 @@ try:
         else: raise AssertionError('An untrusted local CA was unexpectedly accepted.')
         try:
             trusted.open(request.Request(base+'/info', headers={'Host': 'attacker.invalid'}), timeout=5)
-        except error.HTTPError as ex: assert ex.code in [400, 404, 421]
+        except error.HTTPError as ex: assert ex.code == 421
         else: raise AssertionError('Invalid Host was accepted through the proxy.')
     print('PASS: real Caddy TLS validates hostname+private CA, rejects untrusted CA, overwrites spoofed scheme and isolates backend.')
 except Exception:
