@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    environment:
+      ReverseProxy__KnownIp: 172.31.79.10
+      ASPNETCORE_ENVIRONMENT: Production
+    networks: [lab]
+  proxy:
+    image: caddy:2.11.7-alpine
+    ports:
+      - "127.0.0.1:${COURSE_TLS_PORT:-8443}:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      lab:
+        ipv4_address: 172.31.79.10
+      edge: {}
+    depends_on: [app]
+networks:
+  edge: {}
+  lab:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.31.79.0/24
+volumes:
+  caddy-data:
+  caddy-config:

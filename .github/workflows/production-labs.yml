@@ -1,0 +1,65 @@
+name: Production labs
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  quality:
+    name: Publish and telemetry (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: python scripts/check_content.py
+      - name: Execute tests and publish Linux artifact
+        if: runner.os == 'Linux'
+        run: python scripts/production_smoke.py --artifact-dir artifacts/lesson81
+      - name: Execute tests and publish Windows hosts
+        if: runner.os == 'Windows'
+        run: python scripts/production_smoke.py
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'Linux'
+        with:
+          name: lesson81-${{ github.sha }}
+          path: artifacts/lesson81/
+          if-no-files-found: error
+          retention-days: 7
+  containers:
+    name: Real Docker and verified TLS
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - run: python scripts/production_docker_smoke.py
+  artifact-gate:
+    name: Verify exact artifact (no external deploy)
+    needs: [quality, containers]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/download-artifact@v4
+        with:
+          name: lesson81-${{ github.sha }}
+          path: artifacts/lesson81
+      - name: Validate and start the downloaded DLL without rebuilding
+        shell: bash
+        run: python scripts/release_gate.py artifacts/lesson81 "$GITHUB_SHA"

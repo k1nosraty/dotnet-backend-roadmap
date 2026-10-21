@@ -112,5 +112,5 @@ log رخداد را توضیح می‌دهد؛ span بازهٔ یک عملیات
 - [checked و unchecked](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/checked-and-unchecked)
 - [Distributed tracing instrumentation](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/distributed-tracing-instrumentation-walkthroughs)
 
-[قبلی](../077-logging/README.md) · [فهرست بخش](../README.md) · [برنامهٔ بخش بعد: محیط واقعی و عملیات](../../../ROADMAP.md)
-درس ۷۹ هنوز برنامه‌ریزی‌شده است.
+[قبلی](../077-logging/README.md) · [فهرست بخش](../README.md) · [بخش بعد: محیط واقعی و عملیات](../../08-production/README.md)
+[درس بعد: Docker](../../08-production/079-docker/README.md) آماده است.

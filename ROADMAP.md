@@ -121,10 +121,10 @@
 
 | درس | موضوع | وضعیت |
 | --- | --- | --- |
-| 079 | Docker و image و محیط اجرا | برنامه‌ریزی‌شده |
-| 080 | publish و reverse proxy و TLS | برنامه‌ریزی‌شده |
-| 081 | CI/CD و quality gate | برنامه‌ریزی‌شده |
-| 082 | OpenTelemetry و health check | برنامه‌ریزی‌شده |
+| 079 | [Docker و image و محیط اجرا](lessons/08-production/079-docker/README.md) | نوشته‌شده |
+| 080 | [publish و reverse proxy و TLS](lessons/08-production/080-deployment/README.md) | نوشته‌شده |
+| 081 | [CI/CD و quality gate](lessons/08-production/081-ci/README.md) | نوشته‌شده |
+| 082 | [OpenTelemetry و health check](lessons/08-production/082-observability/README.md) | نوشته‌شده |
 | 083 | cache و invalidation و Redis | برنامه‌ریزی‌شده |
 | 084 | صف و پردازش job و ارزیابی Hangfire یا Quartz | برنامه‌ریزی‌شده |
 | 085 | load test و profiling و بودجهٔ latency | برنامه‌ریزی‌شده |
