@@ -107,3 +107,8 @@ Microsoft.AspNetCore.Mvc.Testing 10.0.13 برای WAF و TestServer و Testconta
 
 Microsoft.Extensions.Http.Resilience نسخهٔ مرجع 10.11.0 برای pipeline استاندارد HTTP در درس ۷۵ ثبت شده است؛ نسخهٔ Extensions مستقل از patch runtime است. Serilog.Extensions.Hosting 10.0.0 در درس ۷۷، ILogger را به Serilog متصل می‌کند. JsonFormatter و sink کوچک روی TextWriter برای مشاهدهٔ stdout به‌کار می‌روند؛ package مقصد شبکه‌ای یا فایل اضافه نشده است.
 نسخه‌ها و API از Microsoft Learn، NuGet و مخزن رسمی Serilog در 2026-10-18 بررسی شده‌اند. این‌ها نسخهٔ pinشدهٔ نمونه هستند؛ ادعای آخرین نسخه یا آمادگی محصول نیستند. درس‌های ۷۶ و ۷۸ از Channel و BackgroundService و ActivitySource موجود در framework استفاده می‌کنند. همهٔ نمونه‌های جدید FrameworkReference به Microsoft.AspNetCore.App دارند و SDK/runtime 10 لازم است.
+
+## ابزار محیط اجرا در درس‌های ۷۹ تا ۸۲
+
+نمونه‌های Docker از SDK 10.0.402 و ASP.NET runtime 10.0.13 و نمونهٔ reverse proxy از Caddy official image نسخهٔ مرجع 2.11.7-alpine استفاده می‌کنند. tag نسخه با digest یکسان نیست؛ برای محیط واقعی باید ارتقا و pin کردن digest با سیاست patch بررسی شود.
+OpenTelemetry.Extensions.Hosting و OpenTelemetry.Exporter.Console هر دو 1.19.0 pin شده‌اند؛ console فقط برای مشاهدهٔ آموزشی است و collector یا backend خارجی ندارد. اطلاعات نسخه‌ها و API از منابع رسمی Microsoft، Caddy، NuGet و OpenTelemetry در 2026-10-21 بررسی شده است؛ ادعای آخرین نسخه نیست. HealthCheck و ForwardedHeaders از framework هستند و mocking یا auto-instrumentation HTTP جدید اضافه نشده است.

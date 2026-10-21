@@ -128,3 +128,10 @@
 - [ ] 077: template ثابت، JSON قابل جست‌وجو، عدم نشت scope و حذف payload از مسیر log را آزمودم.
 - [ ] 078: خطای overflow را بازتولید کردم و breakpoint، regression و ارتباط span والد را توضیح دادم.
 - [ ] تمرین مستقل span هر job را با توقف worker و بدون اطلاعات حساس تحویل دادم.
+
+## شروع محیط واقعی و عملیات
+
+- [ ] 079: image چندمرحله‌ای را ساختم و پورت، UID غیر root، runtime بدون SDK و SIGTERM را واقعاً بررسی کردم.
+- [ ] 080: TLS با CA معتبر محلی، Host نامعتبر، header جعلی و اعتماد محدود به proxy را آزمودم.
+- [ ] 081: artifact همان commit را بدون rebuild اجرا کردم و تغییر DLL و commit اشتباه را با gate رد کردم.
+- [ ] 082: readiness را از liveness جدا کردم و span و counter محدود را از SDK OpenTelemetry گرفتم.

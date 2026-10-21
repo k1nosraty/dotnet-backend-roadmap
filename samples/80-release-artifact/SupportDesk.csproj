@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+<PropertyGroup><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><TreatWarningsAsErrors>true</TreatWarningsAsErrors><AssemblyName>SupportDesk.Lesson81</AssemblyName><RootNamespace>SupportDesk</RootNamespace></PropertyGroup>
+<PropertyGroup><CourseCommit Condition="'$(CourseCommit)' == ''">local</CourseCommit></PropertyGroup><ItemGroup><AssemblyMetadata Include="CourseCommit" Value="$(CourseCommit)" /></ItemGroup>
+</Project>

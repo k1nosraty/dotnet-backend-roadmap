@@ -471,25 +471,25 @@
     "id": 79,
     "title": "Docker و image و محیط اجرا",
     "path": "lessons/08-production/079-docker/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 80,
     "title": "publish و reverse proxy و TLS",
     "path": "lessons/08-production/080-deployment/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 81,
     "title": "CI/CD و quality gate",
     "path": "lessons/08-production/081-ci/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 82,
     "title": "OpenTelemetry و health check",
     "path": "lessons/08-production/082-observability/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 83,

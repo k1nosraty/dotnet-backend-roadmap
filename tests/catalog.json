@@ -30,5 +30,13 @@
   {
     "lesson": 78,
     "project": "tests/078-debugging/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 80,
+    "project": "tests/080-proxy-tls/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 82,
+    "project": "tests/082-observability/SupportDesk.Tests.csproj"
   }
 ]

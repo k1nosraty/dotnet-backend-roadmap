@@ -306,5 +306,21 @@
   {
     "lesson": 78,
     "project": "samples/77-debugging/SupportDesk.csproj"
+  },
+  {
+    "lesson": 79,
+    "project": "samples/78-container-lab/SupportDesk.csproj"
+  },
+  {
+    "lesson": 80,
+    "project": "samples/79-proxy-tls/SupportDesk.csproj"
+  },
+  {
+    "lesson": 81,
+    "project": "samples/80-release-artifact/SupportDesk.csproj"
+  },
+  {
+    "lesson": 82,
+    "project": "samples/81-observability/SupportDesk.csproj"
   }
 ]
