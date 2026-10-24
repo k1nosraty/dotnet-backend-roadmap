@@ -322,5 +322,21 @@
   {
     "lesson": 82,
     "project": "samples/81-observability/SupportDesk.csproj"
+  },
+  {
+    "lesson": 83,
+    "project": "samples/82-versioned-cache/SupportDesk.csproj"
+  },
+  {
+    "lesson": 84,
+    "project": "samples/83-durable-jobs/SupportDesk.csproj"
+  },
+  {
+    "lesson": 85,
+    "project": "samples/84-performance/SupportDesk.csproj"
+  },
+  {
+    "lesson": 86,
+    "project": "samples/85-worker-delivery/SupportDesk.csproj"
   }
 ]

@@ -135,3 +135,11 @@
 - [ ] 080: TLS با CA معتبر محلی، Host نامعتبر، header جعلی و اعتماد محدود به proxy را آزمودم.
 - [ ] 081: artifact همان commit را بدون rebuild اجرا کردم و تغییر DLL و commit اشتباه را با gate رد کردم.
 - [ ] 082: readiness را از liveness جدا کردم و span و counter محدود را از SDK OpenTelemetry گرفتم.
+
+## پایان محیط واقعی و عملیات
+
+- [ ] 083: cache hit و expiry و race نسخهٔ قدیمی و tenant و fallback و Redis واقعی را بررسی کردم.
+- [ ] 084: lease و fencing و retry/dead و اثر محلی اتمیک را در PostgreSQL واقعی آزمودم و Hangfire/Quartz را مقایسه کردم.
+- [ ] 085: صحت نتیجه، warmup، p95، error rate، CPU/allocation و محدودیت closed-loop را گزارش کردم.
+- [ ] 086: backup را در DB تازه restore کردم، job منتظر را ادامه دادم و با همان artifact قبلی rollback را تمرین کردم.
+- [ ] runbook مستقل با شرط توقف و شاهد تأیید و محدودیت schema و اثر خارجی نوشتم.

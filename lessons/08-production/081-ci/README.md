@@ -29,7 +29,8 @@ local یعنی برای این اجرای دستی commit تزریق نکرده�
 | --- | --- | --- |
 | quality روی Linux و Windows | لینک‌ها، xUnit، publish و HTTP و بررسی منفی artifact | شروع workflow |
 | containers روی Linux | Docker build و اجرای non-root و TLS واقعی | شروع workflow |
-| artifact-gate | دریافت artifact لینوکس، بررسی hash و commit، اجرای DLL بدون build | موفقیت هر دو runner quality و containers |
+| operations-integration | Redis و صف پایدار و restore/rollback درس‌های ۸۳ تا ۸۶ | شروع workflow |
+| artifact-gate | دریافت artifact لینوکس، بررسی hash و commit، اجرای DLL بدون build | موفقیت quality و containers و operations-integration |
 
 `needs` وابستگی اجرای jobها را مشخص می‌کند. اگر تست یا TLS شکست بخورد، artifact-gate اجرا نمی‌شود.
 workflow قدیمی Check course هم بخش‌های قبلی را بررسی می‌کند؛ موفقیت این workflow جای موفقیت آن را نمی‌گیرد.

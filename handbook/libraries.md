@@ -112,3 +112,8 @@ Microsoft.Extensions.Http.Resilience نسخهٔ مرجع 10.11.0 برای pipeli
 
 نمونه‌های Docker از SDK 10.0.402 و ASP.NET runtime 10.0.13 و نمونهٔ reverse proxy از Caddy official image نسخهٔ مرجع 2.11.7-alpine استفاده می‌کنند. tag نسخه با digest یکسان نیست؛ برای محیط واقعی باید ارتقا و pin کردن digest با سیاست patch بررسی شود.
 OpenTelemetry.Extensions.Hosting و OpenTelemetry.Exporter.Console هر دو 1.19.0 pin شده‌اند؛ console فقط برای مشاهدهٔ آموزشی است و collector یا backend خارجی ندارد. اطلاعات نسخه‌ها و API از منابع رسمی Microsoft، Caddy، NuGet و OpenTelemetry در 2026-10-21 بررسی شده است؛ ادعای آخرین نسخه نیست. HealthCheck و ForwardedHeaders از framework هستند و mocking یا auto-instrumentation HTTP جدید اضافه نشده است.
+
+## ابزارهای پایان عملیات، درس‌های ۸۳ تا ۸۶
+
+StackExchange.Redis نسخهٔ مرجع 2.13.17 برای adapter cache و Testcontainers.Redis 4.15.0 فقط برای تست اضافه شده‌اند. Npgsql 10.0.3 و Testcontainers.PostgreSql 4.15.0 با PostgreSQL 18.6 از بخش‌های قبلی ادامه دارند. Redis از minor tag مرجع 8.2 استفاده می‌کند؛ patch/digest آن ثابت ادعا نمی‌شود. منابع رسمی client و module و PostgreSQL و Hangfire و Quartz در 2026-10-24 بررسی شده‌اند.
+Hangfire و Quartz در جدول تصمیم ارزیابی می‌شوند و در csproj این lab نصب نشده‌اند؛ صف آموزشی، مکانیزم lease/fencing را آشکار می‌کند و framework کامل محصول نیست. load generator از Python استاندارد و BCL metrics استفاده می‌کند؛ dotnet-counters و dotnet-trace فقط در تمرین اختیاری دستی‌اند. ابزار dump/restore از همان image PostgreSQL می‌آید؛ ابزار سراسری دیتابیس کاربر لازم نیست.
