@@ -1,0 +1,66 @@
+[
+  {
+    "lesson": 71,
+    "project": "tests/071-unit-tests/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 72,
+    "project": "tests/072-test-design/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 73,
+    "project": "tests/073-http-testing/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 74,
+    "project": "tests/074-database-testing/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 75,
+    "project": "tests/075-http-resilience/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 76,
+    "project": "tests/076-background-work/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 77,
+    "project": "tests/077-logging/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 78,
+    "project": "tests/078-debugging/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 80,
+    "project": "tests/080-proxy-tls/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 82,
+    "project": "tests/082-observability/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 83,
+    "project": "tests/083-cache/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 84,
+    "project": "tests/084-jobs/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 85,
+    "project": "tests/085-performance/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 87,
+    "project": "tests/087-contract/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 88,
+    "project": "tests/088-prototype/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 89,
+    "project": "tests/089-capstone/SupportDesk.Tests.csproj"
+  }
+]

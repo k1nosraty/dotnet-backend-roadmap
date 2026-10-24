@@ -93,48 +93,48 @@
 
 | درس | موضوع | وضعیت |
 | --- | --- | --- |
-| 061 | مدل تهدید و مرز اعتماد | برنامه‌ریزی‌شده |
-| 062 | Identity و مدیریت امن حساب | برنامه‌ریزی‌شده |
-| 063 | hash رمز و سیاست بازیابی | برنامه‌ریزی‌شده |
-| 064 | cookie و bearer و انتخاب روش | برنامه‌ریزی‌شده |
-| 065 | policy و نقش و مجوز | برنامه‌ریزی‌شده |
-| 066 | کنترل مالکیت و جلوگیری از IDOR | برنامه‌ریزی‌شده |
-| 067 | CORS و CSRF و injection | برنامه‌ریزی‌شده |
-| 068 | rate limiting و کنترل سوءاستفاده | برنامه‌ریزی‌شده |
-| 069 | secrets و audit و دادهٔ حساس | برنامه‌ریزی‌شده |
-| 070 | بازبینی امنیت و سناریوهای منفی | برنامه‌ریزی‌شده |
+| 061 | [مدل تهدید و مرز اعتماد](lessons/06-security/061-threat-model/README.md) | نوشته‌شده |
+| 062 | [Identity و مدیریت امن حساب](lessons/06-security/062-identity/README.md) | نوشته‌شده |
+| 063 | [hash رمز و سیاست بازیابی](lessons/06-security/063-passwords/README.md) | نوشته‌شده |
+| 064 | [cookie و bearer و انتخاب روش](lessons/06-security/064-authentication/README.md) | نوشته‌شده |
+| 065 | [policy و نقش و مجوز](lessons/06-security/065-authorization/README.md) | نوشته‌شده |
+| 066 | [کنترل مالکیت و جلوگیری از IDOR](lessons/06-security/066-ownership/README.md) | نوشته‌شده |
+| 067 | [CORS و CSRF و injection](lessons/06-security/067-web-security/README.md) | نوشته‌شده |
+| 068 | [rate limiting و کنترل سوءاستفاده](lessons/06-security/068-rate-limits/README.md) | نوشته‌شده |
+| 069 | [secrets و audit و دادهٔ حساس](lessons/06-security/069-secrets/README.md) | نوشته‌شده |
+| 070 | [بازبینی امنیت و سناریوهای منفی](lessons/06-security/070-security-review/README.md) | نوشته‌شده |
 
 ## تست و عیب‌یابی
 
 | درس | موضوع | وضعیت |
 | --- | --- | --- |
-| 071 | unit test و xUnit | برنامه‌ریزی‌شده |
-| 072 | boundary و negative case و test double | برنامه‌ریزی‌شده |
-| 073 | integration و WebApplicationFactory | برنامه‌ریزی‌شده |
-| 074 | تست دیتابیس و Testcontainers | برنامه‌ریزی‌شده |
-| 075 | HttpClientFactory و timeout و resilience | برنامه‌ریزی‌شده |
-| 076 | BackgroundService و scope و shutdown | برنامه‌ریزی‌شده |
-| 077 | ILogger و structured logging و Serilog | برنامه‌ریزی‌شده |
-| 078 | debugger و trace و بازتولید خطا | برنامه‌ریزی‌شده |
+| 071 | [unit test و xUnit](lessons/07-testing/071-unit/README.md) | نوشته‌شده |
+| 072 | [boundary و negative case و test double](lessons/07-testing/072-test-design/README.md) | نوشته‌شده |
+| 073 | [integration و WebApplicationFactory](lessons/07-testing/073-integration/README.md) | نوشته‌شده |
+| 074 | [تست دیتابیس و Testcontainers](lessons/07-testing/074-database-tests/README.md) | نوشته‌شده |
+| 075 | [HttpClientFactory و timeout و resilience](lessons/07-testing/075-http-resilience/README.md) | نوشته‌شده |
+| 076 | [BackgroundService و scope و shutdown](lessons/07-testing/076-background-work/README.md) | نوشته‌شده |
+| 077 | [ILogger و structured logging و Serilog](lessons/07-testing/077-logging/README.md) | نوشته‌شده |
+| 078 | [debugger و trace و بازتولید خطا](lessons/07-testing/078-debugging/README.md) | نوشته‌شده |
 
 ## محیط واقعی و عملیات
 
 | درس | موضوع | وضعیت |
 | --- | --- | --- |
-| 079 | Docker و image و محیط اجرا | برنامه‌ریزی‌شده |
-| 080 | publish و reverse proxy و TLS | برنامه‌ریزی‌شده |
-| 081 | CI/CD و quality gate | برنامه‌ریزی‌شده |
-| 082 | OpenTelemetry و health check | برنامه‌ریزی‌شده |
-| 083 | cache و invalidation و Redis | برنامه‌ریزی‌شده |
-| 084 | صف و پردازش job و ارزیابی Hangfire یا Quartz | برنامه‌ریزی‌شده |
-| 085 | load test و profiling و بودجهٔ latency | برنامه‌ریزی‌شده |
-| 086 | backup و restore و rollback و تحویل worker | برنامه‌ریزی‌شده |
+| 079 | [Docker و image و محیط اجرا](lessons/08-production/079-docker/README.md) | نوشته‌شده |
+| 080 | [publish و reverse proxy و TLS](lessons/08-production/080-deployment/README.md) | نوشته‌شده |
+| 081 | [CI/CD و quality gate](lessons/08-production/081-ci/README.md) | نوشته‌شده |
+| 082 | [OpenTelemetry و health check](lessons/08-production/082-observability/README.md) | نوشته‌شده |
+| 083 | [cache و invalidation و Redis](lessons/08-production/083-caching/README.md) | نوشته‌شده |
+| 084 | [صف و پردازش job و ارزیابی Hangfire یا Quartz](lessons/08-production/084-jobs/README.md) | نوشته‌شده |
+| 085 | [load test و profiling و بودجهٔ latency](lessons/08-production/085-performance/README.md) | نوشته‌شده |
+| 086 | [backup و restore و rollback و تحویل worker](lessons/08-production/086-operations/README.md) | نوشته‌شده |
 
 ## پروژهٔ نهایی
 
 | درس | موضوع | وضعیت |
 | --- | --- | --- |
-| 087 | تحلیل ServiceDesk و معیار پذیرش | برنامه‌ریزی‌شده |
-| 088 | پیاده‌سازی مستقل و review | برنامه‌ریزی‌شده |
-| 089 | تست و امنیت و عملکرد | برنامه‌ریزی‌شده |
-| 090 | استقرار و مستندات و دفاع فنی | برنامه‌ریزی‌شده |
+| 087 | [تحلیل ServiceDesk و معیار پذیرش](lessons/09-capstone/087-requirements/README.md) | نوشته‌شده |
+| 088 | [پیاده‌سازی مستقل و review](lessons/09-capstone/088-implementation/README.md) | نوشته‌شده |
+| 089 | [تست و امنیت و عملکرد](lessons/09-capstone/089-hardening/README.md) | نوشته‌شده |
+| 090 | [استقرار و مستندات و دفاع فنی](lessons/09-capstone/090-delivery/README.md) | نوشته‌شده |

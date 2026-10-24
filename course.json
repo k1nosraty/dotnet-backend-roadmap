@@ -363,180 +363,180 @@
     "id": 61,
     "title": "مدل تهدید و مرز اعتماد",
     "path": "lessons/06-security/061-threat-model/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 62,
     "title": "Identity و مدیریت امن حساب",
     "path": "lessons/06-security/062-identity/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 63,
     "title": "hash رمز و سیاست بازیابی",
     "path": "lessons/06-security/063-passwords/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 64,
     "title": "cookie و bearer و انتخاب روش",
     "path": "lessons/06-security/064-authentication/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 65,
     "title": "policy و نقش و مجوز",
     "path": "lessons/06-security/065-authorization/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 66,
     "title": "کنترل مالکیت و جلوگیری از IDOR",
     "path": "lessons/06-security/066-ownership/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 67,
     "title": "CORS و CSRF و injection",
     "path": "lessons/06-security/067-web-security/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 68,
     "title": "rate limiting و کنترل سوءاستفاده",
     "path": "lessons/06-security/068-rate-limits/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 69,
     "title": "secrets و audit و دادهٔ حساس",
     "path": "lessons/06-security/069-secrets/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 70,
     "title": "بازبینی امنیت و سناریوهای منفی",
     "path": "lessons/06-security/070-security-review/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 71,
     "title": "unit test و xUnit",
     "path": "lessons/07-testing/071-unit/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 72,
     "title": "boundary و negative case و test double",
     "path": "lessons/07-testing/072-test-design/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 73,
     "title": "integration و WebApplicationFactory",
     "path": "lessons/07-testing/073-integration/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 74,
     "title": "تست دیتابیس و Testcontainers",
     "path": "lessons/07-testing/074-database-tests/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 75,
     "title": "HttpClientFactory و timeout و resilience",
     "path": "lessons/07-testing/075-http-resilience/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 76,
     "title": "BackgroundService و scope و shutdown",
     "path": "lessons/07-testing/076-background-work/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 77,
     "title": "ILogger و structured logging و Serilog",
     "path": "lessons/07-testing/077-logging/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 78,
     "title": "debugger و trace و بازتولید خطا",
     "path": "lessons/07-testing/078-debugging/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 79,
     "title": "Docker و image و محیط اجرا",
     "path": "lessons/08-production/079-docker/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 80,
     "title": "publish و reverse proxy و TLS",
     "path": "lessons/08-production/080-deployment/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 81,
     "title": "CI/CD و quality gate",
     "path": "lessons/08-production/081-ci/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 82,
     "title": "OpenTelemetry و health check",
     "path": "lessons/08-production/082-observability/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 83,
     "title": "cache و invalidation و Redis",
     "path": "lessons/08-production/083-caching/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 84,
     "title": "صف و پردازش job و ارزیابی Hangfire یا Quartz",
     "path": "lessons/08-production/084-jobs/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 85,
     "title": "load test و profiling و بودجهٔ latency",
     "path": "lessons/08-production/085-performance/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 86,
     "title": "backup و restore و rollback و تحویل worker",
     "path": "lessons/08-production/086-operations/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 87,
     "title": "تحلیل ServiceDesk و معیار پذیرش",
     "path": "lessons/09-capstone/087-requirements/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 88,
     "title": "پیاده‌سازی مستقل و review",
     "path": "lessons/09-capstone/088-implementation/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 89,
     "title": "تست و امنیت و عملکرد",
     "path": "lessons/09-capstone/089-hardening/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 90,
     "title": "استقرار و مستندات و دفاع فنی",
     "path": "lessons/09-capstone/090-delivery/README.md",
-    "status": "planned"
+    "status": "written"
   }
 ]

@@ -85,3 +85,35 @@ Npgsql با Npgsql.EntityFrameworkCore.PostgreSQL یک package نیست؛ provid
 [درس ۵۸](../lessons/05-architecture/058-validation-library/README.md) FluentValidation 12.2.0 را در Application و بدون package auto-validation معرفی می‌کند. در 2026-10-17 [NuGet رسمی](https://www.nuget.org/packages/FluentValidation/12.2.0)، target .NET 8 یا بالاتر، سازگاری محاسبه‌شده با net10.0 و license Apache-2.0 بررسی شدند. نسخه pin شده است؛ build و audit زمان اجرا در CI انجام می‌شوند. ruleهای نمونه pure هستند و با ValidateAsync صریح اجرا می‌شوند. Domain وابسته به validator نیست؛ روش حذف و جایگزینی با guard دستی در متن درس آمده است.
 
 برای تفکیک command/query mediator اجباری نداریم. تست referenceها با XML پروژه و reflection assembly انجام می‌شود؛ ابزار تست معماری خارجی در این مرحله اضافه نشده است.
+
+## Identity و authentication
+
+[درس‌های ۶۲ تا ۶۴](../lessons/06-security/README.md) Microsoft.AspNetCore.Identity.EntityFrameworkCore 10.0.13 و EF Core 10.0.13 را با provider PostgreSQL 10.0.3 استفاده می‌کنند. hash، token provider، cookie و bearer handler از framework هستند؛ کتابخانهٔ JWT یا رمزنگاری دست‌ساز اضافه نشده است. schemaهای نمونه آزمایشی و تازه‌اند؛ روش مهاجرت محصول همان بخش data است. Data Protection نمونهٔ کنسولی ephemeral و نمونهٔ HTTP دارای key ring خصوصی و پایدار است.
+
+## authorization و کنترل درخواست
+
+[درس‌های ۶۵ تا ۶۸](../lessons/06-security/README.md) از IAuthorizationService، requirement/handler و AddRateLimiter خود ASP.NET Core استفاده می‌کنند؛ package خارجی برای role، CORS یا rate limit اضافه نشده است. AddRoles، UserManager و RoleManager روی همان store PostgreSQL ثبت می‌شوند. query جست‌وجو و ExecuteUpdate از EF Core موجود استفاده می‌کنند. شمارندهٔ limiter محلی و مستقل برای هر process است؛ قابلیت توزیع‌شده ادعا نمی‌شود.
+
+## audit و بازبینی امنیت
+
+[درس ۶۹](../lessons/06-security/069-secrets/README.md) از JSON console و ILogger استاندارد و transaction همان EF Core استفاده می‌کند؛ package جدیدی اضافه نشده است. جدول audit با write محلی اتمیک است؛ console، سرویس خارجی و ذخیرهٔ غیرقابل تغییر ادعا نمی‌شوند. [درس ۷۰](../lessons/06-security/070-security-review/README.md) metadata واقعی RouteEndpoint و policy و rate limit را بدون بستهٔ تست جدید بررسی می‌کند. xUnit و integration tooling موضوع بخش بعد هستند.
+
+## ابزار تست در درس‌های ۷۱ تا ۷۴
+
+[بخش هفتم](../lessons/07-testing/README.md) xUnit v2 با نسخهٔ مرجع 2.9.3، adapter xunit.runner.visualstudio 3.1.5 و Microsoft.NET.Test.Sdk 18.0.1 دارد. نسخهٔ adapter با framework یکی نیست و شماره‌ها ادعای جدیدترین نسخه نیستند. packageها فقط در test projectها ثبت شده‌اند.
+Microsoft.AspNetCore.Mvc.Testing 10.0.13 برای WAF و TestServer و Testcontainers.PostgreSql 4.15.0 برای lifecycle PostgreSQL 18.6 معرفی می‌شوند. Npgsql 10.0.3 در adapter واقعی sample قرار دارد. source packageهای رسمی و APIها در 2026-10-18 بررسی شدند و build و اجرای CI سازگاری عملی را می‌سنجند. mocking library یا coverage collector صرفاً برای افزایش تعداد package اضافه نشده است.
+
+## HTTP و logging در درس‌های ۷۵ تا ۷۸
+
+Microsoft.Extensions.Http.Resilience نسخهٔ مرجع 10.11.0 برای pipeline استاندارد HTTP در درس ۷۵ ثبت شده است؛ نسخهٔ Extensions مستقل از patch runtime است. Serilog.Extensions.Hosting 10.0.0 در درس ۷۷، ILogger را به Serilog متصل می‌کند. JsonFormatter و sink کوچک روی TextWriter برای مشاهدهٔ stdout به‌کار می‌روند؛ package مقصد شبکه‌ای یا فایل اضافه نشده است.
+نسخه‌ها و API از Microsoft Learn، NuGet و مخزن رسمی Serilog در 2026-10-18 بررسی شده‌اند. این‌ها نسخهٔ pinشدهٔ نمونه هستند؛ ادعای آخرین نسخه یا آمادگی محصول نیستند. درس‌های ۷۶ و ۷۸ از Channel و BackgroundService و ActivitySource موجود در framework استفاده می‌کنند. همهٔ نمونه‌های جدید FrameworkReference به Microsoft.AspNetCore.App دارند و SDK/runtime 10 لازم است.
+
+## ابزار محیط اجرا در درس‌های ۷۹ تا ۸۲
+
+نمونه‌های Docker از SDK 10.0.402 و ASP.NET runtime 10.0.13 و نمونهٔ reverse proxy از Caddy official image نسخهٔ مرجع 2.11.7-alpine استفاده می‌کنند. tag نسخه با digest یکسان نیست؛ برای محیط واقعی باید ارتقا و pin کردن digest با سیاست patch بررسی شود.
+OpenTelemetry.Extensions.Hosting و OpenTelemetry.Exporter.Console هر دو 1.19.0 pin شده‌اند؛ console فقط برای مشاهدهٔ آموزشی است و collector یا backend خارجی ندارد. اطلاعات نسخه‌ها و API از منابع رسمی Microsoft، Caddy، NuGet و OpenTelemetry در 2026-10-21 بررسی شده است؛ ادعای آخرین نسخه نیست. HealthCheck و ForwardedHeaders از framework هستند و mocking یا auto-instrumentation HTTP جدید اضافه نشده است.
+
+## ابزارهای پایان عملیات، درس‌های ۸۳ تا ۸۶
+
+StackExchange.Redis نسخهٔ مرجع 2.13.17 برای adapter cache و Testcontainers.Redis 4.15.0 فقط برای تست اضافه شده‌اند. Npgsql 10.0.3 و Testcontainers.PostgreSql 4.15.0 با PostgreSQL 18.6 از بخش‌های قبلی ادامه دارند. Redis از minor tag مرجع 8.2 استفاده می‌کند؛ patch/digest آن ثابت ادعا نمی‌شود. منابع رسمی client و module و PostgreSQL و Hangfire و Quartz در 2026-10-24 بررسی شده‌اند.
+Hangfire و Quartz در جدول تصمیم ارزیابی می‌شوند و در csproj این lab نصب نشده‌اند؛ صف آموزشی، مکانیزم lease/fencing را آشکار می‌کند و framework کامل محصول نیست. load generator از Python استاندارد و BCL metrics استفاده می‌کند؛ dotnet-counters و dotnet-trace فقط در تمرین اختیاری دستی‌اند. ابزار dump/restore از همان image PostgreSQL می‌آید؛ ابزار سراسری دیتابیس کاربر لازم نیست.

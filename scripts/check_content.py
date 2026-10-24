@@ -36,3 +36,15 @@ for path in root.rglob('*.md'):
     for project in re.findall(r'samples/[a-zA-Z0-9-]+/[a-zA-Z0-9.-]+\.csproj', text):
         assert (root / project).is_file(), f'Broken project command: {path}: {project}'
 print(f'PASS: {len(catalog)} runnable sample projects match written lesson commands.')
+
+# Keep test projects discoverable without counting them as runnable sample entry projects.
+test_catalog = json.loads((root / 'tests/catalog.json').read_text(encoding='utf-8'))
+ids = [row['lesson'] for row in test_catalog]
+assert ids == sorted(set(ids)), 'Duplicate or unsorted test catalog.'
+test_projects = {p.relative_to(root).as_posix() for p in (root / 'tests').glob('*/SupportDesk.Tests.csproj')}
+assert test_projects == {row['project'] for row in test_catalog}, 'Missing or orphan test project.'
+for row in test_catalog:
+    lesson = lessons[row['lesson'] - 1]
+    assert lesson['status'] == 'written'
+    assert row['project'] in (root / lesson['path']).read_text(encoding='utf-8'), row
+print(f'PASS: {len(test_catalog)} separate test projects match written lesson commands.')

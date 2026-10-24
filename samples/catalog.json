@@ -234,5 +234,125 @@
   {
     "lesson": 60,
     "project": "samples/59-teamdesk/SupportDesk.csproj"
+  },
+  {
+    "lesson": 61,
+    "project": "samples/60-threat-model/SupportDesk.csproj"
+  },
+  {
+    "lesson": 62,
+    "project": "samples/61-identity/SupportDesk.csproj"
+  },
+  {
+    "lesson": 63,
+    "project": "samples/62-password-recovery/SupportDesk.csproj"
+  },
+  {
+    "lesson": 64,
+    "project": "samples/63-cookie-bearer/SupportDesk.csproj"
+  },
+  {
+    "lesson": 65,
+    "project": "samples/64-policies/SupportDesk.csproj"
+  },
+  {
+    "lesson": 66,
+    "project": "samples/65-resource-ownership/SupportDesk.csproj"
+  },
+  {
+    "lesson": 67,
+    "project": "samples/66-web-security/SupportDesk.csproj"
+  },
+  {
+    "lesson": 68,
+    "project": "samples/67-rate-limits/SupportDesk.csproj"
+  },
+  {
+    "lesson": 69,
+    "project": "samples/68-secrets-audit/SupportDesk.csproj"
+  },
+  {
+    "lesson": 70,
+    "project": "samples/69-security-review/SupportDesk.csproj"
+  },
+  {
+    "lesson": 71,
+    "project": "samples/70-unit-tests/SupportDesk.csproj"
+  },
+  {
+    "lesson": 72,
+    "project": "samples/71-test-design/SupportDesk.csproj"
+  },
+  {
+    "lesson": 73,
+    "project": "samples/72-http-testing/SupportDesk.csproj"
+  },
+  {
+    "lesson": 74,
+    "project": "samples/73-database-testing/SupportDesk.csproj"
+  },
+  {
+    "lesson": 75,
+    "project": "samples/74-http-resilience/SupportDesk.csproj"
+  },
+  {
+    "lesson": 76,
+    "project": "samples/75-background-work/SupportDesk.csproj"
+  },
+  {
+    "lesson": 77,
+    "project": "samples/76-structured-logging/SupportDesk.csproj"
+  },
+  {
+    "lesson": 78,
+    "project": "samples/77-debugging/SupportDesk.csproj"
+  },
+  {
+    "lesson": 79,
+    "project": "samples/78-container-lab/SupportDesk.csproj"
+  },
+  {
+    "lesson": 80,
+    "project": "samples/79-proxy-tls/SupportDesk.csproj"
+  },
+  {
+    "lesson": 81,
+    "project": "samples/80-release-artifact/SupportDesk.csproj"
+  },
+  {
+    "lesson": 82,
+    "project": "samples/81-observability/SupportDesk.csproj"
+  },
+  {
+    "lesson": 83,
+    "project": "samples/82-versioned-cache/SupportDesk.csproj"
+  },
+  {
+    "lesson": 84,
+    "project": "samples/83-durable-jobs/SupportDesk.csproj"
+  },
+  {
+    "lesson": 85,
+    "project": "samples/84-performance/SupportDesk.csproj"
+  },
+  {
+    "lesson": 86,
+    "project": "samples/85-worker-delivery/SupportDesk.csproj"
+  },
+  {
+    "lesson": 87,
+    "project": "samples/86-capstone-contract/SupportDesk.csproj"
+  },
+  {
+    "lesson": 88,
+    "project": "samples/87-servicedesk-prototype/SupportDesk.csproj"
+  },
+  {
+    "lesson": 89,
+    "project": "samples/88-servicedesk-hardening/SupportDesk.csproj"
+  },
+  {
+    "lesson": 90,
+    "project": "samples/89-servicedesk-delivery/SupportDesk.csproj"
   }
 ]

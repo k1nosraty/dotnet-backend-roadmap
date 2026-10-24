@@ -93,3 +93,61 @@
 - [ ] 059: policy پروژه و assembly و آزمایش منفی آن را اجرا و ADR با جایگزین و پیامد نوشتم.
 - [ ] 060: TeamDesk معماری را با CRUD، query، validation، restart، شناسهٔ پایدار و دفاع از تصمیم‌ها تحویل دادم.
 - [ ] تمرین مستقل پایان بخش پنجم را بدون کپی مستقیم handler انجام دادم.
+
+## آغاز امنیت
+
+- [ ] 061: دارایی‌ها، actorها و مرز اعتماد را نوشتم و header جعلی را با default deny رد کردم.
+- [ ] 062: حساب Identity را در PostgreSQL ساختم و normalization، تأیید و lockout را بررسی کردم.
+- [ ] 063: hash salted، rehash، reset token کاربر دیگر و replay و تغییر stamp را آزمودم.
+- [ ] 064: cookie و bearer و CSRF و refresh و logout و key ring در restart را بررسی کردم.
+
+## مجوز و مرزهای وب
+
+- [ ] 065: نقش و permission را با هم سنجیدم و حذف grant را با token قبلی آزمایش کردم.
+- [ ] 066: دسترسی هم‌سازمان و سازمان دیگر و تغییر owner/tenant از body را رد کردم.
+- [ ] 067: CORS را از authentication جدا و CSRF و query پارامتری و پاسخ JSON را آزمودم.
+- [ ] 068: تعداد موفق و 429 در رقابت، استقلال userها و مقاومت در برابر header جعلی را بررسی کردم.
+
+## پایان بخش ششم
+
+- [ ] 069: configuration خطرناک را بدون نشت secret رد کردم و audit اتمیک و rollback و حداقل دادهٔ log را آزمودم.
+- [ ] 070: route inventory واقعی و سناریوهای منفی را اجرا و ریسک‌های باقی‌مانده را ثبت کردم.
+- [ ] تمرین مستقل note را با مالکیت، audit و تست منفی و fault injection تحویل دادم.
+
+## آغاز تست و عیب‌یابی
+
+- [ ] 071: Fact و Theory و مرزهای Domain را اجرا و یک regression عمدی را با assertion پیدا کردم.
+- [ ] 072: invalid و missing و conflict و commit failure و cancellation را با test double مستقل سنجیدم.
+- [ ] 073: pipeline HTTP و binding و مالکیت و رقابت را با WAF و هویت فقط در test assembly آزمودم.
+- [ ] 074: fixture PostgreSQL واقعی، constraint و rollback و CAS و دوام در restart host را اجرا کردم.
+
+## پایان تست و عیب‌یابی
+
+- [ ] 075: تلاش محدود HTTP، پاسخ دائمی، timeout و لغو caller را با pipeline واقعی و transport ساختگی آزمودم.
+- [ ] 076: scope هر job، backpressure، complete و shutdown و dispose را با signal قطعی بررسی کردم.
+- [ ] 077: template ثابت، JSON قابل جست‌وجو، عدم نشت scope و حذف payload از مسیر log را آزمودم.
+- [ ] 078: خطای overflow را بازتولید کردم و breakpoint، regression و ارتباط span والد را توضیح دادم.
+- [ ] تمرین مستقل span هر job را با توقف worker و بدون اطلاعات حساس تحویل دادم.
+
+## شروع محیط واقعی و عملیات
+
+- [ ] 079: image چندمرحله‌ای را ساختم و پورت، UID غیر root، runtime بدون SDK و SIGTERM را واقعاً بررسی کردم.
+- [ ] 080: TLS با CA معتبر محلی، Host نامعتبر، header جعلی و اعتماد محدود به proxy را آزمودم.
+- [ ] 081: artifact همان commit را بدون rebuild اجرا کردم و تغییر DLL و commit اشتباه را با gate رد کردم.
+- [ ] 082: readiness را از liveness جدا کردم و span و counter محدود را از SDK OpenTelemetry گرفتم.
+
+## پایان محیط واقعی و عملیات
+
+- [ ] 083: cache hit و expiry و race نسخهٔ قدیمی و tenant و fallback و Redis واقعی را بررسی کردم.
+- [ ] 084: lease و fencing و retry/dead و اثر محلی اتمیک را در PostgreSQL واقعی آزمودم و Hangfire/Quartz را مقایسه کردم.
+- [ ] 085: صحت نتیجه، warmup، p95، error rate، CPU/allocation و محدودیت closed-loop را گزارش کردم.
+- [ ] 086: backup را در DB تازه restore کردم، job منتظر را ادامه دادم و با همان artifact قبلی rollback را تمرین کردم.
+- [ ] runbook مستقل با شرط توقف و شاهد تأیید و محدودیت schema و اثر خارجی نوشتم.
+
+## پروژهٔ نهایی و دفاع
+
+- [ ] 087: قرارداد و ماتریس actor/tenant و مثال‌های مرزی را مستقل نوشتم.
+- [ ] 088: برش اولیه را ساختم و مرز هویت آزمایشی با محصول را توضیح دادم.
+- [ ] 089: login واقعی، revocation، CAS و rollback audit را روی PostgreSQL آزمودم.
+- [ ] 090: TLS، همان artifact، restore، محدودیت عملکرد و runbook را با شاهد تحویل دادم.
+- [ ] تغییر مستقل و دفاع فنی را با rubric و بدون نشت secret انجام دادم.

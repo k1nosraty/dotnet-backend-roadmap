@@ -22,14 +22,17 @@
 15. [بخش چهارم: PostgreSQL و SQL](lessons/04-data/README.md) را با [آماده‌سازی دیتابیس](handbook/postgresql-lab.md) شروع کن.
 16. [شروع بخش پنجم: معماری و مرزها](lessons/05-architecture/README.md) را از درس ۰۴۹ ادامه بده.
 17. [تحویل معماری TeamDesk](lessons/05-architecture/060-teamdesk/README.md) و ارزیابی بخش پنجم را انجام بده.
-18. پیشرفت خودت را در [PROGRESS.md](PROGRESS.md) ثبت کن.
+18. [بخش امنیت](lessons/06-security/README.md) را از مدل تهدید درس ۰۶۱ آغاز کن.
+19. [بخش هفتم: تست و عیب‌یابی](lessons/07-testing/README.md) را با unit test از درس ۷۱ ادامه بده.
+20. [محیط اجرا و عملیات](lessons/08-production/README.md) را از Docker آغاز کن.
+21. پیشرفت خودت را در [PROGRESS.md](PROGRESS.md) ثبت کن.
 
 ## وضعیت واقعی محتوا
 
-این نسخه شامل پنج بخش اول کامل در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۶۰ درس نوشته شده، ۵۹ نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
-درس‌های آینده در نقشه وضعیت «برنامه‌ریزی‌شده» دارند و فایل آموزشی خالی برای آن‌ها ساخته نشده است.
-SDK در محیط محلی تهیهٔ این نسخه نصب نیست؛ بررسی ساختاری محلی انجام شده است.
+این نسخه شامل هر نه بخش کامل در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۹۰ درس نوشته شده، ۸۹ نمونهٔ مستقل C# و ۱۶ پروژهٔ مجزای تست آماده شده است.
+[پروژهٔ نهایی ServiceDesk](lessons/09-capstone/README.md) قرارداد، اجرای مستقل، تست، TLS و بازیابی دارد.
 ساخت و بررسی رفتار نمونه‌ها در workflow «Check course» روی Windows و Linux در GitHub اجرا می‌شود؛ نتیجهٔ هر commit را در تب Actions ببین.
+شانزده پروژهٔ مجزای xUnit در پوشهٔ tests وجود دارد؛ در شمار نمونه‌های اجرایی بالا شمرده نشده‌اند.
 فرمان ساخت، سناریوهای بررسی و اسکریپت smoke در بسته وجود دارند.
 
 ```powershell
@@ -44,9 +47,24 @@ python scripts/architecture_final_smoke.py
 # برای نمونه‌های PostgreSQL پس از آماده‌سازی server و SUPPORTDESK_PG:
 python scripts/postgres_smoke.py
 python scripts/ef_smoke.py
+python scripts/security_smoke.py
+python scripts/security_next_smoke.py
+python scripts/security_final_smoke.py
+# تست‌های xUnit و WAF؛ برای اجرای PostgreSQL کانتینری، --with-docker اضافه کن:
+python scripts/testing_smoke.py
+python scripts/testing_next_smoke.py
+python scripts/production_smoke.py
+# Docker واقعی برای image و TLS:
+python scripts/production_docker_smoke.py
+python scripts/operations_smoke.py
+python scripts/capstone_smoke.py
+# Docker واقعی برای تست نهایی و تحویل TLS و restore:
+python scripts/capstone_smoke.py --docker-only
+python scripts/capstone_delivery.py
+# تست واقعی Redis/PostgreSQL و بازیابی: --with-docker اضافه کن.
 ```
 
-این ده اسکریپت به Python 3 نیاز دارند؛ اسکریپت‌های smoke به SDK 10 هم نیاز دارند. postgres_smoke به PostgreSQL واقعی و متغیر SUPPORTDESK_PG نیز نیاز دارد. ef_smoke برای بخش API علاوه بر این‌ها psql می‌خواهد؛ متغیرهای اتصال تست در README نمونهٔ تحویل توضیح داده شده‌اند. اجرای دستی درس‌های دیتابیس نیز PostgreSQL و اتصال تنظیم‌شده می‌خواهد.
+اسکریپت‌های بررسی به Python 3 نیاز دارند؛ اسکریپت‌های smoke به SDK 10 هم نیاز دارند. postgres_smoke به PostgreSQL واقعی و متغیر SUPPORTDESK_PG نیز نیاز دارد. ef_smoke برای بخش API علاوه بر این‌ها psql می‌خواهد؛ متغیرهای اتصال تست در README نمونهٔ تحویل توضیح داده شده‌اند. security_smoke و security_next_smoke و security_final_smoke در حالت کامل PostgreSQL و psql و متغیرهای اتصال تست مطابق فهرست بخش امنیت می‌خواهند. اجرای دستی درس‌های دیتابیس نیز PostgreSQL و اتصال تنظیم‌شده می‌خواهد.
 
 ## مبنای فنی
 
