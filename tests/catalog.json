@@ -50,5 +50,17 @@
   {
     "lesson": 85,
     "project": "tests/085-performance/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 87,
+    "project": "tests/087-contract/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 88,
+    "project": "tests/088-prototype/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 89,
+    "project": "tests/089-capstone/SupportDesk.Tests.csproj"
   }
 ]

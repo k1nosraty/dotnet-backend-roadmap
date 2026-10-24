@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:18.6
+    environment:
+      POSTGRES_USER: course
+      POSTGRES_DB: desk
+      POSTGRES_PASSWORD: ${CAPSTONE_DB_PASSWORD:?Set a private lab password}
+    networks: [backend]
+    volumes:
+      - database:/var/lib/postgresql
+  app:
+    build:
+      context: .
+      args:
+        COURSE_COMMIT: ${CAPSTONE_COMMIT:-local}
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Desk__Connection: Host=db;Database=${CAPSTONE_DATABASE:-desk};Username=course;Password=${CAPSTONE_DB_PASSWORD};Search Path=${CAPSTONE_SCHEMA:?Use a fresh capstone_32hex schema};Timeout=3;Command Timeout=5
+      Desk__Keys: /var/lib/servicedesk/keys
+      Desk__ProxyIp: 172.31.90.10
+    networks: [backend]
+    volumes:
+      - keys:/var/lib/servicedesk/keys
+    depends_on: [db]
+  proxy:
+    image: caddy:2.11.7-alpine
+    ports:
+      - "127.0.0.1:${CAPSTONE_TLS_PORT:-8443}:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - certificates:/data
+      - proxy-config:/config
+    networks:
+      backend:
+        ipv4_address: 172.31.90.10
+      edge: {}
+    depends_on: [app]
+networks:
+  edge: {}
+  backend:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.31.90.0/24
+volumes:
+  database:
+  keys:
+  certificates:
+  proxy-config:

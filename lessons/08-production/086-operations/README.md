@@ -124,3 +124,5 @@ python scripts/operations_smoke.py --with-docker
 
 [قبلی](../085-performance/README.md) · [فهرست بخش](../README.md) · [پروژهٔ نهایی در نقشه](../../../ROADMAP.md)
 درس‌های ۸۷ تا ۹۰ هنوز برنامه‌ریزی‌شده‌اند.
+
+[ادامه: درس ۸۷ و پروژهٔ نهایی](../../09-capstone/087-requirements/README.md)

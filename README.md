@@ -29,10 +29,10 @@
 
 ## وضعیت واقعی محتوا
 
-این نسخه شامل هشت بخش اول کامل در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۸۶ درس نوشته شده، ۸۵ نمونهٔ مستقل C# آماده شده و برنامهٔ هر ۹۰ درس مشخص است.
-درس‌های آینده در نقشه وضعیت «برنامه‌ریزی‌شده» دارند و فایل آموزشی خالی برای آن‌ها ساخته نشده است.
+این نسخه شامل هر نه بخش کامل در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۹۰ درس نوشته شده، ۸۹ نمونهٔ مستقل C# و ۱۶ پروژهٔ مجزای تست آماده شده است.
+[پروژهٔ نهایی ServiceDesk](lessons/09-capstone/README.md) قرارداد، اجرای مستقل، تست، TLS و بازیابی دارد.
 ساخت و بررسی رفتار نمونه‌ها در workflow «Check course» روی Windows و Linux در GitHub اجرا می‌شود؛ نتیجهٔ هر commit را در تب Actions ببین.
-سیزده پروژهٔ مجزای xUnit در پوشهٔ tests وجود دارد؛ در شمار نمونه‌های اجرایی بالا شمرده نشده‌اند.
+شانزده پروژهٔ مجزای xUnit در پوشهٔ tests وجود دارد؛ در شمار نمونه‌های اجرایی بالا شمرده نشده‌اند.
 فرمان ساخت، سناریوهای بررسی و اسکریپت smoke در بسته وجود دارند.
 
 ```powershell
@@ -57,6 +57,10 @@ python scripts/production_smoke.py
 # Docker واقعی برای image و TLS:
 python scripts/production_docker_smoke.py
 python scripts/operations_smoke.py
+python scripts/capstone_smoke.py
+# Docker واقعی برای تست نهایی و تحویل TLS و restore:
+python scripts/capstone_smoke.py --docker-only
+python scripts/capstone_delivery.py
 # تست واقعی Redis/PostgreSQL و بازیابی: --with-docker اضافه کن.
 ```
 

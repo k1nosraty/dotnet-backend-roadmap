@@ -338,5 +338,21 @@
   {
     "lesson": 86,
     "project": "samples/85-worker-delivery/SupportDesk.csproj"
+  },
+  {
+    "lesson": 87,
+    "project": "samples/86-capstone-contract/SupportDesk.csproj"
+  },
+  {
+    "lesson": 88,
+    "project": "samples/87-servicedesk-prototype/SupportDesk.csproj"
+  },
+  {
+    "lesson": 89,
+    "project": "samples/88-servicedesk-hardening/SupportDesk.csproj"
+  },
+  {
+    "lesson": 90,
+    "project": "samples/89-servicedesk-delivery/SupportDesk.csproj"
   }
 ]

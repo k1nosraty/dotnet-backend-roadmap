@@ -519,24 +519,24 @@
     "id": 87,
     "title": "تحلیل ServiceDesk و معیار پذیرش",
     "path": "lessons/09-capstone/087-requirements/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 88,
     "title": "پیاده‌سازی مستقل و review",
     "path": "lessons/09-capstone/088-implementation/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 89,
     "title": "تست و امنیت و عملکرد",
     "path": "lessons/09-capstone/089-hardening/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 90,
     "title": "استقرار و مستندات و دفاع فنی",
     "path": "lessons/09-capstone/090-delivery/README.md",
-    "status": "planned"
+    "status": "written"
   }
 ]
