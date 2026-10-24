@@ -35,4 +35,4 @@ TLS این بخش با CA محلی و trust محدود به درخواست تس�
 
 [بخش هفتم](../07-testing/README.md) · [نقشهٔ دوره](../../ROADMAP.md)
 
-ادامهٔ این بخش: operations_smoke در حالت عادی ۱۴ تست cache/قرارداد و load محدود را اجرا و suite دیتابیس را build می‌کند. حالت Docker هشت تست Redis/PostgreSQL و rehearsal بازیابی و rollback worker را اجرا می‌کند. job مستقل Real Redis, job leases and recovery در CI اجباری است و artifact-gate به موفقیت آن هم وابسته است. [محیط دستی یک‌بارمصرف](../../handbook/operations-lab.md) برای اجراهای فردی آماده است.
+ادامهٔ این بخش: operations_smoke در حالت عادی ۱۵ تست cache/قرارداد و load محدود را اجرا و suite دیتابیس را build می‌کند. حالت Docker هشت تست Redis/PostgreSQL و rehearsal بازیابی و rollback worker را اجرا می‌کند. job مستقل Real Redis, job leases and recovery در CI اجباری است و artifact-gate به موفقیت آن هم وابسته است. [محیط دستی یک‌بارمصرف](../../handbook/operations-lab.md) برای اجراهای فردی آماده است.

@@ -34,7 +34,7 @@ def test(suite,folder,minimum,filter=None):
 with tempfile.TemporaryDirectory(prefix='operations-') as directory:
     folder=Path(directory)
     if sys.argv[1:]!=['--docker-only']:
-        test('083-cache',folder,6,'Category!=Docker')
+        test('083-cache',folder,7,'Category!=Docker')
         test('085-performance',folder,8)
         run(['dotnet','build',str(ROOT/'tests/084-jobs/SupportDesk.Tests.csproj'),'--nologo','-m:1'])
         run(['dotnet','build',str(ROOT/'samples/85-worker-delivery/SupportDesk.csproj'),'--nologo','-m:1'])

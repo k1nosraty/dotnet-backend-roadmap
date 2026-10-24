@@ -41,10 +41,10 @@ public sealed class CachedSummary(TicketSource source, ICache cache, Func<Ticket
                 catch (JsonException) { } // Broken cache is a miss; authoritative state is untouched.
             }
         }
-        catch (RedisException) { } // A cache outage may reduce speed, never replace source truth.
+        catch (Exception ex) when (ex is RedisConnectionException or RedisTimeoutException) { } // A cache outage may reduce speed, never replace source truth.
         var summary = await project(ticket, ct);
         try { await cache.PutAsync(Key(ticket), JsonSerializer.Serialize(summary), TimeSpan.FromSeconds(30), ct); }
-        catch (RedisException) { }
+        catch (Exception ex) when (ex is RedisConnectionException or RedisTimeoutException) { }
         return summary;
     }
     public async Task UpdateAsync(Guid tenant, Guid id, string title, CancellationToken ct = default)
@@ -53,7 +53,7 @@ public sealed class CachedSummary(TicketSource source, ICache cache, Func<Ticket
         var previous = source.Read(tenant,id);
         source.Write(tenant,id,title); // Commit the authoritative change BEFORE best-effort invalidation.
         if (previous is not null)
-            try { await cache.RemoveAsync(Key(previous), ct); } catch (RedisException) { }
+            try { await cache.RemoveAsync(Key(previous), ct); } catch (Exception ex) when (ex is RedisConnectionException or RedisTimeoutException) { }
     }
 }
 public sealed class MemoryCache(TimeProvider clock) : ICache
@@ -70,7 +70,7 @@ public sealed class MemoryCache(TimeProvider clock) : ICache
         ct.ThrowIfCancellationRequested();
         lock(gate)
         {
-            // shortcut: bounded FIFO for this console lab; use a managed cache eviction policy in a server.
+            // shortcut: bounded eviction for this console lab; use a managed cache eviction policy in a server.
             if(items.Count>=128 && !items.ContainsKey(key)) items.Remove(items.Keys.First());
             items[key]=(value,clock.GetUtcNow()+ttl);
         }

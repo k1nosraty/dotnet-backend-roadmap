@@ -57,7 +57,7 @@ ReadAsync اول snapshot معتبر را از source می‌گیرد، سپس �
 UpdateAsync اول source را تغییر می‌دهد و بعد حذف کلید قبلی را به‌صورت best-effort انجام می‌دهد.
 اگر حذف شکست بخورد، کلید قدیمی به‌دلیل version از خواندن تازه کنار می‌رود و TTL عمر باقیماندهٔ آن را محدود می‌کند.
 نسخه باید در منبع واقعی پایدار و غیرقابل استفادهٔ مجدد باشد؛ بعد از restore یا تغییر timeline، namespace/epoch cache را عوض کن.
-حافظهٔ نمونه برای آموزش است و FIFO ساده دارد؛ روی سرور از سیاست eviction مدیریت‌شده استفاده کن.
+حافظهٔ نمونه برای آموزش است و حذف سادهٔ entry دارد؛ روی سرور از سیاست eviction مدیریت‌شده استفاده کن.
 Redis هم نیاز به بودجهٔ حافظه، maxmemory و سیاست eviction دارد؛ TTL به‌تنهایی کل ظرفیت را تضمین نمی‌کند.
 
 ## ۵. Redis واقعی
@@ -76,7 +76,7 @@ WaitAsync لغوِ انتظار caller است؛ تضمین نمی‌کند فر�
 
 ## ۶. شکست cache را با شکست source قاطی نکن
 
-RedisException در خواندن/نوشتن cache باعث fallback می‌شود؛ خطای projection یا source پنهان نمی‌شود.
+RedisConnectionException و RedisTimeoutException در خواندن/نوشتن cache باعث fallback می‌شوند؛ خطای command/server ناشی از قرارداد نادرست را مخفی نمی‌کنیم؛ خطای projection یا source پنهان نمی‌شود.
 JSON خراب cache یک miss است. tenant دیگر کلید جدا دارد؛ شناسهٔ تیکت به‌تنهایی برای key کافی نیست.
 tenant در این کنسول ثابت و مصنوعی است؛ در API واقعی باید از هویت معتبر بیاید و ownership پیش از پاسخ cache اعمال شود.
 این نمونه single-flight، stampede protection، توزیع بار replica یا تضمین cache مشترک در چند region ندارد.
