@@ -1,176 +1,309 @@
-# درس ۰۱۰ — LINQ و زمان اجرای query
+# درس ۰۱۰ — انتخاب و تبدیل داده‌ها با LINQ
 
 [قبلی](../009-exceptions/README.md) · [خانه](../../../README.md) · [بعدی](../011-files-json/README.md)
 
-## خروجی درس
+## اول بدان قرار است چه کاری انجام بدهیم
 
-درخواست‌های باز را فیلتر، مرتب و به متن گزارش تبدیل می‌کنی.
-تفاوت query تعریف‌شده، enumeration و snapshot را با تغییر داده می‌بینی.
-برای queryهایی که دوباره اجرا می‌شوند، هزینه و رفتار را توضیح می‌دهی.
+فرض کن پنج عدد یا چند Ticket در یک List داری و فقط بعضی از آن‌ها را می‌خواهی.
+در این درس ابتدا همین کار را با foreach انجام می‌دهیم، بعد شکل LINQ آن را می‌نویسیم.
+هدف اول فهمیدن سه کار است: **انتخاب کردن با Where، تبدیل کردن با Select، مرتب کردن با OrderBy**.
+بعد از این سه مورد، زمان اجرای query و ToList را با دو مثال مقایسه می‌کنیم.
 
-## پیش‌نیاز
+پیش‌نیاز: List، foreach، if و propertyهای Ticket. این درس روی داده‌های حافظه است؛ هنوز دیتابیس نداریم.
+قسمت‌های ۱ تا ۷ مسیر اصلی‌اند؛ مطالب تکمیلی انتهای درس برای مرور دوم هستند.
 
-Ticket، List و foreach و nullable.
-این درس LINQ to Objects است؛ هنوز query دیتابیس یا EF Core نداریم.
+## پیش از شروع مثال‌ها
 
-## ۱. مسئله
+از ریشهٔ repo یک پروژهٔ تمرین بساز:
 
-می‌خواهیم درخواست‌های Open را به ترتیب شناسه ببینیم.
-می‌توان با foreach و if این کار را کرد، اما ترکیب filter و sort و projection با LINQ خواناتر می‌شود.
-LINQ خودکار سریع‌ترین راه نیست؛ رفتار query را باید بشناسیم.
-
-## ۲. lambda
-
-```csharp
-t => t.Status == TicketStatus.Open
+```powershell
+dotnet new console -o exercises/lesson10 --framework net10.0
+Set-Location exercises/lesson10
 ```
 
-t پارامتر ورودی تابع کوتاه است.
-عبارت سمت راست نتیجهٔ bool می‌دهد.
-نوع t از collection مشخص می‌شود.
-برای شروع این را مثل یک تابع بررسی وضعیت بخوان.
-این expression در Where نقش predicate دارد.
+اگر از درس ۹ داخل exercises/lesson09 هستی، ابتدا با `Set-Location ../..` به ریشه برگرد.
+اگر پروژهٔ lesson10 قبلاً ساخته شده، دوباره نساز.
+در هر مثالِ عددی، کد را **جای تمام Program.cs** بگذار و `dotnet run` بزن.
+مثال‌های عددی مستقل‌اند؛ کد آن‌ها را زیر هم نچسبان، چون متغیرهای هم‌نام را دوباره تعریف می‌کنند.
+نام‌های معمول List و LINQ در پروژهٔ console این SDK با implicit usings در دسترس‌اند.
 
-## ۳. Where
+## ۱. اول با چیزی که بلدیم: foreach و if
 
-```csharp
-IEnumerable<Ticket> openTickets = tickets.Where(t => t.Status == TicketStatus.Open);
-```
-
-Where دادهٔ منبع را حذف یا تغییر نمی‌دهد.
-یک توصیف از پیمایش فیلترشده می‌دهد.
-IEnumerable<Ticket> قرارداد امکان پیمایش است؛ الزاماً List نیست.
-نام openTickets به تنهایی معنی «نتیجه همین حالا محاسبه شده» ندارد.
-
-## ۴. enumeration
+می‌خواهیم فقط عددهای بزرگ‌تر از ۳ را چاپ کنیم.
 
 ```csharp
-foreach (Ticket ticket in openTickets)
+List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+
+foreach (int number in numbers)
 {
-    Console.WriteLine(ticket.Title);
+    if (number > 3)
+    {
+        Console.WriteLine(number);
+    }
 }
 ```
 
-با پیمایش، predicate روی عنصرها اجرا می‌شود.
-در این query، تا وقتی پیمایش انجام نشود، filter اجرا نشده است.
-این deferred execution است.
-Count() و ToList() نیز query را پیمایش می‌کنند.
-همهٔ متدهای LINQ deferred نیستند؛ نتیجهٔ عددی Count و Any باید در همان فراخوانی به دست بیاید.
+خروجی:
 
-## ۵. نمونهٔ deferred و snapshot
-
-```csharp
-IEnumerable<Ticket> deferredOpen = tickets.Where(t => t.Status == TicketStatus.Open);
-List<Ticket> snapshotOpen = deferredOpen.ToList();
-tickets.Add(new Ticket(4, "Backup issue"));
+```text
+4
+5
 ```
 
-deferredOpen بعداً دادهٔ تازهٔ منبع را نیز می‌بیند.
-snapshotOpen مجموعهٔ referenceهای انتخاب‌شده در زمان ToList را نگه داشته است.
-ToList یک کپی عمیق از Ticketها نیست.
-اگر Title یکی از شیءهای مشترک عوض شود، snapshot نیز همان شیء تغییرکرده را می‌بیند.
 
-برای snapshot مستقل از عنوان فعلی، می‌توان مقدار string عنوان‌ها را project کرد:
+foreach هر عدد را برمی‌دارد؛ if تصمیم می‌گیرد آن عدد چاپ شود یا نه.
+در پایان، numbers همچنان پنج عدد اصلی را دارد؛ چیزی از آن حذف نشده است.
+همین هدف را در قدم بعد با LINQ می‌نویسیم.
+
+## ۲. Where یعنی کدام عضوها را انتخاب کنیم؟
+
+LINQ مجموعه‌ای از روش‌ها برای کار با داده‌های قابل پیمایش است.
+برای شروع، Where را مانند همان if داخل foreach بخوان.
 
 ```csharp
-List<string> titlesAtThisMoment = deferredOpen.Select(t => t.Title).ToList();
+List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+
+var selected = numbers.Where(number => number > 3);
+
+foreach (int number in selected)
+{
+    Console.WriteLine(number);
+}
 ```
 
-این فهرست رشته‌های آن لحظه را نگه می‌دارد؛ Rename یک Ticket بعدی، خود فهرست را بازنویسی نمی‌کند.
+خروجی:
 
-## ۶. OrderBy
-
-```csharp
-IEnumerable<Ticket> ordered = deferredOpen.OrderBy(t => t.Id);
+```text
+4
+5
 ```
 
-مرتب‌سازی به دادهٔ لازم برای ترتیب کامل نیاز دارد.
-OrderBy در LINQ to Objects deferred است، اما مثل Where streaming ساده نیست.
-هنگام enumeration دادهٔ ورودی را برای sort پردازش می‌کند.
-برای صفحه‌بندی قابل اتکا باید ترتیب صریح و قابل پیش‌بینی داشته باشیم.
-اگر کلید اول یکسان است، ThenBy یک tie-breaker اضافه می‌کند.
 
-## ۷. Select
+نتیجه همان ۴ و ۵ است. Where عددها را از numbers حذف یا مقدارشان را تغییر نداده است.
+selected چیزی است که می‌توانیم با foreach پیمایش کنیم و فقط نتیجه‌های مطابق شرط را بگیریم.
+
+### علامت => را چگونه بخوانیم؟
+
+در `number => number > 3`:
+
+| قسمت | معنی |
+| --- | --- |
+| number سمت چپ | نام موقتِ عضوی که داریم بررسی می‌کنیم |
+| => | ورودی سمت چپ را بده، نتیجهٔ سمت راست را حساب کن |
+| number > 3 | شرطی که true یا false می‌دهد |
+
+این یک تابع کوتاه، یا lambda، است: «یک عدد بگیر و بگو از ۳ بزرگ‌تر هست یا نه.»
+number اسم خاص و اجباری نیست؛ `x => x > 3` همان معنی را دارد.
+نام واضح‌تر را برای یادگیری انتخاب کرده‌ایم.
+
+`var` هم یعنی compiler نوع متغیر را از سمت راست مشخص کند؛ متغیر بی‌نوع یا dynamic نیست.
+نوع selected در این مثال IEnumerable<int> است: یعنی قابل پیمایشِ عددها؛ لازم نیست خود آن List باشد.
+
+### یک تغییر کوچک
+
+شرط را به `number < 3` تبدیل کن. قبل از اجرا حدس بزن: این بار ۱ و ۲ چاپ می‌شوند.
+سپس شرط را به `number % 2 == 0` تغییر بده تا فقط عددهای زوج را انتخاب کنی.
+
+## ۳. Select یعنی هر عضو را به چه چیزی تبدیل کنیم؟
+
+حالا به جای انتخاب بعضی عددها، می‌خواهیم از **هر عدد یک نتیجهٔ دوبرابر** بسازیم.
 
 ```csharp
-IEnumerable<string> lines = ordered.Select(t => $"#{t.Id}: {t.Title}");
+List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+
+var doubled = numbers.Select(number => number * 2);
+
+foreach (int number in doubled)
+{
+    Console.WriteLine(number);
+}
 ```
 
-Select شکل نتیجه را عوض می‌کند: اینجا Ticket به string تبدیل می‌شود.
-Select filter نیست؛ هر عنصر ورودی یک نتیجه در این مثال دارد.
-در آینده برای response DTO هم projection به کار می‌رود.
-از Select برای تغییر Status همراه side effect استفاده نکن؛ عملیات تغییر را صریح اجرا کن.
+خروجی:
 
-## ۸. ترکیب pipeline
+```text
+2
+4
+6
+8
+10
+```
+
+
+این بار برای هرکدام از پنج عدد، یک مقدار خروجی داریم. numbers همچنان ۱ تا ۵ است.
+Select در این مثال مقدار نتیجه را حساب می‌کند؛ برای عوض کردن عضوهای فهرست اصلی استفاده نشده است.
+
+| متد | سؤال | نمونه |
+| --- | --- | --- |
+| Where | کدام عضوها بمانند؟ | عددهای بزرگ‌تر از ۳ |
+| Select | از هر عضو چه نتیجه‌ای بسازیم؟ | دوبرابر هر عدد |
+
+فعلاً این دو سؤال را از هم جدا نگه دار؛ کوتاه بودن syntax به معنی یکی بودن کارشان نیست.
+
+## ۴. OrderBy یعنی نتیجه با چه ترتیبی بیاید؟
+
+این بار فهرست اولیه مرتب نیست. اول انتخاب می‌کنیم، سپس نتیجه را مرتب می‌کنیم.
 
 ```csharp
+List<int> numbers = new List<int> { 5, 1, 4, 2, 3 };
+
+var selected = numbers
+    .Where(number => number > 3)
+    .OrderBy(number => number);
+
+foreach (int number in selected)
+{
+    Console.WriteLine(number);
+}
+```
+
+خروجی:
+
+```text
+4
+5
+```
+
+
+بدون OrderBy، ترتیب نتیجهٔ Where در این مثال ۵ و ۴ بود؛ OrderBy آن را ۴ و ۵ کرده است.
+عبارت `number => number` یعنی برای مرتب‌سازی، خود مقدار عدد را معیار قرار بده.
+نوشتن متدها در چند خط فقط برای خوانایی است؛ نقطهٔ هر خط، مرحلهٔ بعدی را به نتیجهٔ قبلی وصل می‌کند.
+
+حالا می‌توانی `.Select(number => number * 10)` را بعد از OrderBy اضافه کنی؛ نتیجه باید ۴۰ و ۵۰ شود.
+این تمرین را بعد از اجرای مثال اصلی انجام بده، نه قبل از فهمیدن مراحل آن.
+
+## ۵. نکتهٔ مهم: انتخاب چه زمانی اجرا می‌شود؟
+
+در مثال‌های قبلی foreach نتیجه را می‌خواند.
+در Where، تعریف کردن query معمولاً همان لحظه یک فهرست آماده از جواب‌ها نمی‌سازد.
+مثال زیر را کامل جای Program.cs بگذار:
+
+```csharp
+List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+
+var selected = numbers.Where(number => number > 3);
+
+numbers.Add(6);
+
+Console.WriteLine(selected.Count());
+```
+
+خروجی:
+
+```text
+3
+```
+
+
+چرا ۳؟ چون selected هنگام Count() روی دادهٔ آن زمان پیمایش شده است.
+در آن زمان numbers شامل ۶ هم هست، پس عضوهای بزرگ‌تر از ۳ عبارت‌اند از ۴، ۵ و ۶.
+فراخوانی Where را مثل نوشتن دستور انتخاب بخوان؛ foreach یا Count() آن دستور را روی منبع اجرا می‌کند.
+به این عقب افتادن اجرا، **deferred execution** می‌گویند.
+
+## ۶. ToList یعنی نتیجهٔ همین لحظه را به فهرست تبدیل کن
+
+این بار فقط یک متد به تعریف selected اضافه می‌کنیم:
+
+```csharp
+List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+
+var selected = numbers.Where(number => number > 3).ToList();
+
+numbers.Add(6);
+
+Console.WriteLine(selected.Count);
+```
+
+خروجی:
+
+```text
+2
+```
+
+
+ToList قبل از Add اجرا شده است. در آن لحظه فقط ۴ و ۵ انتخاب شده بودند و در فهرست تازه قرار گرفتند.
+اضافه شدن ۶ به numbers، آن فهرست تازه را بزرگ نمی‌کند.
+
+| ترتیب اتفاق‌ها | بدون ToList | با ToList قبل از Add |
+| --- | --- | --- |
+| تعریف انتخاب | دستور انتخاب را نگه می‌داریم | انتخاب اجرا و فهرست ساخته می‌شود |
+| اضافه کردن ۶ به numbers | منبع تغییر می‌کند | فقط منبع تغییر می‌کند |
+| خواندن تعداد نتیجه | ۳ | ۲ |
+
+در مثال اول `Count()` متد است و نتیجهٔ query را می‌شمارد.
+در مثال دوم selected یک List است و `Count` بدون پرانتز، تعداد عضوهای همان فهرست آماده را می‌دهد.
+ToList را به همهٔ queryها اضافه نکن؛ وقتی نتیجهٔ آمادهٔ آن لحظه را لازم داری از آن استفاده کن.
+
+### خودت پیش‌بینی کن
+
+اگر Add(6) را **قبل از ToList** ببری، تعداد فهرست تازه هم ۳ می‌شود.
+عدد خروجی را حفظ نکن؛ جای ToList و Add را دنبال کن.
+
+## ۷. حالا همین مراحل را روی Ticket انجام بدهیم
+
+برای این مثال، کلاس Ticket را هم به پروژهٔ تمرین اضافه کن؛ از داخل exercises/lesson10:
+
+```powershell
+Copy-Item ../../samples/09-ticket-linq/Domain/Ticket.cs ./Ticket.cs
+```
+
+سپس کد زیر را جای Program.cs بگذار و اجرا کن. کلاس استفاده‌شده همان [Ticket.cs](../../../samples/09-ticket-linq/Domain/Ticket.cs) نمونه است؛ Program.cs اصلی repo را لازم نیست تغییر بدهی.
+
+```csharp
+using SupportDesk.Domain;
+
+List<Ticket> tickets = new List<Ticket>
+{
+    new Ticket(3, "Email issue"),
+    new Ticket(1, "Network issue"),
+    new Ticket(2, "Printer issue")
+};
+
+tickets[1].Start();
+tickets[1].Close();
+
 var lines = tickets
-    .Where(t => t.Status == TicketStatus.Open)
-    .OrderBy(t => t.Id)
-    .Select(t => $"#{t.Id}: {t.Title}");
-```
+    .Where(ticket => ticket.Status == TicketStatus.Open)
+    .OrderBy(ticket => ticket.Id)
+    .Select(ticket => "#" + ticket.Id + ": " + ticket.Title);
 
-این قطعه جایگزین تعریف‌های میانی است؛ هم‌زمان با مثال قبلی در همان scope اعلان lines را تکرار نکن.
-var نوع را از expression می‌گیرد.
-هر مرحله وظیفهٔ مشخصی دارد.
-خوانایی chain طولانی را با نام‌گذاری مراحل یا متدهای کوچک حفظ کن.
-
-## ۹. FirstOrDefault و Single
-
-```csharp
-Ticket? ticket = tickets.FirstOrDefault(t => t.Id == 99);
-```
-
-برای نوع مرجع، نبود نتیجه اینجا null است.
-FirstOrDefault در اولین match می‌تواند متوقف شود.
-اگر قرارداد می‌گوید حداکثر یک match مجاز است، SingleOrDefault تکراری بودن را هم بررسی می‌کند.
-SingleOrDefault با چند match exception می‌دهد.
-انتخاب آن جای enforce کردن یکتایی هنگام ثبت را نمی‌گیرد.
-
-## ۱۰. Any و Count
-
-```csharp
-bool hasOpenTickets = tickets.Any(t => t.Status == TicketStatus.Open);
-int openCount = tickets.Count(t => t.Status == TicketStatus.Open);
-```
-
-برای سؤال «آیا وجود دارد؟»، Any معنی واضحی دارد و می‌تواند زودتر متوقف شود.
-Count با predicate باید تعداد همهٔ matchها را به دست بیاورد.
-Count property یک List با Count(predicate) یکی نیست.
-فراخوانی Count و سپس foreach روی یک query deferred ممکن است دو پیمایش ایجاد کند.
-اگر یک snapshot لازم است، یک بار ToList را آگاهانه انتخاب کن.
-
-## ۱۱. GroupBy
-
-```csharp
-foreach (var group in tickets.GroupBy(t => t.Status).OrderBy(g => g.Key))
+foreach (string line in lines)
 {
-    Console.WriteLine($"{group.Key}: {group.Count()}");
+    Console.WriteLine(line);
 }
 ```
 
-group.Key وضعیت مشترک است و خود گروه قابل پیمایش است.
-GroupBy فقط وضعیت‌هایی را می‌دهد که در داده وجود دارند.
-اگر Closed صفر است، گروه Closed خودکار ساخته نمی‌شود.
-برای گزارش شامل صفرها باید روی همهٔ مقدارهای enum پیمایش کنیم و تعداد هرکدام را بگیریم.
-همین تفاوت در نمونهٔ نهایی بخش اول دیده می‌شود.
+خروجی:
 
-## ۱۲. تغییر collection حین پیمایش
+```text
+#2: Printer issue
+#3: Email issue
+```
 
-Where source را از خطر mutation مصون نمی‌کند.
-اگر هنگام foreach روی query مبتنی بر List، ساختار منبع را تغییر بدهی، پیمایش می‌تواند خطا بدهد.
-برای برنامهٔ concurrent، snapshot و synchronization باید آگاهانه طراحی شوند.
-نمونهٔ این درس تک‌نخی است و تغییر قبل از پیمایش انجام می‌شود.
 
-## ۱۳. اجرا
+`tickets[1]` یعنی دومین عضو فهرست، نه Ticket با Id برابر ۱ به‌عنوان یک قاعدهٔ عمومی.
+در این فهرست، دومین عضو اتفاقاً Id برابر ۱ دارد و با Start و Close بسته شده است.
+دو Ticket دیگر هنوز Open هستند.
 
-[Program](../../../samples/09-ticket-linq/Program.cs)
+سه مرحلهٔ query را بلند بخوان:
+
+۱. Where: فقط Ticketهای Open را انتخاب کن.
+۲. OrderBy: آن‌ها را با Id مرتب کن.
+۳. Select: از هرکدام یک خط متن برای چاپ بساز.
+
+ticket سمت چپ lambda این بار یک عدد نیست؛ یک شیء Ticket است و Id و Title و Status دارد.
+منطق lambda همان است؛ نوع ورودی از فهرست مشخص می‌شود.
+
+## ۸. اجرای نمونهٔ کامل repo
+
+اگر داخل پوشهٔ تمرین هستی، با `Set-Location ../..` به ریشه برگرد.
+کد نمونه: [Program.cs](../../../samples/09-ticket-linq/Program.cs).
 
 ```powershell
 dotnet run --project samples/09-ticket-linq/SupportDesk.csproj
 ```
 
-خروجی نمونه:
+خروجی:
 
 ```text
 Deferred count: 3
@@ -183,58 +316,88 @@ Open: 3
 Closed: 1
 ```
 
-عددها را حفظ نکن؛ زمان ToList و Add را دنبال کن.
-اگر Add را قبل از ToList ببری، Snapshot count باید ۳ شود.
+نمونهٔ کامل پس از گرفتن snapshot، Ticket شمارهٔ ۴ را اضافه می‌کند؛ به همین دلیل تعدادها ۳ و ۲ هستند.
+سه خط میانی همان Where و OrderBy و Select هستند.
+جست‌وجوی Id برابر ۹۹ چیزی پیدا نمی‌کند و دو خط آخر تعداد Ticketهای هر وضعیت را گزارش می‌کنند.
+برای فهمیدن Where لازم نیست همین حالا همهٔ گزارش‌های انتهایی را بازنویسی کنی؛ توضیحشان در بخش مرور دوم است.
 
-## ۱۴. IEnumerable و IQueryable
+## تمرین‌های کوچک، به همین ترتیب
 
-IEnumerable در این مثال روی objectهای در حافظه اجرا می‌شود.
-IQueryable می‌تواند expression را برای provider مانند EF Core توصیف کند.
-همان syntax الزاماً همان رفتار، SQL یا هزینه را ندارد.
-ToList زودهنگام روی دیتابیس می‌تواند حجم زیادی داده را به حافظه بیاورد.
-آموزش ترجمه و محدودیت query دیتابیس در فصل data access انجام می‌شود.
+۱. از عددهای ۱ تا ۵ فقط زوج‌ها را با Where چاپ کن.
+۲. از هر عدد یک متن مثل `Number: 1` با Select بساز.
+۳. عددهای نامرتب را فیلتر و مرتب کن و خروجی را قبل از اجرا بنویس.
+۴. جای Add و ToList را عوض کن و تغییر تعداد را توضیح بده.
+۵. در نمونهٔ Ticket، فقط Ticketهای Closed را انتخاب کن و ببین چه چیزی چاپ می‌شود.
 
-## تمرین مستقل
+<details>
+<summary>مرور دوم: ToList از objectها کپی عمیق نمی‌سازد</summary>
 
-گزارش را شامل همهٔ وضعیت‌ها، حتی تعداد صفر، کن.
-درخواست‌های باز را به ترتیب عنوان و سپس Id نمایش بده.
-چون عنوان فارسی و انگلیسی می‌تواند باشد، قرارداد مقایسهٔ متن را در README توضیح بده.
-برای گزارش این تمرین می‌توانی StringComparer.Ordinal را انتخاب کنی؛ آن را ترتیب زبانی فارسی معرفی نکن.
+در مثال عددی، فهرست تازه تعداد مستقل دارد. اما وقتی عضوها شیء Ticket هستند، ToList فهرست تازه‌ای از reference همان شیءها می‌سازد.
+این مثال به کلاس Ticket نمونه نیاز دارد:
 
-## تمرین صفحه‌بندی
+```csharp
+using SupportDesk.Domain;
 
-با OrderBy، Skip و Take پنج درخواست از صفحهٔ دوم نمایش بده.
-صفحه از ۱ شروع می‌شود و pageSize مثبت است.
-ورودی page صفر یا منفی باید پیش از query رد شود.
-برای محاسبهٔ offset روی int بزرگ مراقب overflow باش؛ در این تمرین page را بین ۱ و ۱۰۰۰ محدود کن.
+List<Ticket> tickets = new List<Ticket>
+{
+    new Ticket(1, "Network issue")
+};
 
-## سناریوهای پذیرش
+var copiedList = tickets.ToList();
+var savedTitles = tickets.Select(ticket => ticket.Title).ToList();
 
-| حالت | انتظار |
-| --- | --- |
-| هیچ درخواست باز | لیست خالی؛ گزارش Open صفر |
-| شناسهٔ ناموجود | پیام ناموجود |
-| دو عنوان یکسان | ترتیب دوم بر اساس Id |
-| Add پس از ساخت query | query deferred دادهٔ تازه را ببیند |
-| Add پس از ToList | تعداد snapshot ثابت بماند |
-| Rename شیء مشترک | snapshot referenceها عنوان تازه را ببیند |
+tickets[0].Rename("Renamed issue");
 
-## سرنخ
+Console.WriteLine(copiedList[0].Title);
+Console.WriteLine(savedTitles[0]);
+```
 
-برای صفرهای گزارش، Enum.GetValues<TicketStatus>() را بررسی کن.
-برای snapshot عمیق، باید شکل دادهٔ مستقل تعریف کنی؛ ToList به تنهایی کافی نیست.
-predicate را بدون تغییر دادن مدل نگه دار.
+خروجی:
 
-## معیار عبور
+```text
+Renamed issue
+Network issue
+```
 
-- [ ] Where و Select را یکی نمی‌دانم.
-- [ ] زمان اجرای query را نشان می‌دهم.
-- [ ] ToList را کپی عمیق نمی‌دانم.
-- [ ] گزارش شامل صفرهاست.
-- [ ] ترتیب صفحه‌بندی صریح است.
-- [ ] query در حافظه و query دیتابیس را یکسان فرض نمی‌کنم.
 
-## منابع رسمی
+copiedList و tickets دو فهرست‌اند، اما عضو اولشان همان Ticket است؛ Rename از هر دو دیده می‌شود.
+savedTitles مقدار رشته‌های عنوان را پیش از Rename گرفته است؛ تغییر property عنوان Ticket، آن فهرست رشته‌ها را بازنویسی نمی‌کند.
+پس ثابت ماندن تعداد snapshot را با مستقل بودن همهٔ objectهای داخل آن یکی ندان.
+
+</details>
+
+<details>
+<summary>مرور دوم: جست‌وجو، شمارش، گروه‌بندی و محدودیت‌ها</summary>
+
+- `FirstOrDefault(ticket => ticket.Id == 99)` اولین مورد مطابق شرط را می‌دهد. برای Ticket که نوع مرجع است، اگر پیدا نشود نتیجه null است؛ پیش از استفاده بررسی‌اش کن.
+- `SingleOrDefault` علاوه بر جست‌وجو، انتظار حداکثر یک match دارد؛ با چند match خطا می‌دهد. این انتخاب جای جلوگیری از ثبت شناسهٔ تکراری را نمی‌گیرد.
+- `Any` می‌پرسد «آیا حداقل یکی هست؟» و می‌تواند زودتر متوقف شود. `Count` با شرط باید تعداد همهٔ موارد مطابق را به دست بیاورد. همهٔ LINQها deferred نیستند؛ نتیجهٔ عددی Count در همان فراخوانی محاسبه می‌شود.
+- `GroupBy(ticket => ticket.Status)` Ticketهای هم‌وضعیت را دسته‌بندی می‌کند. group.Key نام وضعیت گروه است و group.Count() تعداد آن گروه را می‌دهد. وضعیت بدون عضو، گروه خودکار با تعداد صفر ندارد.
+- برای گزارش شامل صفرها، روی `Enum.GetValues<TicketStatus>()` حرکت کن و تعداد هر وضعیت را حساب کن.
+- `ThenBy` معیار مرتب‌سازی دوم است؛ مثلاً اول Title و در تساوی عنوان، Id. اگر StringComparer.Ordinal را برای متن انتخاب کردی، آن را ترتیب زبانی فارسی معرفی نکن.
+- Where معمولاً عضوها را هنگام پیمایش یکی‌یکی بررسی می‌کند؛ OrderBy برای مرتب‌سازی باید دادهٔ لازم را پردازش کند. deferred بودن الزاماً به معنی streaming ساده نیست.
+- Count() و سپس foreach روی یک query deferred ممکن است دو پیمایش ایجاد کنند. اگر واقعاً یک snapshot آماده لازم داری، آگاهانه ToList بگیر.
+- هنگام foreach روی query مبتنی بر List، ساختار منبع را با Add یا Remove تغییر نده؛ ممکن است پیمایش خطا بدهد. تغییر مثال‌های این درس قبل از پیمایش انجام می‌شود.
+- از Select برای تغییر Status همراه اثر جانبی استفاده نکن؛ عملیات تغییر مدل را صریح انجام بده.
+- IEnumerable این درس روی objectهای حافظه کار می‌کند. IQueryable می‌تواند query را برای provider مثل EF Core توصیف کند؛ بحث SQL و هزینهٔ ToList روی دیتابیس را در بخش data یاد می‌گیریم.
+
+### تمرین تکمیلی پس از فهم مسیر اصلی
+
+گزارش همهٔ وضعیت‌ها، حتی تعداد صفر، و ترتیب Title سپس Id را بساز.
+بعد با OrderBy و Skip و Take صفحهٔ دوم پنج‌عضوی را نمایش بده.
+page را از ۱ تا ۱۰۰۰ و pageSize را مثبت و محدود بگیر؛ ورودی نامعتبر را پیش از محاسبهٔ offset رد کن تا وارد مشکل overflow و صفحه‌بندی نامعتبر نشوی.
+این تمرین‌ها برای مرور دوم‌اند، نه شرط فهمیدن اولین مثال Where.
+
+</details>
+
+## برای رفتن به درس بعد، این‌ها کافی است
+
+- [ ] lambda را به‌صورت «ورودی بگیر، نتیجه بده» می‌خوانم.
+- [ ] می‌توانم تفاوت Where، Select و OrderBy را با یک مثال توضیح بدهم.
+- [ ] می‌دانم در دو مثال Add و ToList چرا یک تعداد ۳ و دیگری ۲ شد.
+- [ ] سه مرحلهٔ گزارش Ticketها را جدا دنبال می‌کنم.
+
+## منابع رسمی برای مراجعه
 
 - [Introduction to LINQ queries](https://learn.microsoft.com/en-us/dotnet/csharp/linq/get-started/introduction-to-linq-queries)
 - [Standard query operators](https://learn.microsoft.com/en-us/dotnet/csharp/linq/standard-query-operators/)
@@ -242,4 +405,4 @@ predicate را بدون تغییر دادن مدل نگه دار.
 
 ## قدم بعد
 
-فهرست Ticketها را روی دیسک ذخیره می‌کنیم تا اجرای بعدی آن را بازیابی کند.
+در درس ۱۱، فهرست Ticketها را در فایل JSON ذخیره و در اجرای بعد بازیابی می‌کنیم.
