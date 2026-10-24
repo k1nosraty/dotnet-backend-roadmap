@@ -125,10 +125,10 @@
 | 080 | [publish و reverse proxy و TLS](lessons/08-production/080-deployment/README.md) | نوشته‌شده |
 | 081 | [CI/CD و quality gate](lessons/08-production/081-ci/README.md) | نوشته‌شده |
 | 082 | [OpenTelemetry و health check](lessons/08-production/082-observability/README.md) | نوشته‌شده |
-| 083 | cache و invalidation و Redis | برنامه‌ریزی‌شده |
-| 084 | صف و پردازش job و ارزیابی Hangfire یا Quartz | برنامه‌ریزی‌شده |
-| 085 | load test و profiling و بودجهٔ latency | برنامه‌ریزی‌شده |
-| 086 | backup و restore و rollback و تحویل worker | برنامه‌ریزی‌شده |
+| 083 | [cache و invalidation و Redis](lessons/08-production/083-caching/README.md) | نوشته‌شده |
+| 084 | [صف و پردازش job و ارزیابی Hangfire یا Quartz](lessons/08-production/084-jobs/README.md) | نوشته‌شده |
+| 085 | [load test و profiling و بودجهٔ latency](lessons/08-production/085-performance/README.md) | نوشته‌شده |
+| 086 | [backup و restore و rollback و تحویل worker](lessons/08-production/086-operations/README.md) | نوشته‌شده |
 
 ## پروژهٔ نهایی
 

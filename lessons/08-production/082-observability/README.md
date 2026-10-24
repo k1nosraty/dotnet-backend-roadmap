@@ -114,4 +114,4 @@ OTLP exporter، collector و backend مانند سامانهٔ trace در این
 - [Console exporter مرجع 1.19.0](https://www.nuget.org/packages/OpenTelemetry.Exporter.Console/1.19.0)
 
 [قبلی](../081-ci/README.md) · [فهرست بخش](../README.md) · [نقشهٔ دوره](../../../ROADMAP.md)
-درس ۸۳، cache و invalidation و Redis، هنوز برنامه‌ریزی‌شده است.
+[درس بعد: cache و Redis](../083-caching/README.md) آماده است.

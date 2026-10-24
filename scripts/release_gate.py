@@ -32,10 +32,11 @@ def verify(folder, expected_commit):
     return manifest
 
 @contextmanager
-def serve(folder, dll):
+def serve(folder, dll, overrides=None):
     folder = Path(folder).resolve()
     env = os.environ.copy()
     env.update({'DOTNET_ENVIRONMENT': 'Production', 'ASPNETCORE_ENVIRONMENT': 'Production'})
+    env.update(overrides or {})
     # CLI URL takes precedence over machine settings; logs contain only synthetic lab traffic.
     with tempfile.TemporaryDirectory(prefix='published-lab-') as directory:
         log_path = Path(directory)/'host.log'

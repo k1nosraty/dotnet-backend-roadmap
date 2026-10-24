@@ -495,25 +495,25 @@
     "id": 83,
     "title": "cache و invalidation و Redis",
     "path": "lessons/08-production/083-caching/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 84,
     "title": "صف و پردازش job و ارزیابی Hangfire یا Quartz",
     "path": "lessons/08-production/084-jobs/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 85,
     "title": "load test و profiling و بودجهٔ latency",
     "path": "lessons/08-production/085-performance/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 86,
     "title": "backup و restore و rollback و تحویل worker",
     "path": "lessons/08-production/086-operations/README.md",
-    "status": "planned"
+    "status": "written"
   },
   {
     "id": 87,

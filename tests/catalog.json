@@ -38,5 +38,17 @@
   {
     "lesson": 82,
     "project": "tests/082-observability/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 83,
+    "project": "tests/083-cache/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 84,
+    "project": "tests/084-jobs/SupportDesk.Tests.csproj"
+  },
+  {
+    "lesson": 85,
+    "project": "tests/085-performance/SupportDesk.Tests.csproj"
   }
 ]
