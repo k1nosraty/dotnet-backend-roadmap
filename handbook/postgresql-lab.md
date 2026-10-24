@@ -43,10 +43,10 @@ docker run --name supportdesk-pg -e POSTGRES_USER=course -e POSTGRES_PASSWORD=co
 
 ```powershell
 docker logs supportdesk-pg
-docker exec supportdesk-pg pg_isready -U course -d supportdesk_lab
+docker exec supportdesk-pg pg_isready -h 127.0.0.1 -U course -d supportdesk_lab
 ```
 
-باید server آمادهٔ اتصال باشد؛ صرف برگشتن شناسهٔ container کافی نیست.
+باید server آمادهٔ اتصال TCP باشد؛ صرف برگشتن شناسهٔ container کافی نیست. گزینهٔ -h را حذف نکن: بررسی socket محلی ممکن است server موقت مرحلهٔ initialization را ببیند. pg_isready فقط وضعیت پذیرش اتصال را می‌سنجد؛ درستی password و مجوز query را با بررسی اتصال پایین ثابت کن.
 سپس:
 
 ```powershell

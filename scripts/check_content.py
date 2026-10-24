@@ -33,8 +33,10 @@ for row in catalog:
     assert row['project'] in lesson_text, f"Lesson/sample command mismatch: {row}"
 for path in root.rglob('*.md'):
     text = path.read_text(encoding='utf-8')
-    for project in re.findall(r'samples/[a-zA-Z0-9-]+/[a-zA-Z0-9.-]+\.csproj', text):
+    for project in re.findall(r'(?:samples|tests)/[a-zA-Z0-9_./-]+\.csproj', text):
         assert (root / project).is_file(), f'Broken project command: {path}: {project}'
+    for script in re.findall(r'scripts/[a-zA-Z0-9_-]+\.py', text):
+        assert (root / script).is_file(), f'Broken script command: {path}: {script}'
 print(f'PASS: {len(catalog)} runnable sample projects match written lesson commands.')
 
 # Keep test projects discoverable without counting them as runnable sample entry projects.

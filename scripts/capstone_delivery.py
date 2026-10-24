@@ -6,6 +6,7 @@ import os
 import re
 import shutil
 import ssl
+import sys
 import subprocess
 import tempfile
 import time
@@ -75,6 +76,18 @@ try:
             time.sleep(.2)
         else:raise AssertionError('Local CA not created.')
         context=ssl.create_default_context(cafile=str(root));ready(base,context)
+        # Execute the exact documented client against real TLS, Identity and PostgreSQL.
+        document=(ROOT/'capstone/DELIVERY.md').read_text(encoding='utf-8')
+        clients=re.findall(r'```python\n(.*?)```',document,re.S)
+        assert len(clients)==1,'Expected one runnable manual-client example.'
+        client_environment=environment.copy()
+        client_environment.update({'CAPSTONE_CA':str(root),'CAPSTONE_BASE':base})
+        client=subprocess.run([sys.executable,'-c',clients[0]],cwd=ROOT,env=client_environment,
+            capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=60)
+        assert client.returncode==0,(client.stdout,client.stderr)
+        assert 'PASS: manual client:' in client.stdout
+        assert environment['CAPSTONE_LAB_PASSWORD'] not in client.stdout+client.stderr
+        print(client.stdout.strip(),flush=True)
         assert send(base,context,'/version')[1]=={'service':'servicedesk','version':'1.0.0','commit':environment['CAPSTONE_COMMIT']}
         assert send(base,context,'/requests',headers={'X-Test-Actor':'agent','X-Tenant':'alpha'})[0]==401
         def login(email):

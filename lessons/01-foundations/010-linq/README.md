@@ -13,6 +13,25 @@
 Ticket، List و foreach و nullable.
 این درس LINQ to Objects است؛ هنوز query دیتابیس یا EF Core نداریم.
 
+## دادهٔ ورودی مثال‌ها
+
+قطعه‌ها از [نمونهٔ همین درس](../../../samples/09-ticket-linq/Program.cs) هستند؛ برای آزمایش، پوشهٔ همین نمونه را در exercises کپی کن. کلاس‌ها در [Domain](../../../samples/09-ticket-linq/Domain/Ticket.cs) قرار دارند. مدل نسخه‌های بعدی را جای این مدل نگذار: قواعد آن‌ها عمداً تغییر می‌کنند.
+
+Program با `using SupportDesk.Domain;` شروع می‌شود. دادهٔ اولیه، پیش از queryها، این است:
+
+```csharp
+List<Ticket> tickets = new()
+{
+    new Ticket(3, "Email issue"),
+    new Ticket(1, "Network issue"),
+    new Ticket(2, "Printer issue")
+};
+tickets[1].Start();
+tickets[1].Close();
+```
+
+`[1]` یعنی عنصر دوم List، یعنی تیکت با Id برابر ۱؛ شمارهٔ index همان شناسه نیست. اکنون Idهای ۲ و ۳ باز و Id برابر ۱ بسته است. تعریف‌های query را از بخش‌های بعد دنبال کن؛ lambda بخش ۲ به‌تنهایی یک statement کامل برای Program نیست.
+
 ## ۱. مسئله
 
 می‌خواهیم درخواست‌های Open را به ترتیب شناسه ببینیم.
@@ -204,9 +223,9 @@ ToList زودهنگام روی دیتابیس می‌تواند حجم زیاد�
 ## تمرین صفحه‌بندی
 
 با OrderBy، Skip و Take پنج درخواست از صفحهٔ دوم نمایش بده.
-صفحه از ۱ شروع می‌شود و pageSize مثبت است.
+صفحه از ۱ شروع می‌شود؛ page را بین ۱ و ۱۰۰۰ و pageSize را بین ۱ و ۱۰۰ محدود کن.
 ورودی page صفر یا منفی باید پیش از query رد شود.
-برای محاسبهٔ offset روی int بزرگ مراقب overflow باش؛ در این تمرین page را بین ۱ و ۱۰۰۰ محدود کن.
+فقط محدود کردن page کافی نیست؛ pageSize بسیار بزرگ هم می‌تواند `(page - 1) * pageSize` را دچار overflow کند. هر دو ورودی را پیش از این ضرب بررسی کن؛ با سقف‌های بالا، بیشترین offset برابر ۹۹۹۰۰ است.
 
 ## سناریوهای پذیرش
 

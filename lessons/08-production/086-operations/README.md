@@ -123,6 +123,6 @@ python scripts/operations_smoke.py --with-docker
 - [Continuous archiving و PITR](https://www.postgresql.org/docs/18/continuous-archiving.html)
 
 [قبلی](../085-performance/README.md) · [فهرست بخش](../README.md) · [پروژهٔ نهایی در نقشه](../../../ROADMAP.md)
-درس‌های ۸۷ تا ۹۰ هنوز برنامه‌ریزی‌شده‌اند.
+درس‌های ۸۷ تا ۹۰ آماده‌اند؛ در پروژهٔ نهایی همین مهارت‌های تحویل و بازیابی را کنار هویت و قواعد درخواست به کار می‌بری.
 
 [ادامه: درس ۸۷ و پروژهٔ نهایی](../../09-capstone/087-requirements/README.md)

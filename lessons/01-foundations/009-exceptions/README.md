@@ -13,6 +13,18 @@
 Ticket، guard سازنده و nullable در درس‌های ۰۰۷ و ۰۰۸.
 در این درس برای اولین بار یک فایل لاگ کوچک می‌نویسیم؛ ذخیرهٔ مدل در JSON درس ۰۱۱ است.
 
+## محل اجرای قطعه‌ها
+
+قطعه‌های این صفحه بخش‌هایی از [نمونهٔ همین درس](../../../samples/08-ticket-exceptions/Program.cs) هستند، نه چند برنامهٔ مستقل برای چسباندن پشت سر هم. کلاس Ticket در [Domain](../../../samples/08-ticket-exceptions/Domain/Ticket.cs) است و Program با `using SupportDesk.Domain;` آن را می‌شناسد. برای تغییر مثال‌ها، یک کپی از پوشهٔ همین نمونه در exercises بساز؛ فایل‌های درس ۷ را با مدل این درس مخلوط نکن.
+
+ابتدا نمونهٔ کاملِ بخش ۱۲ را اجرا کن؛ سپس در کپی خودت هر تغییر را جدا انجام بده. در مثال فایلِ بخش‌های ۸ و ۹، پیش از usingها مسیر را تعریف کن:
+
+```csharp
+string path = "activity.log";
+```
+
+این مسیر نسبت به پوشهٔ اجرای process است. writer بخش ۸ باید بسته شود و بعد reader بخش ۹ فایل را باز کند؛ اگر فقط قطعهٔ reader را اجرا کنی، فایل ممکن است هنوز وجود نداشته باشد.
+
 ## ۱. دسته‌بندی مسئله
 
 | وضعیت | ابزار اولیه |
@@ -147,6 +159,7 @@ cleanup خودش می‌تواند خطا بدهد؛ در ذخیرهٔ فایل 
 [Program](../../../samples/08-ticket-exceptions/Program.cs)
 
 ```powershell
+New-Item -ItemType Directory -Force exercises | Out-Null
 dotnet run --project samples/08-ticket-exceptions/SupportDesk.csproj -- exercises/activity.log
 ```
 
