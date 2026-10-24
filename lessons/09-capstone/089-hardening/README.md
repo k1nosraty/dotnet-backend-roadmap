@@ -10,7 +10,7 @@ snapshot این درس مستقل و کامل‌تر است: Identity، PostgreS
 
 در create ابتدا ورودی معتبر می‌شود؛ request ذخیره می‌شود، audit ذخیره می‌شود و سپس transaction commit می‌شود. اگر audit ذخیره نشود، ذخیرهٔ اول هم برمی‌گردد. در رقابت، Version یک concurrency token است: UPDATE نسخهٔ قبلی را شرط می‌کند؛ اگر کسی زودتر تغییر داده باشد، نتیجه 409 است. unique index از create تکراری بین دو process جلوگیری می‌کند؛ lock حافظه این کار را نمی‌کند.
 
-Tenant و IsAgent از رکورد فعلی کاربر می‌آیند. ارسال tenant در body به خاطر property ناشناخته 400 است؛ ساختن claim روی header هم auth نیست. test مجوز باید با token قدیمی پس از حذف نقش شکست بخورد. کوتاه بودن عمر token جایگزین بررسی مجوز فعلی نشده است.
+Tenant و IsAgent از رکورد فعلی کاربر می‌آیند. ارسال tenant در body به خاطر property ناشناخته 400 است؛ ساختن claim روی header هم auth نیست. test مجوز باید با token قدیمی پس از حذف نقش شکست بخورد: درخواست دیگران 404 و claim روی درخواست خود فرد 403 می‌شود. کوتاه بودن عمر token جایگزین بررسی مجوز فعلی نشده است.
 
 تست PostgreSQL را با Docker واقعی اجرا کن. WebApplicationFactory مسیر HTTP را اجرا می‌کند، ولی TLS واقعی نیست؛ آن شاهد در درس بعد است. برای اجرای دستی حساب‌ها و تنظیمات از راهنمای تحویل استفاده کن؛ connection و key directory اجباری‌اند و startup با config ناقص عمداً شکست می‌خورد.
 

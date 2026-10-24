@@ -75,9 +75,13 @@ public sealed class CapstoneTests(DeskFixture fixture):IClassFixture<DeskFixture
     public async Task Server_side_grant_revocation_affects_existing_token()
     {
         await fixture.Reset();using var owner=await fixture.As("requester@alpha.test");var row=await Create(owner);using var agent=await fixture.As("agent@alpha.test");
+        Assert.Equal(HttpStatusCode.OK,(await agent.GetAsync($"/requests/{row.Id}")).StatusCode);
+        var own=await Create(agent);
         await using(var scope=fixture.Factory.Services.CreateAsyncScope())
             await scope.ServiceProvider.GetRequiredService<DeskContext>().Users.Where(u=>u.Email=="agent@alpha.test").ExecuteUpdateAsync(set=>set.SetProperty(u=>u.IsAgent,false));
-        Assert.Equal(HttpStatusCode.Forbidden,(await agent.PostAsJsonAsync($"/requests/{row.Id}/claim",new {version=1})).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound,(await agent.GetAsync($"/requests/{row.Id}")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound,(await agent.PostAsJsonAsync($"/requests/{row.Id}/claim",new {version=1})).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden,(await agent.PostAsJsonAsync($"/requests/{own.Id}/claim",new {version=1})).StatusCode);
     }
     [Fact]
     public async Task Audit_failure_after_first_database_write_rolls_back_request()
