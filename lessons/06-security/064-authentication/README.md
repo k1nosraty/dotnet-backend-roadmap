@@ -12,6 +12,17 @@ credential دست‌ساز، X-User و X-Role هیچ هویتی ایجاد نم�
 
 ## انتخاب بر اساس client
 
+قبل از انتخاب روش، چهار اصطلاح را به همین سناریو وصل کنیم:
+
+| اصطلاح | سؤال یا نقش آن |
+| --- | --- |
+| authentication / احراز هویت | این درخواست با credential معتبرِ کدام حساب آمده است؟ |
+| authorization / مجوز | آیا آن حساب اجازهٔ همین عملیات روی همین منبع را دارد؟ |
+| credential | چیزی که برای اثبات هویت ارائه می‌شود؛ مانند password موقع login یا cookie/token صادرشده بعد از آن |
+| scheme | نام تنظیمات و handler مربوط به یک روش احراز هویت در برنامه |
+
+Identity امکانات حساب و ورود را فراهم می‌کند؛ به‌تنهایی نمی‌گوید هر کاربر کدام تیکت را می‌تواند تغییر بدهد. این موضوع در درس‌های نقش و مالکیت ادامه دارد. token هم نام عمومی یک دادهٔ صادرشده با کاربرد مشخص است؛ access token، refresh token و reset token وظیفهٔ یکسان ندارند.
+
 | روش | رفتار client | تصمیم‌های مهم |
 | --- | --- | --- |
 | Cookie | مرورگر معمولاً خودکار می‌فرستد | HttpOnly، Secure، SameSite و CSRF |
@@ -68,6 +79,17 @@ GET /api/me فقط userId سروری می‌دهد و IdentityUser کامل seri
 پس از ورود، token جدید بگیر چون token قبلی به وضعیت anonymous وابسته بود.
 برای cookie-action و logout، token را در X-CSRF-TOKEN بفرست.
 مسیر bearer-only به cookie برای ورود تکیه نمی‌کند و ambient cookie آن را مجاز نمی‌کند.
+
+ambient cookie یعنی credentialای که مرورگر برای درخواست واجد شرایط، خودکار همراه می‌کند. CSRF از این خودکاربودن سوءاستفاده می‌کند: ممکن است درخواست ناخواسته‌ای با هویت مرورگر کاربر ارسال شود. token ضد CSRF شاهد جداگانه‌ای است که این نمونه برای عملیات cookie لازم می‌داند؛ password یا access token نیست.
+
+مسیر cookie همین نمونه را روی کاغذ دنبال کن:
+
+1. client با نگه‌داشتن cookieهای پاسخ، GET /auth/csrf را می‌زند؛ cookie و token مربوط را می‌گیرد.
+2. login را با email/password و همان token در header می‌فرستد؛ credential حساب بررسی و cookie ورود صادر می‌شود.
+3. پس از ورود، CSRF token تازه می‌گیرد تا به وضعیت هویت فعلی مربوط باشد.
+4. برای cookie-action یا logout، هم cookie معتبر و هم header ضد CSRF لازم است.
+
+در مسیر bearer، client access token را صریح در Authorization با قالب Bearer می‌فرستد. داشتن یک cookie معتبر به تنهایی شرط route مخصوص bearer را برآورده نمی‌کند. برای خودآزمایی، بگو در هر مرحله کدام داده «اثبات هویت» است و کدام داده «محافظ درخواست cookie».
 فصل ۶۷ CSRF، CORS و injection را عمیق‌تر ادامه می‌دهد؛ این نمونه تا آن زمان مسیر cookie باز و بی‌محافظ نمی‌سازد.
 
 ## عمر و ابطال
@@ -82,6 +104,10 @@ Refresh با protector مربوط و expiry و ValidateSecurityStampAsync برر
 Logout این route، cookie را از client پاک می‌کند و access token قبلی را فوراً باطل نمی‌کند.
 همچنین کپی دزدیده‌شدهٔ cookie الزاماً با حذف cookie مرورگر خودبه‌خود باطل نمی‌شود.
 برای revocation فوری و session management و replay detection به قابلیت جدا و تست آن نیاز داریم.
+
+refresh یعنی درخواست credential دسترسی تازه با refresh token؛ نه دوباره فرستادن password، و نه اجازهٔ نادیده‌گرفتن انقضا. revocation یعنی اعتبار credential صادرشده را پیش از پایان عمرش از سمت server پس بگیریم. replay یعنی یک دادهٔ قابل استفاده دوباره فرستاده شود؛ صدور pair تازه خودبه‌خود ثابت نمی‌کند pair قبلی دیگر قابل استفاده نیست.
+
+SecurityStamp علامت وضعیت امنیتی حساب است؛ در مسیرهایی که آن را اعتبارسنجی می‌کنند می‌توان تغییر وضعیت امنیتی حساب را تشخیص داد. key ring هم مجموعهٔ کلیدهای Data Protection برای حفاظت و خواندن credentialهای همین برنامه است؛ با password حساب یا token ضد CSRF یکی نیست. به همین دلیل ماندگاری DB به تنهایی برای خواندن cookie قبلی پس از restart کافی نیست.
 
 ## کلیدهای پایدار
 
