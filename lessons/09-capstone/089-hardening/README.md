@@ -16,6 +16,18 @@ Tenant و IsAgent از رکورد فعلی کاربر می‌آیند. ارسا�
 
 تمرین مستقل: note را با transaction و audit اضافه کن، سپس fault در ذخیرهٔ audit و race دو تغییر را بازتولید کن. معیار عبور: نه تست واقعی پاس، بدون skip؛ توضیح اینکه هر assertion کدام قانون را حفاظت می‌کند. هشدار امنیتی یا محدودیت باقی‌مانده را در گزارش خودت ثبت کن، نه با حذف تست.
 
+## دو رقابت متفاوت را از هم جدا کن
+
+| رقابت | ابزار در پیاده‌سازی | نتیجهٔ لازم |
+| --- | --- | --- |
+| دو create با key یکسان | unique index روی Tenant/Owner/Key | یک رکورد و یک audit؛ replay همان Id |
+| دو close با version یکسان | Version به عنوان concurrency token | یک تغییر؛ دیگری 409 |
+| شکست ذخیرهٔ audit | transaction دور هر دو SaveChanges | تغییر اول هم باقی نماند |
+
+این ابزارها جای هم نیستند: unique index از close قدیمی جلوگیری نمی‌کند و concurrency token به تنهایی کلید create را یکتا نمی‌کند. در [DeskService](../../../samples/88-servicedesk-hardening/Application/DeskService.cs)، مسیر create را تا commit دنبال کن. با SaveChanges اول SQL اجرا شده، ولی transaction هنوز commit نشده است؛ نقطهٔ اصلی فهم rollback همین تفاوت است.
+
+در [تست‌ها](../../../tests/089-capstone/CapstoneTests.cs)، `Audit_failure_after_first_database_write_rolls_back_request` را بخوان. interceptor هنگام ذخیرهٔ audit خطا می‌دهد؛ سپس context جدا تعداد رکوردها را بررسی می‌کند. این با تستی که فقط می‌گوید «SaveAsync صدا زده شد» فرق دارد. در تست grant revocation نیز همان token استفاده می‌شود تا login تازه نتیجه را مخفی نکند.
+
 ## فرمان از ریشهٔ مخزن
 
 ```powershell

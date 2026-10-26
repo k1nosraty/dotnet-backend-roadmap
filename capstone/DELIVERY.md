@@ -53,6 +53,69 @@ curl.exe --cacert ./capstone-root.crt https://localhost:8443/version
 
 body نمونهٔ create برابر `{"title":"Printer is unavailable","priority":"urgent"}` است. body تغییر برابر `{"version":2,"resolution":"Printer connection repaired"}` است. در claim و reopen فقط version لازم است. همکار یا سازمان دیگر باید get/audit را 404 بگیرد. برای هر پاسخ غیرمنتظره ابتدا status و health و commit را بررسی کن؛ token و payload را در log عمومی نریز.
 
+## ارسال واقعی درخواست‌ها بدون چاپ credential
+
+پس از آماده‌شدن محیط دستی بالا، در همان ترمینال، Python 3 را اجرا کن. کد زیر را یک‌جا بفرست؛ از CA عمومی کپی‌شده استفاده می‌کند و رمز را از متغیر session می‌خواند. در این آزمایش حساب peer درخواست جداگانهٔ خودش را ثبت می‌کند و agent آن را می‌پذیرد و می‌بندد؛ حساب peer در حالت عادی به درخواست‌های صاحب دیگر دسترسی ندارد.
+
+```powershell
+$env:CAPSTONE_CA = (Resolve-Path ./capstone-root.crt).Path
+$env:CAPSTONE_BASE = 'https://localhost:8443'
+```
+
+کد Python زیر را در Python اجرا کن، یا در PowerShell بین `@'` و `'@ | python -` قرار بده. این دو delimiter باید روی خط جدا باشند. برای خواندن کد لازم نیست Python یاد بگیری؛ ترتیب URL، method، body و نتیجه را با جدول بالا مقایسه کن.
+
+```python
+import json
+import os
+import ssl
+from urllib import request, error
+from uuid import uuid4
+
+base = os.environ['CAPSTONE_BASE']
+context = ssl.create_default_context(cafile=os.environ['CAPSTONE_CA'])
+opener = request.build_opener(request.ProxyHandler({}), request.HTTPSHandler(context=context))
+password = os.environ['CAPSTONE_LAB_PASSWORD']
+
+def send(path, method='GET', body=None, token=None, key=None):
+    headers = {'Content-Type': 'application/json'}
+    if token:
+        headers['Authorization'] = 'Bearer ' + token
+    if key:
+        headers['Idempotency-Key'] = key
+    data = None if body is None else json.dumps(body).encode('utf-8')
+    req = request.Request(base + path, data=data, method=method, headers=headers)
+    try:
+        with opener.open(req, timeout=10) as response:
+            status, raw = response.status, response.read()
+    except error.HTTPError as response:
+        status, raw = response.code, response.read()
+    return status, json.loads(raw) if raw else None
+
+def login(email):
+    status, result = send('/auth/login', 'POST', {'email': email, 'password': password})
+    assert status == 200, 'Login failed; check readiness and lab credentials.'
+    return result['accessToken']
+
+owner = login('peer@alpha.test')
+agent = login('agent@alpha.test')
+key = str(uuid4())
+body = {'title': 'Manual client proof', 'priority': 'urgent'}
+status, created = send('/requests', 'POST', body, owner, key)
+assert status == 201
+status, replay = send('/requests', 'POST', body, owner, key)
+assert status == 200 and replay['id'] == created['id']
+route = '/requests/' + created['id']
+assert send(route + '/claim', 'POST', {'version': 1}, owner)[0] == 403
+assert send(route + '/claim', 'POST', {'version': 1}, agent)[0] == 200
+status, closed = send(route + '/close', 'POST', {'version': 2, 'resolution': 'Connection repaired'}, agent)
+assert status == 200 and closed['state'] == 'Closed' and closed['version'] == 3
+status, audit = send(route + '/audit', token=owner)
+assert status == 200 and len(audit) == 3
+print('PASS: manual client: create, replay, denied owner claim, agent close, audit=3.')
+```
+
+خروجی نهایی باید یک خط PASS باشد؛ password، accessToken یا refreshToken را print نکن. اجرای دوباره درخواست مستقل تازه‌ای می‌سازد چون key تازه تولید می‌شود. اگر مرحله‌ای assertion داد، مرحله‌های بعد را ادامه نده؛ health و status همان مرحله را بررسی کن. هنگام انقضای token، کل مثال را دوباره اجرا کن تا login تازه انجام شود.
+
 ## بازیابی و توقف
 
 اسکریپت delivery پس از close، از schema آزمایشگاهی `pg_dump -Fc` می‌گیرد، در DB جدید restore می‌کند و همان image را با اتصال DB جدید راه می‌اندازد. SHA256 فایل DLL باید یکسان، version درخواست ۳، state بسته و تعداد audit سه باشد. token قبلی با key volume قبلی معتبر می‌ماند. این بازیابی در DB تازه است؛ بازنویسی DB زنده نیست. برای ارتقای واقعی schema باید migration، سازگاری نسخهٔ قبلی و بازیابی را جدا طراحی کرد؛ صرف عوض‌کردن image، rollback دیتابیس نیست.

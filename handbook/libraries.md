@@ -117,3 +117,7 @@ OpenTelemetry.Extensions.Hosting و OpenTelemetry.Exporter.Console هر دو 1.1
 
 StackExchange.Redis نسخهٔ مرجع 2.13.17 برای adapter cache و Testcontainers.Redis 4.15.0 فقط برای تست اضافه شده‌اند. Npgsql 10.0.3 و Testcontainers.PostgreSql 4.15.0 با PostgreSQL 18.6 از بخش‌های قبلی ادامه دارند. Redis از minor tag مرجع 8.2 استفاده می‌کند؛ patch/digest آن ثابت ادعا نمی‌شود. منابع رسمی client و module و PostgreSQL و Hangfire و Quartz در 2026-10-24 بررسی شده‌اند.
 Hangfire و Quartz در جدول تصمیم ارزیابی می‌شوند و در csproj این lab نصب نشده‌اند؛ صف آموزشی، مکانیزم lease/fencing را آشکار می‌کند و framework کامل محصول نیست. load generator از Python استاندارد و BCL metrics استفاده می‌کند؛ dotnet-counters و dotnet-trace فقط در تمرین اختیاری دستی‌اند. ابزار dump/restore از همان image PostgreSQL می‌آید؛ ابزار سراسری دیتابیس کاربر لازم نیست.
+
+## مکمل‌های استاندارد هویت
+
+[JWT](../lessons/06-security/064a-jwt/README.md) و [OIDC](../lessons/06-security/064b-oidc/README.md) از Microsoft.AspNetCore.Authentication.JwtBearer و OpenIdConnect نسخهٔ 10.0.13 روی net10.0 استفاده می‌کنند. cryptography و handlerهای اعتبارسنجی استاندارد هستند؛ کلید خصوصی صادرکنندهٔ مصنوعی فقط در test assembly ساخته می‌شود. API اصلی ۶۴ همچنان protected bearer خود Identity است.

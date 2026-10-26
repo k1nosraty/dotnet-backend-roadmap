@@ -138,3 +138,7 @@
 | 088 | [پیاده‌سازی مستقل و review](lessons/09-capstone/088-implementation/README.md) | نوشته‌شده |
 | 089 | [تست و امنیت و عملکرد](lessons/09-capstone/089-hardening/README.md) | نوشته‌شده |
 | 090 | [استقرار و مستندات و دفاع فنی](lessons/09-capstone/090-delivery/README.md) | نوشته‌شده |
+
+## مکمل‌های بخش امنیت
+
+پس از درس ۶۴: [JWT و اعتبارسنجی API](lessons/06-security/064a-jwt/README.md) → [OAuth/OIDC و PKCE](lessons/06-security/064b-oidc/README.md) → درس ۶۵. هر دو نمونهٔ اجرایی و تست مستقل دارند؛ در شمار ۹۰ درس اصلی نیستند.

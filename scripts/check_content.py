@@ -33,8 +33,10 @@ for row in catalog:
     assert row['project'] in lesson_text, f"Lesson/sample command mismatch: {row}"
 for path in root.rglob('*.md'):
     text = path.read_text(encoding='utf-8')
-    for project in re.findall(r'samples/[a-zA-Z0-9-]+/[a-zA-Z0-9.-]+\.csproj', text):
+    for project in re.findall(r'(?:samples|tests|supplements)/[a-zA-Z0-9_./-]+\.csproj', text):
         assert (root / project).is_file(), f'Broken project command: {path}: {project}'
+    for script in re.findall(r'scripts/[a-zA-Z0-9_-]+\.py', text):
+        assert (root / script).is_file(), f'Broken script command: {path}: {script}'
 print(f'PASS: {len(catalog)} runnable sample projects match written lesson commands.')
 
 # Keep test projects discoverable without counting them as runnable sample entry projects.
@@ -48,3 +50,15 @@ for row in test_catalog:
     assert lesson['status'] == 'written'
     assert row['project'] in (root / lesson['path']).read_text(encoding='utf-8'), row
 print(f'PASS: {len(test_catalog)} separate test projects match written lesson commands.')
+
+# Security supplements preserve the original lesson numbers and have their own runnable/test coverage.
+supplements=json.loads((root/'supplements/catalog.json').read_text(encoding='utf-8'))
+assert len({row['id'] for row in supplements})==len(supplements)
+listed=set()
+for row in supplements:
+    text=(root/row['path']).read_text(encoding='utf-8')
+    for key in ['project','test']:
+        assert (root/row[key]).is_file() and row[key] in text,row
+        listed.add(row[key])
+assert listed=={p.relative_to(root).as_posix() for p in (root/'supplements').rglob('*.csproj')}
+print(f'PASS: {len(supplements)} security supplements, runnable projects and tests.')

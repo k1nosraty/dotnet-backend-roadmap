@@ -16,6 +16,17 @@ Application/MemoryDesk.cs داخل lock، تشخیص تکرار و تغییر ve
 
 تمرین مستقل: فهرست owner را با ترتیب پایدار و size محدود اضافه کن؛ peer و tenant دیگر را تست کن. معیار عبور: دو تست موجود پاس و تست مستقل جدید بدون واردکردن test header به محصول.
 
+## مرور را با دو شاهد شروع کن
+
+در [تست HTTP](../../../tests/088-prototype/PrototypeTests.cs) این دو مسیر را دنبال کن:
+
+1. `Normal_host_never_trusts_test_identity_header`: host عادی ساخته می‌شود؛ X-Test-Actor فرستاده می‌شود ولی 401 می‌گیریم. پس header، ورودی ورودِ محصول نیست.
+2. `Idempotency_and_cross_tenant_and_racing_claim_are_explicit`: فقط TestFactory هویت مصنوعی را ثبت می‌کند. همان key دوباره همان Id می‌دهد؛ actor سازمان دیگر 404 می‌گیرد؛ شش claim با version یکسان فقط یک موفقیت دارند.
+
+قبل از اجرای تست، جدول نتیجهٔ هر درخواست را بنویس. سپس [MemoryDesk](../../../samples/87-servicedesk-prototype/Application/MemoryDesk.cs) را بخوان و مشخص کن چرا بررسی version و تغییر state باید داخل همان lock باشند. بیرون‌بردن یکی از این دو از lock، شرط و تغییر را از هم جدا می‌کند.
+
+اگر فقط dotnet run کنی و 401 بگیری، نمونه خراب نشده است؛ برای تجربهٔ این قابلیت در این مرحله تست را اجرا کن. login واقعی در درس ۸۹ اضافه می‌شود. تمرین فهرست این درس نیز باید هویت ساختگی را فقط در تست دریافت کند.
+
 ## فرمان از ریشهٔ مخزن
 
 ```powershell

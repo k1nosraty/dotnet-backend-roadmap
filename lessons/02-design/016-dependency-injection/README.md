@@ -21,6 +21,19 @@ interface، constructor injection دستی، IDisposable و composition root.
 container ساخت گراف dependency و lifetime را هماهنگ می‌کند؛ تعریف DI را به یک package محدود نکن.
 برای برنامهٔ کوچک ساخت دستی گاهی کافی است.
 
+dependency یا وابستگی یعنی چیزی که کلاس برای انجام کارش لازم دارد؛ مثلاً TicketSummaryService برای خواندن تیکت به ITicketReader نیاز دارد. injection یعنی آن چیز را از بیرون به کلاس بدهیم، به‌جای اینکه کلاس خودش implementation را بسازد.
+
+واژه‌های ادامه را با همین نمونه بخوان:
+
+| اصطلاح | اتفاق در نمونه |
+| --- | --- |
+| registration / ثبت | اعلام می‌کنیم وقتی reader لازم شد، چه نوعی و با چه طول عمری فراهم شود |
+| container / provider | مسئول ساخت و نگه‌داری instanceها مطابق ثبت‌ها |
+| resolve | از provider یک سرویس می‌خواهیم؛ وابستگی‌هایش هم فراهم می‌شوند |
+| composition root | نقطهٔ اتصال اجزا در Program؛ محل تنظیم چگونگی ساخت برنامه |
+
+ثبت سرویس با گرفتن سرویس فرق دارد. AddTransient فعلاً قاعدهٔ ساخت را ثبت می‌کند؛ GetRequiredService بعداً طبق آن قاعده سرویس را می‌گیرد.
+
 ## ۲. کتابخانهٔ این درس
 
 Microsoft.Extensions.DependencyInjection implementation رسمی container استاندارد .NET است.
@@ -97,6 +110,15 @@ singleton به معنی یکی در تمام سرورها یا تمام process�
 Scoped هم به معنی یک instance برای هر کاربر نیست.
 در وب معمولاً scope درخواست داریم، اما قرارداد عمومی container «scope» است.
 
+scope در این کنسول یک محدودهٔ عمر است که خودمان با CreateScope باز و با Dispose تمام می‌کنیم. برای پیش‌بینی هویت شیءها، به‌جای عنوان «کاربر»، به این محدوده نگاه کن:
+
+| گرفتن یک نوع ثبت‌شده | Transient | Scoped | Singleton |
+| --- | --- | --- | --- |
+| دو بار در scope اول | دو شیء متفاوت | همان شیء | همان شیء |
+| بار دیگر در scope دوم همان provider | شیء تازه | شیء تازه برای scope دوم | همان شیء قبلی |
+
+ReferenceEquals می‌پرسد «آیا هر دو متغیر به یک شیء اشاره می‌کنند؟»؛ دو شیء با propertyهای مساوی هم ممکن است جواب False بدهند. probe در این درس فقط وسیلهٔ مشاهدهٔ همین هویت است. پس از اجرای نمونه، برای هر خط same دلیل True یا False را با این جدول توضیح بده.
+
 ## ۷. مشاهدهٔ Transient
 
 ```csharp
@@ -148,6 +170,8 @@ public sealed class BadSingleton
 
 singleton عمر بلند دارد، اما scoped dependency باید متعلق به scope عملیات باشد.
 نگه داشتن مستقیم آن در singleton می‌تواند آن را از عمر مورد انتظار جدا کند.
+
+captive یعنی وابستگی در شیء بلندعمر گرفتار شده است. اگر BadSingleton در constructor یک ScopedProbe بگیرد و آن را نگه دارد، نمی‌توان برای هر عملیات تازه همان وابستگی را خودکار عوض کرد؛ constructor دوباره اجرا نشده است. validation خطا می‌دهد تا این ناسازگاری پنهان نماند. راه‌حل را از نیاز انتخاب کن: شاید خود سرویس باید scoped باشد؛ یا برای کار مستقلِ بعدی به scope تازه نیاز دارد. خاموش‌کردن validation، عمرها را اصلاح نمی‌کند.
 نمونه عمداً AddSingleton<BadSingleton> و AddScoped<ScopedProbe> را در container جدا ثبت می‌کند.
 با ValidateScopes و ValidateOnBuild ساخت آن رد می‌شود.
 

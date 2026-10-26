@@ -28,7 +28,7 @@ python scripts/operations_smoke.py --with-docker
 
 فرمان دوم تست‌های WAF و خروجی واقعی SDK OpenTelemetry، publish در Release، HTTP روی فایل‌های منتشرشده و gate منفی artifact را اجرا می‌کند.
 فرمان سوم Docker CLI و engine با Linux containers و Compose می‌خواهد؛ نبود Docker شکست است و fallback ساختگی ندارد.
-در CI، Production labs دو runner Windows/Linux برای publish و تست و یک job کانتینر واقعی و یک job دریافت artifact دارد. workflow قدیمی Check course بررسی‌های بخش‌های قبلی را نگه می‌دارد.
+در CI، Production labs دو runner Windows/Linux برای publish و تست و دو job کانتینر واقعی (TLS و عملیات) و یک job دریافت artifact دارد. workflow قدیمی Check course بررسی‌های بخش‌های قبلی را نگه می‌دارد.
 
 TLS این بخش با CA محلی و trust محدود به درخواست تست می‌شود؛ گواهی عمومی صادر نمی‌شود. artifact-gate فقط بسته را روی runner اجرا می‌کند و deploy خارجی ندارد.
 نمونه‌ها حساب و اطلاعات کاربر ندارند و جای نسخهٔ امن و کامل TeamDesk را نمی‌گیرند. نمونه‌های پایدار صف، cache و تمرین restore/rollback در پایان همین بخش آمده‌اند؛ تضمین‌های محلی و محدودیت‌های محصول در هر درس مشخص شده‌اند.

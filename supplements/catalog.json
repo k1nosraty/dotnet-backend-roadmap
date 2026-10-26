@@ -1,0 +1,16 @@
+[
+  {
+    "id": "064a",
+    "title": "JWT و اعتبارسنجی API",
+    "path": "lessons/06-security/064a-jwt/README.md",
+    "project": "supplements/identity/JwtApi/JwtApi.csproj",
+    "test": "supplements/identity/JwtApi.Tests/JwtApi.Tests.csproj"
+  },
+  {
+    "id": "064b",
+    "title": "OAuth/OIDC و Authorization Code با PKCE",
+    "path": "lessons/06-security/064b-oidc/README.md",
+    "project": "supplements/identity/OidcClient/OidcClient.csproj",
+    "test": "supplements/identity/OidcClient.Tests/OidcClient.Tests.csproj"
+  }
+]

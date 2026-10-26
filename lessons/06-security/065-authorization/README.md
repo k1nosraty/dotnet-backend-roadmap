@@ -152,3 +152,5 @@ requirement را از endpoint مستقل نگه دار و تغییر grant را
 - [Role-based authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-10.0)
 
 [قبلی](../064-authentication/README.md) · [فهرست بخش](../README.md) · [بعدی](../066-ownership/README.md)
+
+پیش از این درس می‌توانی [مکمل JWT](../064a-jwt/README.md) و [مکمل OIDC](../064b-oidc/README.md) را اجرا کنی؛ policyهای این درس همچنان روی نمونهٔ Identity خودش هستند.
