@@ -16,6 +16,10 @@
 | 069 | [secrets و audit و دادهٔ حساس](069-secrets/README.md) | نوشته‌شده |
 | 070 | [بازبینی امنیت و سناریوهای منفی](070-security-review/README.md) | نوشته‌شده |
 
+## مکمل‌های JWT و ورود استاندارد
+
+پس از درس ۶۴، [۶۴ـالف: JWT](064a-jwt/README.md) و [۶۴ـب: OAuth/OIDC و PKCE](064b-oidc/README.md) را انجام بده و سپس به درس ۶۵ برو. دو نمونه و دو پروژهٔ تست مستقل در supplements هستند و شماره‌های ۹۰ درس اصلی ثابت مانده‌اند. برای بررسی هر دو، `python scripts/identity_smoke.py` را اجرا کن. تست‌های OIDC از IdP کنترل‌شدهٔ داخل test assembly استفاده می‌کنند؛ راهنمای اتصال دستی به provider واقعی در مکمل دوم آمده است.
+
 ## ترتیب اجرا
 
 ابتدا مدل تهدید و default deny، سپس چرخهٔ حساب در PostgreSQL، بعد hash و reset، و در پایان cookie و bearer را انجام بده.
@@ -55,7 +59,7 @@ schemaهای auth62 و auth63 توسط Lab و schemaهای auth64 تا auth70 ت
 ## مرزهای تأیید
 
 hash و token دست‌ساز نداریم؛ Identity و Data Protection امکانات اصلی را فراهم می‌کنند.
-نمونهٔ cookie از همین مرحله CSRF می‌خواهد. protected bearer این نمونه JWT استاندارد یا سرویس کامل OAuth/OIDC نیست.
+نمونهٔ cookie از همین مرحله CSRF می‌خواهد. protected bearer درس ۶۴ JWT استاندارد یا سرویس کامل OAuth/OIDC نیست؛ مکمل‌های جدید روش‌های استاندارد را جدا آموزش می‌دهند.
 ارسال ایمیل واقعی، ثبت‌نام self-service، MFA کامل، مدیریت عمومی نقش/سازمان و انتقال مالکیت، محدودیت توزیع‌شده، تنظیم proxy و مدیریت production کلید هنوز تحویل نشده‌اند. role/ownership و rate limit محلی در درس‌های ۶۵ تا ۶۸ پوشش دارند.
 تست‌ها password یا token چاپ نمی‌کنند؛ فایل کلید و schema تست موقت‌اند.
 

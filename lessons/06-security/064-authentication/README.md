@@ -197,3 +197,5 @@ JWT دست‌ساز یا header role را به‌عنوان میان‌بر اض
 
 [قبلی](../063-passwords/README.md) · [فهرست بخش](../README.md)
 [ادامه: درس ۶۵ و policy](../065-authorization/README.md). درس‌های ۶۹ و ۷۰ نیز در فهرست بخش آماده‌اند.
+
+[ادامهٔ عملی همین موضوع: JWT و اعتبارسنجی API](../064a-jwt/README.md) و سپس [OAuth/OIDC با PKCE](../064b-oidc/README.md).

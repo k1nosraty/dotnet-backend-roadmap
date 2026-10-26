@@ -27,6 +27,8 @@
 20. [محیط اجرا و عملیات](lessons/08-production/README.md) را از Docker آغاز کن.
 21. پیشرفت خودت را در [PROGRESS.md](PROGRESS.md) ثبت کن.
 
+دو مکمل عملی [JWT](lessons/06-security/064a-jwt/README.md) و [OAuth/OIDC با PKCE](lessons/06-security/064b-oidc/README.md) به بخش امنیت اضافه شده‌اند؛ شماره‌های ۹۰ درس اصلی حفظ شده‌اند.
+
 ## وضعیت واقعی محتوا
 
 این نسخه شامل هر نه بخش کامل در [GitHub](https://github.com/k1nosraty/dotnet-backend-roadmap) است: ۹۰ درس نوشته شده، ۸۹ نمونهٔ مستقل C# و ۱۶ پروژهٔ مجزای تست آماده شده است.

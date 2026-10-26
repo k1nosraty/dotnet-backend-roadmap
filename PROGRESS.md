@@ -151,3 +151,9 @@
 - [ ] 089: login واقعی، revocation، CAS و rollback audit را روی PostgreSQL آزمودم.
 - [ ] 090: TLS، همان artifact، restore، محدودیت عملکرد و runbook را با شاهد تحویل دادم.
 - [ ] تغییر مستقل و دفاع فنی را با rubric و بدون نشت secret انجام دادم.
+
+## مکمل‌های هویت
+
+- [ ] 064a: امضا، issuer، audience، زمان و نوع access token را اعتبارسنجی و تفاوت 401/403 را تست کردم.
+- [ ] 064b: code flow و PKCE و state/nonce را با handler واقعی دنبال و رد callback نامعتبر را مشاهده کردم.
+- [ ] اتصال دستی IdP واقعی و مرز logout/session/refresh را با شاهد بدون secret توضیح دادم.
