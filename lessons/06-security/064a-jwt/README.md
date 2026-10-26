@@ -61,7 +61,7 @@ dotnet test supplements/identity/JwtApi.Tests/JwtApi.Tests.csproj
 python scripts/identity_smoke.py
 ```
 
-۱۶ case اجرا می‌شوند: توکن معتبر، scope ناکافی، ناشناس، token در query string، HTTP نامجاز، Authority نامعتبر و token با issuer/audience/امضا/نوع/زمان نامعتبر یا sub/exp مفقود و payload دست‌کاری‌شده. انتظار صفر skip و failure است. فایل [JwtTests](../../../supplements/identity/JwtApi.Tests/JwtTests.cs) توکن مصنوعی را با RSA تصادفی می‌سازد؛ کلید خصوصی و ابزار صدور فقط در test assembly هستند. API هیچ endpoint ساخت token ندارد.
+۱۷ case اجرا می‌شوند: توکن معتبر، scope ناکافی، ناشناس، token در query string، HTTP نامجاز، Authority نامعتبر و token با issuer/audience/امضا/الگوریتم/نوع/زمان نامعتبر یا sub/exp مفقود و payload دست‌کاری‌شده. انتظار صفر skip و failure است. فایل [JwtTests](../../../supplements/identity/JwtApi.Tests/JwtTests.cs) توکن مصنوعی را با RSA تصادفی می‌سازد؛ کلید خصوصی و ابزار صدور فقط در test assembly هستند. API هیچ endpoint ساخت token ندارد.
 
 این تست، JwtBearer واقعی و cryptography واقعی را داخل WebApplicationFactory اجرا می‌کند؛ metadata در این suite کنترل‌شده است. شبکه، TLS واقعی و issuer بیرونی ادعا نمی‌شوند. JSON خواندن توکن، جای این تست اعتبارسنجی نیست.
 

@@ -18,7 +18,7 @@ public sealed class JwtTests
     [Theory]
     [InlineData("issuer")] [InlineData("audience")] [InlineData("expired")] [InlineData("future")]
     [InlineData("key")] [InlineData("unsigned")] [InlineData("expiry-missing")] [InlineData("id-token")]
-    [InlineData("subject-missing")] [InlineData("tampered")] [InlineData("malformed")]
+    [InlineData("algorithm")] [InlineData("subject-missing")] [InlineData("tampered")] [InlineData("malformed")]
     public async Task Invalid_credentials_return_401(string fault)
     {
         using var factory=new ApiFactory();using var client=factory.Client(factory.Token(fault));
@@ -81,8 +81,8 @@ public sealed class ApiFactory(string authority="https://issuer.course.test"):We
         var jwt=new JwtSecurityToken(fault=="issuer"?"https://wrong.test":authority,
             fault=="audience"?"other-api":Audience,claims,
             notBefore:DateTime.UtcNow.AddMinutes(fault=="future"?10:-20),
-            expires:DateTime.UtcNow.AddMinutes(fault=="expired"?-10:5),
-            signingCredentials:fault=="unsigned"?null:new SigningCredentials(new RsaSecurityKey(fault=="key"?wrong:rsa){KeyId="test-key"},SecurityAlgorithms.RsaSha256));
+            expires:DateTime.UtcNow.AddMinutes(fault=="expired"?-10:fault=="future"?20:5),
+            signingCredentials:fault=="unsigned"?null:new SigningCredentials(new RsaSecurityKey(fault=="key"?wrong:rsa){KeyId="test-key"},fault=="algorithm"?SecurityAlgorithms.RsaSha512:SecurityAlgorithms.RsaSha256));
         jwt.Header["typ"]=fault=="id-token"?"JWT":"at+jwt";
         if(fault=="expiry-missing")jwt.Payload.Remove("exp");
         var token=new JwtSecurityTokenHandler().WriteToken(jwt);

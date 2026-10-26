@@ -12,7 +12,7 @@ def run(args):
     return result.stdout
 with tempfile.TemporaryDirectory(prefix='identity-labs-') as directory:
     folder=Path(directory)
-    for name,minimum in [('JwtApi',16),('OidcClient',12)]:
+    for name,minimum in [('JwtApi',17),('OidcClient',12)]:
         results=folder/(name+'-results')
         run(['dotnet','test',f'supplements/identity/{name}.Tests/{name}.Tests.csproj','--nologo','-m:1',
             '--logger','trx;LogFileName=results.trx','--results-directory',str(results)])
