@@ -6,9 +6,14 @@
 
 **۹۰ درس در ۹ بخش · دو مکمل JWT و OAuth/OIDC · نمونه‌های قابل اجرا · بررسی خودکار روی Windows و Linux**
 
+[![بررسی درس‌ها و نمونه‌ها](https://github.com/k1nosraty/dotnet-backend-roadmap/actions/workflows/check-course.yml/badge.svg?branch=main)](https://github.com/k1nosraty/dotnet-backend-roadmap/actions/workflows/check-course.yml)
+[![آزمایش‌های محیط اجرا](https://github.com/k1nosraty/dotnet-backend-roadmap/actions/workflows/production-labs.yml/badge.svg?branch=main)](https://github.com/k1nosraty/dotnet-backend-roadmap/actions/workflows/production-labs.yml)
+[![پروژهٔ نهایی](https://github.com/k1nosraty/dotnet-backend-roadmap/actions/workflows/capstone.yml/badge.svg?branch=main)](https://github.com/k1nosraty/dotnet-backend-roadmap/actions/workflows/capstone.yml)
+[![JWT و OIDC](https://github.com/k1nosraty/dotnet-backend-roadmap/actions/workflows/identity.yml/badge.svg?branch=main)](https://github.com/k1nosraty/dotnet-backend-roadmap/actions/workflows/identity.yml)
+
 [شروع دوره](#start) · [مسیر یادگیری](#curriculum) · [پروژه‌ها](#projects) · [پیش‌نیازها](#prerequisites) · [نقشهٔ کامل درس‌ها](ROADMAP.md)
 
-## دستاوردهای یادگیری
+## 🎯 دستاوردهای یادگیری
 
 در این مسیر، مهارت‌های زیر را با ساخت و توسعهٔ پروژه تمرین می‌کنید:
 
@@ -23,7 +28,7 @@
 
 <a id="prerequisites"></a>
 
-## مخاطبان و پیش‌نیازها
+## 👥 مخاطبان و پیش‌نیازها
 
 این مسیر برای شروع توسعهٔ بک‌اند و نیز انتقال تجربه از زبان‌های دیگر به C# طراحی شده است. آشنایی مقدماتی با متغیر، شرط، حلقه و تابع، یادگیری را سریع‌تر می‌کند؛ دانش قبلی C#، ASP.NET Core، SQL، JWT یا Docker الزامی نیست.
 
@@ -40,7 +45,7 @@
 
 <a id="start"></a>
 
-## شروع دوره
+## 🚀 شروع دوره
 
 ### ۱. دریافت محتوای دوره
 
@@ -65,23 +70,23 @@ cd dotnet-backend-roadmap
 
 <a id="curriculum"></a>
 
-## مسیر یادگیری
+## 🧭 مسیر یادگیری
 
 | مرحله | درس‌ها | موضوع و خروجی اصلی |
 | --- | --- | --- |
-| [مبانی C#](lessons/01-foundations/README.md) | ۱–۱۲ | نوع‌ها، کنترل جریان، مدل، LINQ، فایل و async |
-| [طراحی کد](lessons/02-design/README.md) | ۱۳–۲۲ | شیءگرایی، قراردادها، DI، مسئولیت‌ها و تحویل CLI |
-| [HTTP و ASP.NET Core](lessons/03-web/README.md) | ۲۳–۳۴ | endpoint، کنترلر، DTO، اعتبارسنجی، REST و OpenAPI |
-| [داده و PostgreSQL](lessons/04-data/README.md) | ۳۵–۴۸ | SQL، index، transaction، EF Core، migration و Dapper |
-| [معماری و مرزها](lessons/05-architecture/README.md) | ۴۹–۶۰ | جهت وابستگی، نگاشت، use case، تست معماری و ADR |
-| [امنیت و مدیریت حساب](lessons/06-security/README.md) | ۶۱–۷۰ | Identity، احراز هویت، policy، مالکیت، امنیت وب و audit |
-| [تست و عیب‌یابی](lessons/07-testing/README.md) | ۷۱–۷۸ | xUnit، تست HTTP و دیتابیس، resilience، لاگ و trace |
-| [محیط اجرا و عملیات](lessons/08-production/README.md) | ۷۹–۸۶ | Docker، TLS، CI، telemetry، cache، job و بازیابی |
-| [پروژهٔ نهایی ServiceDesk](lessons/09-capstone/README.md) | ۸۷–۹۰ | تحلیل، پیاده‌سازی مستقل، آزمون و تحویل قابل تکرار |
+| 🧩 [مبانی C#](lessons/01-foundations/README.md) | ۱–۱۲ | نوع‌ها، کنترل جریان، مدل، LINQ، فایل و async |
+| 🧱 [طراحی کد](lessons/02-design/README.md) | ۱۳–۲۲ | شیءگرایی، قراردادها، DI، مسئولیت‌ها و تحویل CLI |
+| 🌐 [HTTP و ASP.NET Core](lessons/03-web/README.md) | ۲۳–۳۴ | endpoint، کنترلر، DTO، اعتبارسنجی، REST و OpenAPI |
+| 🗄️ [داده و PostgreSQL](lessons/04-data/README.md) | ۳۵–۴۸ | SQL، index، transaction، EF Core، migration و Dapper |
+| 🏗️ [معماری و مرزها](lessons/05-architecture/README.md) | ۴۹–۶۰ | جهت وابستگی، نگاشت، use case، تست معماری و ADR |
+| 🔐 [امنیت و مدیریت حساب](lessons/06-security/README.md) | ۶۱–۷۰ | Identity، احراز هویت، policy، مالکیت، امنیت وب و audit |
+| 🧪 [تست و عیب‌یابی](lessons/07-testing/README.md) | ۷۱–۷۸ | xUnit، تست HTTP و دیتابیس، resilience، لاگ و trace |
+| ⚙️ [محیط اجرا و عملیات](lessons/08-production/README.md) | ۷۹–۸۶ | Docker، TLS، CI، telemetry، cache، job و بازیابی |
+| 🏁 [پروژهٔ نهایی ServiceDesk](lessons/09-capstone/README.md) | ۸۷–۹۰ | تحلیل، پیاده‌سازی مستقل، آزمون و تحویل قابل تکرار |
 
 فهرست جزئی موضوع‌ها و وضعیت هر درس در [نقشهٔ کامل دوره](ROADMAP.md) قرار دارد.
 
-### مکمل‌های امنیت
+### 🔐 مکمل‌های امنیت
 
 پس از درس ۶۴ و پیش از ادامهٔ مجوزدهی، دو مکمل زیر را انجام دهید. شماره‌گذاری ۹۰ درس اصلی حفظ شده است.
 
@@ -94,7 +99,7 @@ cd dotnet-backend-roadmap
 
 <a id="projects"></a>
 
-## پروژه‌های مسیر
+## 🛠️ پروژه‌های مسیر
 
 | پروژه | دامنهٔ تمرین | نقطهٔ تحویل |
 | --- | --- | --- |
@@ -106,7 +111,7 @@ cd dotnet-backend-roadmap
 
 نمونهٔ هر درس یک snapshot مستقل با محدودهٔ مشخص است. فایل‌های مراحل مختلف را بدون بررسی قراردادها با یکدیگر ترکیب نکنید؛ رشد قابلیت‌ها و تغییر قواعد در متن درس توضیح داده می‌شود.
 
-## محیط توسعه
+## 💻 محیط توسعه
 
 | زمان استفاده | ابزار | راهنمای آماده‌سازی |
 | --- | --- | --- |
@@ -121,7 +126,7 @@ cd dotnet-backend-roadmap
 
 نسخهٔ مبنا .NET 10 است؛ **SDK** را از [منبع رسمی](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) نصب کنید. نصب runtime به‌تنهایی ابزار ساخت پروژه را فراهم نمی‌کند. نسخهٔ دقیق وابستگی‌ها در فایل پروژه‌ها و [راهنمای کتابخانه‌ها](handbook/libraries.md) ثبت شده است.
 
-## روش مطالعه و ارزیابی
+## 📖 روش مطالعه و ارزیابی
 
 چرخهٔ پیشنهادی هر درس: **درک مسئله ← اجرای نمونه ← پیش‌بینی و تغییر رفتار ← حل تمرین مستقل ← بررسی نتیجه و توضیح تصمیم**.
 
@@ -129,7 +134,7 @@ cd dotnet-backend-roadmap
 
 پایان دوره، آغاز ارزیابی مستقل مهارت‌هاست: پروژه‌ای با نیازمندی متفاوت بسازید، آن را با تست و روش استقرار تحویل دهید و برای تصمیم‌ها و تغییرات بعدی بازخورد بگیرید. تجربهٔ عملی و نگه‌داری پروژه، مکمل ضروری آموزش است؛ عنوان شغلی یا زمان رسیدن به آن از روی تعداد درس‌های مطالعه‌شده تعیین نمی‌شود.
 
-## وضعیت محتوا و بررسی‌های خودکار
+## ✅ وضعیت محتوا و بررسی‌های خودکار
 
 ۹۰ درس اصلی نوشته شده‌اند و ۸۹ نمونهٔ اجرایی مستقل و ۱۶ پروژهٔ تست در مسیر اصلی وجود دارد. دو مکمل امنیت، دو نمونه و دو پروژهٔ تست جداگانه دارند و در این شمارش منظور نشده‌اند.
 
@@ -160,7 +165,7 @@ python scripts/check_content.py
 
 [ممیزی کیفیت دوره](AUDIT-90.md) روش بررسی و محدودیت‌های آن را ثبت می‌کند. [ممیزی تا درس ۶۰](AUDIT-60.md) و [گزارش درس‌های ۱ تا ۳۴](AUDIT.md) شواهد تاریخیِ محدودهٔ خود را نگه می‌دارند.
 
-## راهنماها و توسعهٔ محتوا
+## 📚 راهنماها و توسعهٔ محتوا
 
 [مرجع C#](handbook/csharp-syntax.md) · [ساختار پروژه](handbook/project-structure.md) · [انتخاب کتابخانه](handbook/libraries.md) · [شرح پروژهٔ نخست](projects/01-support-desk/README.md) · [دریافت و به‌روزرسانی](PUBLISH.md)
 
