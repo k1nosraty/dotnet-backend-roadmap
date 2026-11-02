@@ -22,7 +22,9 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - name: Check lesson metadata and Markdown links
-        run: python scripts/check_content.py
+        run: |
+          python scripts/check_content.py
+          python -m unittest discover -s tests -p "test_*.py"
       - name: Check architecture snapshots, compile boundaries and publish
         run: |
           python scripts/architecture_smoke.py

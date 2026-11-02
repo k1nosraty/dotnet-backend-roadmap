@@ -40,6 +40,8 @@ dotnet test tests/071-unit-tests/SupportDesk.Tests.csproj --filter "FullyQualifi
 نام تست باید رفتار و نتیجه را بگوید، نه نامی مانند Test1 که بعد از شکست چیزی توضیح نمی‌دهد.
 با --filter فقط بخشی از تست‌ها اجرا می‌شوند؛ آن را با اجرای کل suite اشتباه نگیر.
 
+اگر تست شکست خورد، اول نام همان تست و بخش‌های Expected و Actual را بخوان: اولی چیزی است که قرارداد می‌خواهد و دومی نتیجه‌ای است که واقعاً دیده شده. شمارهٔ خط assertion را در پروژهٔ tests پیدا کن، بعد رفتار متناظر را در Domain دنبال کن. خطای build پیش از شروع تست، به معنی رد شدن یک assertion نیست؛ در آن حالت ابتدا خطای کامپایل را رفع کن.
+
 ## Fact و Theory
 
 Fact برای مثال مشخصی مانند رد Guid.Empty مناسب است.
@@ -63,7 +65,7 @@ expected در این تست از قرارداد «حداقل سه scalar» آم�
 
 | رفتار | دادهٔ آزمون | انتظار |
 | --- | --- | --- |
-| عنوان خالی | null و whitespace | ArgumentException |
+| عنوان خالی یا غیرقابل ذخیره | null، whitespace و متن دارای NUL | ArgumentException |
 | پایین مرز | ۲ scalar | رد |
 | خود مرزها | ۳ و ۱۲۰ scalar | قبول |
 | بالای مرز | ۱۲۱ scalar | رد |
@@ -73,7 +75,7 @@ expected در این تست از قرارداد «حداقل سه scalar» آم�
 | resolve کوتاه/بلند | ۲ و ۲۰۱ scalar | رد و حفظ InProgress |
 
 string.Length در .NET با شمارش scalar یکسان نیست؛ بعضی emojiها دو UTF-16 code unit دارند.
-TextRules از EnumerateRunes استفاده می‌کند تا با char_length روی متن Unicode معتبر PostgreSQL در درس ۷۴ هم‌معنا باشد.
+TextRules از EnumerateRunes استفاده می‌کند تا با char_length روی متن Unicode معتبر PostgreSQL در درس ۷۴ هم‌معنا باشد. بررسی جداگانهٔ NUL هم لازم است؛ این نویسه ممکن است طول مجاز داشته باشد، اما PostgreSQL آن را در متن نمی‌پذیرد.
 این شمارش، شمارش grapheme یا تعداد نمادهای بصری نیست؛ ترکیب‌ها و ZWJ می‌توانند متفاوت دیده شوند.
 واحد اندازه‌گیری متن را بخشی از قرارداد بدان.
 

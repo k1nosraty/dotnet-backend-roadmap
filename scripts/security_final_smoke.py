@@ -149,11 +149,15 @@ for lesson,name in enumerate(NAMES,69):
                 sql(f"DELETE FROM {schema}.\"AspNetUserClaims\" WHERE \"ClaimType\"='permission' AND \"ClaimValue\"='audit.read' AND \"UserId\"=(SELECT \"Id\" FROM {schema}.\"AspNetUsers\" WHERE \"Email\"='owner@example.test')")
                 assert send(client(),base,'/api/staff/audit',headers=auth(staff))[1]==[]
                 assert send(client(),base,'/auth/login','POST',{'email':bad_email,'password':password})[0]==401
+                assert send(client(),base,'/auth/login','POST',{'email':'bad\0@example.test','password':password})[0]==401
                 assert send(client(),base,'/api/me',headers=auth(bad_token))[0]==401
                 assert send(client(),base,'/auth/login','POST',{'email':bad_email,'password':'x'*20000})[0]==413
                 made=send(client(),base,'/api/tickets','POST',{'title':marker},auth(owner))
                 assert made[0]==201
+                assert send(client(),base,'/api/tickets','POST',{'title':'Bad\0title'},auth(owner))[0]==400
                 ticket=made[1]['id'];path='/api/tickets/'+ticket
+                assert send(client(),base,path+'/title','POST',{'title':'Bad\0title'},auth(owner))[0]==400
+                assert send(client(),base,'/api/tickets/search?term=Bad%00filter',headers=auth(owner))[0]==400
                 audit=send(client(),base,'/api/staff/audit',headers=auth(staff))
                 assert audit[0]==200 and len(audit[1])==1
                 first=audit[1][0]

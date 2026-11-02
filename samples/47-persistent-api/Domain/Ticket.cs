@@ -34,8 +34,8 @@ public sealed record Ticket
     {
         ArgumentNullException.ThrowIfNull(text);
         string normalized = text.Trim();
-        if (normalized.Length < 3 || normalized.Length > 500)
-            throw new ArgumentException("Note must contain 3-500 characters.", nameof(text));
+        if (normalized.Contains('\0') || normalized.Length < 3 || normalized.Length > 500)
+            throw new ArgumentException("Note must contain 3-500 characters and no NUL.", nameof(text));
         if (Status == "Closed" || Notes.Count >= 5 || Notes.Contains(normalized, StringComparer.Ordinal))
             return null;
         return new(Id, Title, Status, Notes.Append(normalized));

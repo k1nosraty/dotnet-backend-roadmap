@@ -53,7 +53,7 @@ python scripts/load_lab.py --algorithm formula --requests 64 --concurrency 4 --b
 | processCpuMs | تغییر CPU time کل process میزبان |
 | allocatedBytes | تغییر تخصیص حافظهٔ کل process |
 
-صدک‌ها با nearest-rank حساب می‌شوند: داده‌ها مرتب و عضو ceil(p*N) انتخاب می‌شود.
+صدک‌ها با nearest-rank حساب می‌شوند: داده‌ها مرتب و عضو ceil(p*N) با شماره‌گذاری از یک انتخاب می‌شود. مثلاً برای ۲۰ درخواست، p95 زمانِ عضو نوزدهمِ فهرست مرتب است؛ دست‌کم ۱۹ درخواست زمانی کمتر یا مساوی آن داشته‌اند. p95 برابر ۲۰۰ میلی‌ثانیه به معنی «همهٔ درخواست‌ها زیر ۲۰۰ میلی‌ثانیه‌اند» نیست.
 میانگین به‌تنهایی tail latency را نشان نمی‌دهد. تعداد نمونهٔ ۶۴ برای نتیجه‌گیری دربارهٔ p99 محصول کافی نیست؛ برای شناخت ابزار کوچک انتخاب شده است.
 CPU و allocation اینجا از /runtime می‌آیند و شامل overhead آزمایش و process هستند؛ اندازه‌گیری اختصاصی یک متد نیستند.
 این endpoint مدیریتی فقط برای دادهٔ مصنوعی روی loopback است؛ آن را به API عمومی محصول کپی نکن.
@@ -80,9 +80,9 @@ CPU و allocation اینجا از /runtime می‌آیند و شامل overhead 
 ```powershell
 dotnet tool install --tool-path artifacts/tools dotnet-counters
 dotnet tool install --tool-path artifacts/tools dotnet-trace
-.rtifacts	ools\dotnet-counters.exe ps
-.rtifacts	ools\dotnet-counters.exe monitor --process-id 12345 --counters System.Runtime
-.rtifacts	ools\dotnet-trace.exe collect --process-id 12345 --duration 00:00:15 --output artifacts/worker.nettrace
+./artifacts/tools/dotnet-counters.exe ps
+./artifacts/tools/dotnet-counters.exe monitor --process-id 12345 --counters System.Runtime
+./artifacts/tools/dotnet-trace.exe collect --process-id 12345 --duration 00:00:15 --output artifacts/worker.nettrace
 ```
 
 12345 نمونه است؛ PID میزبان خودت را از ps بگیر. در Linux پسوند exe و شکل مسیر Windows را عوض کن.

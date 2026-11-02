@@ -95,7 +95,9 @@ WaitAsync لغوِ انتظار caller است؛ تضمین نمی‌کند فر�
 ## ۶. شکست cache را با شکست source قاطی نکن
 
 RedisConnectionException و RedisTimeoutException در خواندن/نوشتن cache باعث fallback می‌شوند؛ خطای command/server ناشی از قرارداد نادرست را مخفی نمی‌کنیم؛ خطای projection یا source پنهان نمی‌شود.
-JSON خراب cache یک miss است. tenant دیگر کلید جدا دارد؛ شناسهٔ تیکت به‌تنهایی برای key کافی نیست.
+JSON خراب cache یک miss است. JSON معتبر با Version اشتباه یا Label غایب، null یا فقط فاصله نیز miss است و از source بازسازی می‌شود. مثلاً `{"Version":1}` از نظر JSON درست است، ولی خلاصهٔ نمایشی قابل استفاده‌ای ندارد. nullable نبودن Label در اعلان C# به‌تنهایی اعتبار دادهٔ deserializeشده را تضمین نمی‌کند.
+
+tenant دیگر کلید جدا دارد؛ شناسهٔ تیکت به‌تنهایی برای key کافی نیست.
 tenant در این کنسول ثابت و مصنوعی است؛ در API واقعی باید از هویت معتبر بیاید و ownership پیش از پاسخ cache اعمال شود.
 این نمونه single-flight، stampede protection، توزیع بار replica یا تضمین cache مشترک در چند region ندارد.
 

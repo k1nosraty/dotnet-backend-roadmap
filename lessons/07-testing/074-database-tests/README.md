@@ -64,6 +64,7 @@ EnsureDeleted و حذف database خارجی نداریم. تست‌ها SUPPORTD
 | title شبیه SQL | متن literal بدون تبدیل شدن به دستور |
 | OwnerId نامعتبر در snapshot | Save ناموفق و حفظ Open |
 | id غایب و token از ابتدا cancelled | نبود منبع و exception لغو، بدون موفقیت کاذب |
+| عنوان یا resolution دارای NUL از HTTP | پاسخ 400؛ وضعیت ذخیره‌شده و resolution قبلی ثابت بمانند |
 | dispose و ساخت دوبارهٔ WebApplicationFactory | دادهٔ PostgreSQL باقی بماند و bob منبع alice را نبیند |
 
 PostgresTicketStore تمام مقدارها را parameter می‌کند. identifier schema فقط پس از regex محدود وارد DDL می‌شود؛ نام schema، input HTTP نیست.
@@ -77,6 +78,8 @@ UPDATE شرط Id و OwnerId و Version دارد و version را در همان st
 char_length در PostgreSQL و EnumerateRunes در Domain برای Unicode معتبر scalar را می‌شمارند.
 Title بین ۳ و ۱۲۰ و Resolution بین ۳ و ۲۰۰ scalar است؛ Close بدون resolution معتبر در DB پذیرفته نمی‌شود.
 هم‌خوان بودن واحد طول از اختلاف emoji بین string.Length و SQL جلوگیری می‌کند.
+NUL با کد صفر، حتی با طول مجاز در ستون متنی PostgreSQL قابل ذخیره نیست. TextRules آن را پیش از I/O رد می‌کند. برای آزمایش، رشتهٔ `Bad\0title` در C# را از PostAsJsonAsync بفرست؛ درخواست باید 400 بگیرد، نه خطای 500 از دیتابیس.
+
 این کنترل جای تست normalization و grapheme و تمام ورودی‌های Unicode در محصول را نمی‌گیرد.
 
 ## HTTP با دیتابیس واقعی و هویت تست

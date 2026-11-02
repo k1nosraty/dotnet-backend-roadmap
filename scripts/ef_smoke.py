@@ -51,7 +51,7 @@ try:
         assert migrate.returncode == 0 and 'PASS: application migrations applied' in migrate.stdout, (migrate.stdout,migrate.stderr)
     with server('47-persistent-api','Production',{'SUPPORTDESK_PG':cs}) as base:
         assert send(base,'/health/ready')[0] == 200
-        for title in [None,'  ','ab']:
+        for title in [None,'  ','ab','Bad\0title']:
             assert send(base,path,'POST',{'title':title})[0] == 400
         status,headers,ticket = send(base,path,'POST',{'title':'  Persistent ticket  '})
         assert status == 201 and ticket['title'] == 'Persistent ticket' and ticket['id'] > 0
@@ -64,6 +64,10 @@ try:
         assert send(base,route+'/status','PUT',{'status':'Closed'})[0] == 409
         assert send(base,route+'/status','PUT',{'status':'Unknown'})[0] == 400
         assert send(base,route+'/notes','POST',{'text':'  '})[0] == 400
+        assert send(base,route+'/notes','POST',{'text':'Bad\0note'})[0] == 400
+        assert send(base,route+'/title','PUT',{'title':'Bad\0title'})[0] == 400
+        assert send(base,path+'?q=Bad%00filter')[0] == 400
+        assert send(base,route)[2]['notes'] == []
         assert send(base,route+'/title','PUT',{'title':'  Durable renamed ticket  '})[0] == 200
         assert send(base,route+'/notes','POST',{'text':'Unique first note'})[0] == 200
         assert send(base,route+'/notes','POST',{'text':'  Unique first note  '})[0] == 409

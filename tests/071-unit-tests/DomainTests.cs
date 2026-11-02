@@ -4,7 +4,7 @@ namespace SupportDesk.Tests;
 public sealed class DomainTests
 {
     [Theory]
-    [InlineData(null)] [InlineData("")] [InlineData("  ")]
+    [InlineData(null)] [InlineData("")] [InlineData("  ")] [InlineData("Bad\0title")]
     public void Rejects_missing_title(string? value) => Assert.Throws<ArgumentException>(() => TicketTitle.Create(value));
     [Fact]
     public void Rejects_too_short_title() => Assert.Throws<ArgumentException>(() => TicketTitle.Create("ab"));
@@ -37,7 +37,7 @@ public sealed class DomainTests
         Assert.Throws<InvalidOperationException>(() => closed.Start());
         Assert.Throws<InvalidOperationException>(() => closed.Resolve("Again"));
     }
-    [Theory] [InlineData(null)] [InlineData("")] [InlineData("ab")]
+    [Theory] [InlineData(null)] [InlineData("")] [InlineData("ab")] [InlineData("Bad\0resolution")]
     public void Rejects_invalid_resolution_without_closing(string? resolution)
     {
         var ticket = Ticket.Open(Guid.NewGuid(), TicketTitle.Create("Network")).Start();

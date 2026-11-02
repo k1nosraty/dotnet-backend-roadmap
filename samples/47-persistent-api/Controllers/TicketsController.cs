@@ -14,7 +14,7 @@ public sealed class TicketsController(TicketService service, IOptions<TicketOpti
         [FromQuery] int page = 1, [FromQuery] int? pageSize = null, CancellationToken ct = default)
     {
         int size = pageSize ?? options.Value.DefaultPageSize;
-        if (page < 1 || size < 1 || size > options.Value.MaxPageSize || (q?.Length ?? 0) > 120)
+        if (page < 1 || size < 1 || size > options.Value.MaxPageSize || (q?.Length ?? 0) > 120 || q?.Contains('\0') == true)
             return Problem(statusCode: 400, title: "Invalid page or filter");
         // PostgreSQL filtering uses case-sensitive Contains; see the delivery lesson.
         return Ok(await service.AllAsync(q, page, size, ct));
@@ -36,7 +36,7 @@ public sealed class TicketsController(TicketService service, IOptions<TicketOpti
     public async Task<ActionResult<TicketResponse>> Create([FromBody] CreateTicketRequest request, CancellationToken ct)
     {
         string? title = request.Title?.Trim();
-        if (title is null || title.Length < 3 || title.Length > 120) return InvalidTitle();
+        if (title is null || title.Contains('\0') || title.Length < 3 || title.Length > 120) return InvalidTitle();
         var ticket = await service.CreateAsync(title, ct);
         return CreatedAtAction(nameof(GetById), new { id = ticket.Id }, ticket.ToResponse());
     }
@@ -49,7 +49,7 @@ public sealed class TicketsController(TicketService service, IOptions<TicketOpti
     {
         if (id <= 0) return Problem(statusCode: 400, title: "ID must be positive");
         string? title = request.Title?.Trim();
-        if (title is null || title.Length < 3 || title.Length > 120) return InvalidTitle();
+        if (title is null || title.Contains('\0') || title.Length < 3 || title.Length > 120) return InvalidTitle();
         return FromMutation(await service.RenameAsync(id, title, ct));
     }
     [HttpDelete("{id:int}")]
@@ -71,7 +71,7 @@ public sealed class TicketsController(TicketService service, IOptions<TicketOpti
     }
     private ActionResult InvalidTitle()
     {
-        ModelState.AddModelError("title", "Title must contain 3-120 characters after trimming.");
+        ModelState.AddModelError("title", "Title must contain 3-120 characters after trimming and no NUL.");
         return ValidationProblem(ModelState);
     }
     [HttpPost("{id:int}/notes")]
@@ -83,9 +83,9 @@ public sealed class TicketsController(TicketService service, IOptions<TicketOpti
     {
         if (id <= 0) return Problem(statusCode: 400, title: "ID must be positive");
         string? text = request.Text?.Trim();
-        if (text is null || text.Length < 3 || text.Length > 500)
+        if (text is null || text.Contains('\0') || text.Length < 3 || text.Length > 500)
         {
-            ModelState.AddModelError("text", "Note must contain 3-500 characters after trimming.");
+            ModelState.AddModelError("text", "Note must contain 3-500 characters after trimming and no NUL.");
             return ValidationProblem(ModelState);
         }
         return FromMutation(await service.AddNoteAsync(id, text, ct));

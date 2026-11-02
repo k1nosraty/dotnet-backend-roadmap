@@ -13,6 +13,9 @@ for item in lessons:
     assert exists == (item['status'] == 'written'), item
 for path in root.rglob('*.md'):
     text = path.read_text(encoding='utf-8')
+    for line_number, line in enumerate(text.split('\n'), 1):
+        assert not any((ord(char) < 32 and char not in '\t\r') or ord(char) == 127 for char in line), \
+            f'Invisible control character: {path}:{line_number}'
     assert text.count('```') % 2 == 0, f'Unclosed fence: {path}'
     for target in re.findall(r'\]\(([^)]+)\)', text):
         if '://' in target or target.startswith('#'):

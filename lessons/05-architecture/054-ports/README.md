@@ -24,6 +24,8 @@ public interface ITicketStore
 }
 ```
 
+در اینجا port همان interface موردنیاز برنامه است؛ مثلاً می‌گوید «تیکت را بخوان»، بدون اینکه روش خواندن را تعیین کند. adapter کلاسی است که این درخواست را با روش مشخصی انجام می‌دهد: یکی از dictionary می‌خواند و دیگری از فایل JSON.
+
 مالک قرارداد Application است؛ جزئیات JSON و dictionary در امضای آن نیست.
 Infrastructure این قرارداد را پیاده می‌کند.
 Program implementation را انتخاب می‌کند و handler همان ITicketStore را دریافت می‌کند.

@@ -65,6 +65,22 @@ public sealed class CacheTests
         using var cancelled=new CancellationTokenSource(); cancelled.Cancel();
         await Assert.ThrowsAnyAsync<OperationCanceledException>(()=>service.ReadAsync(Tenant,Id,cancelled.Token));
     }
+    [Theory]
+    [InlineData("{\"Version\":1}")]
+    [InlineData("{\"Version\":1,\"Label\":null}")]
+    [InlineData("{\"Version\":1,\"Label\":\" \"}")]
+    [InlineData("{\"Version\":2,\"Label\":\"stale\"}")]
+    public async Task Invalid_cached_summary_is_rebuilt_and_replaces_the_bad_entry(string json)
+    {
+        var source=new TicketSource(); var ticket=source.Write(Tenant,Id,"truth");
+        var cache=new MemoryCache(TimeProvider.System);
+        await cache.PutAsync(CachedSummary.Key(ticket),json,TimeSpan.FromSeconds(30),default);
+        var builds=0;
+        var service=new CachedSummary(source,cache,(t,ct)=>{ builds++; return Project(t,ct); });
+        Assert.Equal(new Summary(ticket.Version,"truth"),await service.ReadAsync(Tenant,Id));
+        Assert.Equal(new Summary(ticket.Version,"truth"),await service.ReadAsync(Tenant,Id));
+        Assert.Equal(1,builds);
+    }
     private sealed class Clock : TimeProvider { public DateTimeOffset Now=DateTimeOffset.UnixEpoch; public override DateTimeOffset GetUtcNow()=>Now; }
     private sealed class BrokenCache(bool timeout) : ICache
     {

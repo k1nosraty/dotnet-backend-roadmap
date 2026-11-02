@@ -14,6 +14,16 @@ using Xunit;
 public sealed class PrototypeTests
 {
     [Fact]
+    public async Task Nul_title_is_rejected_without_consuming_the_idempotency_key()
+    {
+        using var factory=new TestFactory(); using var owner=factory.As("owner");
+        owner.DefaultRequestHeaders.Add("Idempotency-Key",Guid.NewGuid().ToString());
+        using var invalid=await owner.PostAsJsonAsync("/requests",new {title="Bad\0title",priority="normal"});
+        Assert.Equal(HttpStatusCode.BadRequest,invalid.StatusCode);
+        using var valid=await owner.PostAsJsonAsync("/requests",new {title="Printer",priority="normal"});
+        Assert.Equal(HttpStatusCode.Created,valid.StatusCode);
+    }
+    [Fact]
     public async Task Normal_host_never_trusts_test_identity_header()
     { using var factory=new WebApplicationFactory<Program>();using var client=factory.CreateClient();client.DefaultRequestHeaders.Add("X-Test-Actor","owner");Assert.Equal(HttpStatusCode.Unauthorized,(await client.GetAsync("/requests/"+Guid.NewGuid())).StatusCode); }
     [Fact]

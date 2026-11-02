@@ -37,7 +37,12 @@ public sealed class CachedSummary(TicketSource source, ICache cache, Func<Ticket
             var text = await cache.GetAsync(Key(ticket), ct);
             if (text is not null)
             {
-                try { var value = JsonSerializer.Deserialize<Summary>(text); if (value?.Version == ticket.Version) return value; }
+                try
+                {
+                    var value = JsonSerializer.Deserialize<Summary>(text);
+                    if (value?.Version == ticket.Version && !string.IsNullOrWhiteSpace(value.Label))
+                        return value;
+                }
                 catch (JsonException) { } // Broken cache is a miss; authoritative state is untouched.
             }
         }

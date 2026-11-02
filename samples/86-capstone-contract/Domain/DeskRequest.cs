@@ -18,8 +18,13 @@ public sealed class DeskRequest
     public string? Resolution { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset DueAt { get; private set; }
+    // Keep the in-memory and PostgreSQL text contracts consistent: NUL cannot be stored.
     public static bool ValidText(string? value,int maximum)
-    { var count=value?.Trim().EnumerateRunes().Count()??0; return count>=3 && count<=maximum; }
+    {
+        if (value is null || value.Contains('\0')) return false;
+        int count = value.Trim().EnumerateRunes().Count();
+        return count >= 3 && count <= maximum;
+    }
     public static DeskRequest Open(Actor actor,Guid key,string? title,string? priority,DateTimeOffset now)
     {
         if(actor.Tenant==Guid.Empty || string.IsNullOrWhiteSpace(actor.Id) || key==Guid.Empty || !ValidText(title,120) || priority is not ("normal" or "urgent"))

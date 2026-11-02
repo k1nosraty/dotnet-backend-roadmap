@@ -111,6 +111,7 @@ for lesson,name in enumerate(NAMES,65):
                     assert result[0]==200,'Disposable lab login failed.'
                     return result[1]['accessToken']
                 owner,peer,other,staff,roleonly,claimonly=[login(x) for x in ['owner','peer','other','staff','roleonly','claimonly']]
+                assert send(client(),base,'/auth/login','POST',{'email':'bad\0@example.test','password':password})[0]==401
                 assert send(client(),base,'/api/private-default',headers=auth(owner))[0]==200
                 assert send(client(),base,'/api/staff/report',headers=auth(owner))[0]==403
                 for token in [peer,other,roleonly,claimonly]:
@@ -126,7 +127,11 @@ for lesson,name in enumerate(NAMES,65):
                 if lesson>=66:
                     made=send(client(),base,'/api/tickets','POST',{'title':'Owner alpha ticket'},auth(owner))
                     assert made[0]==201 and made[1]['title']=='Owner alpha ticket'
+                    assert send(client(),base,'/api/tickets','POST',{'title':'Bad\0title'},auth(owner))[0]==400
                     ticket=made[1]['id'];path='/api/tickets/'+ticket
+                    assert send(client(),base,path+'/title','POST',{'title':'Bad\0title'},auth(owner))[0]==400
+                    if lesson>=67:
+                        assert send(client(),base,'/api/tickets/search?term=Bad%00filter',headers=auth(owner))[0]==400
                     assert send(client(),base,path,headers=auth(owner))[0]==200
                     for token in [peer,other,staff]:
                         assert send(client(),base,path,headers=auth(token))[0]==404

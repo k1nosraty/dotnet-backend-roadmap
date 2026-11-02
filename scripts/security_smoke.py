@@ -114,6 +114,7 @@ with tempfile.TemporaryDirectory(prefix='security64-') as directory:
             assert send(client(),base,'/health/ready')[0]==200
             assert send(client(),base,'/api/me')[0]==401
             assert send(client(),base,'/api/me',headers={'X-User':'admin','X-Role':'Administrator'})[0]==401
+            assert send(client(),base,'/auth/login','POST',{'email':'bad\0@example.test','password':'Wrong-password!9Aa'})[0]==401
             wrong=send(client(),base,'/auth/login','POST',{'email':email,'password':'Wrong-password!9Aa'})
             missing=send(client(),base,'/auth/login','POST',{'email':'missing@example.test','password':'Wrong-password!9Aa'})
             assert wrong[0]==missing[0]==401 and wrong[1]==missing[1],'Login reveals account existence through response shape.'

@@ -13,7 +13,7 @@ python scripts/capstone_delivery.py
 | --- | --- | --- |
 | ۸ unit test | tests/087-contract/SupportDesk.Tests.csproj | قواعد Domain، موعد، version و یک reopen |
 | ۲ تست HTTP | tests/088-prototype/SupportDesk.Tests.csproj | default deny، replay، مرز سازمان و رقابت حافظه |
-| ۹ تست PostgreSQL | tests/089-capstone/SupportDesk.Tests.csproj | login واقعی، payload متفاوت، نقش/سازمان، لغو grant، CAS، rollback audit، restart و محدودیت نرخ |
+| ۱۰ تست PostgreSQL | tests/089-capstone/SupportDesk.Tests.csproj | login واقعی، payload متفاوت، نقش/سازمان، لغو grant، CAS، rollback audit، restart و محدودیت نرخ |
 | smoke | scripts/capstone_smoke.py | خروجی قرارداد، publish، نبود test DLL و رد config بدون نشت password |
 | delivery | scripts/capstone_delivery.py | TLS معتبر، non-root، پورت خصوصی، جریان واقعی، restore و همان DLL |
 

@@ -44,6 +44,22 @@ public sealed class DatabaseFactory(string connection) : TicketFactory
 public sealed class PostgresTests(PostgresFixture fixture) : IClassFixture<PostgresFixture>
 {
     [Fact]
+    public async Task Nul_text_returns_400_and_does_not_change_persisted_state()
+    {
+        using var factory = new DatabaseFactory(fixture.Connection);
+        using var client = factory.As("alice");
+        using var invalid = await client.PostAsJsonAsync("/api/tickets", new { title = "Bad\0title" });
+        Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
+        using var made = await client.PostAsJsonAsync("/api/tickets", new { title = "Valid title" });
+        Assert.Equal(HttpStatusCode.Created, made.StatusCode);
+        string path = made.Headers.Location!.ToString();
+        Assert.Equal(HttpStatusCode.OK, (await client.PostAsync(path+"/start", null)).StatusCode);
+        using var rejected = await client.PostAsJsonAsync(path+"/resolve", new { resolution = "Bad\0resolution" });
+        Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
+        var saved = await client.GetFromJsonAsync<TicketView>(path);
+        Assert.NotNull(saved); Assert.Equal("InProgress", saved.Status); Assert.Null(saved.Resolution);
+    }
+    [Fact]
     public async Task Real_store_roundtrip_and_version_survive_new_adapter()
     {
         await using var source = NpgsqlDataSource.Create(fixture.Connection);

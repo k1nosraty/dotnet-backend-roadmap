@@ -5,6 +5,8 @@ return await Lab.RunAsync("lab36", args, async (db, token) =>
 {
     await Lab.ScriptAsync(db, "01-schema.sql", token);
     var repository = new TicketRepository(db);
+    try { TicketTitle.Create("Bad\0title"); throw new InvalidOperationException("NUL title accepted."); }
+    catch (ArgumentException) { }
     var first = await repository.CreateAsync(TicketTitle.Create("  مشکل شبکه  "), token);
     Lab.Check(first.Title == "مشکل شبکه", "Unicode or normalization changed.");
     var injection = await repository.CreateAsync(TicketTitle.Create("Robert'); DROP TABLE tickets;--"), token);

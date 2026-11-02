@@ -24,7 +24,7 @@ public static class AuthenticationEndpoints
             mode ??= "bearer";
             if (mode is not ("cookie" or "bearer")) return Results.Problem(statusCode: 400, title: "Unknown login mode.");
             if (mode == "cookie" && !await ValidCsrf(context, antiforgery)) return Results.Problem(statusCode: 400, title: "Invalid CSRF token.");
-            if (string.IsNullOrWhiteSpace(input.Email) || input.Email.Length > 254 || input.Password is null || input.Password.Length > 1024)
+            if (string.IsNullOrWhiteSpace(input.Email) || input.Email.Length > 254 || input.Email.Contains('\0') || input.Password is null || input.Password.Length > 1024)
             { security.Record(SecurityCode.LoginRejected); return Results.Unauthorized(); }
             signIn.AuthenticationScheme = mode == "cookie" ? IdentityConstants.ApplicationScheme : IdentityConstants.BearerScheme;
             var result = await signIn.PasswordSignInAsync(input.Email, input.Password, isPersistent: false, lockoutOnFailure: true);

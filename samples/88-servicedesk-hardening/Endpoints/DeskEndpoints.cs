@@ -20,7 +20,7 @@ public static class DeskEndpoints
     {
         app.MapPost("/auth/login",async (LoginInput input,SignInManager<DeskUser> signIn)=>
         {
-            if(string.IsNullOrWhiteSpace(input.Email)||input.Email.Length>254||input.Password is null||input.Password.Length>1024)return Results.Unauthorized();
+            if(string.IsNullOrWhiteSpace(input.Email)||input.Email.Length>254||input.Email.Contains('\0')||input.Password is null||input.Password.Length>1024)return Results.Unauthorized();
             signIn.AuthenticationScheme=IdentityConstants.BearerScheme;
             var result=await signIn.PasswordSignInAsync(input.Email,input.Password,false,true);
             return result.Succeeded?Results.Empty:Results.Unauthorized();

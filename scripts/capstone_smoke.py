@@ -29,9 +29,9 @@ with tempfile.TemporaryDirectory(prefix='capstone-') as directory:
     folder=Path(directory)
     if sys.argv[1:]==['--docker-only']:
         assert shutil.which('docker') and run(['docker','info','--format','{{.OSType}}']).strip()=='linux','Running Linux Docker required; no skip.'
-        test('089-capstone',folder,9)
+        test('089-capstone',folder,10)
     else:
-        test('087-contract',folder,8);test('088-prototype',folder,2)
+        test('087-contract',folder,10);test('088-prototype',folder,3)
         assert run(['dotnet','run','--project',str(ROOT/'samples/86-capstone-contract/SupportDesk.csproj')]).strip()=='state=Open; version=4; reopens=1; dueHours=4'
         run(['dotnet','build',str(ROOT/'tests/089-capstone/SupportDesk.Tests.csproj'),'--nologo','-m:1'])
         for n,name in [(88,'87-servicedesk-prototype'),(89,'88-servicedesk-hardening'),(90,'89-servicedesk-delivery')]:

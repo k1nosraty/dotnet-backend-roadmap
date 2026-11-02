@@ -19,6 +19,26 @@ using Xunit;
 public sealed class CapstoneTests(DeskFixture fixture):IClassFixture<DeskFixture>
 {
     [Fact]
+    public async Task Nul_text_is_rejected_before_database_writes_or_audit()
+    {
+        await fixture.Reset(); using var owner=await fixture.As("requester@alpha.test");
+        owner.DefaultRequestHeaders.Add("Idempotency-Key",Guid.NewGuid().ToString());
+        using var invalid=await owner.PostAsJsonAsync("/requests",new {title="Bad\0title",priority="normal"});
+        Assert.Equal(HttpStatusCode.BadRequest,invalid.StatusCode);
+        await using(var scope=fixture.Factory.Services.CreateAsyncScope())
+        {
+            var db=scope.ServiceProvider.GetRequiredService<DeskContext>();
+            Assert.Equal(0,await db.Requests.CountAsync()); Assert.Equal(0,await db.Audits.CountAsync());
+        }
+        var row=await Create(owner); using var agent=await fixture.As("agent@alpha.test");
+        Assert.Equal(HttpStatusCode.OK,(await agent.PostAsJsonAsync($"/requests/{row.Id}/claim",new {version=1})).StatusCode);
+        using var rejected=await agent.PostAsJsonAsync($"/requests/{row.Id}/close",new {version=2,resolution="Bad\0resolution"});
+        Assert.Equal(HttpStatusCode.BadRequest,rejected.StatusCode);
+        var saved=(await owner.GetFromJsonAsync<RequestView>($"/requests/{row.Id}"))!;
+        Assert.Equal("InProgress",saved.State); Assert.Equal(2,saved.Version); Assert.Null(saved.Resolution);
+        Assert.Equal(2,(await owner.GetFromJsonAsync<AuditView[]>($"/requests/{row.Id}/audit"))!.Length);
+    }
+    [Fact]
     public async Task Anonymous_spoof_and_tampered_token_are_denied()
     {
         await fixture.Reset();using var client=fixture.Factory.Client();client.DefaultRequestHeaders.Add("X-Test-Actor","agent");
@@ -27,6 +47,8 @@ public sealed class CapstoneTests(DeskFixture fixture):IClassFixture<DeskFixture
         Assert.Equal(HttpStatusCode.Unauthorized,(await client.GetAsync("/requests")).StatusCode);
         using var bad=await client.PostAsJsonAsync("/auth/login",new {email="missing@alpha.test",password="invalid"});
         Assert.Equal(HttpStatusCode.Unauthorized,bad.StatusCode);
+        using var nulEmail=await client.PostAsJsonAsync("/auth/login",new {email="bad\0@alpha.test",password="invalid"});
+        Assert.Equal(HttpStatusCode.Unauthorized,nulEmail.StatusCode);
     }
     [Fact]
     public async Task Racing_same_key_creates_one_request_and_one_audit_and_changed_payload_conflicts()

@@ -94,7 +94,7 @@ bool parsed = decimal.TryParse(
     out decimal estimatedHours);
 ```
 
-rawHours رشتهٔ ورودی است و قبل از این قطعه باید تعریف شود.
+پیش از TryParse، ورودی ساعت را با `string? rawHours = Console.ReadLine();` بگیر. دستور `using System.Globalization;` به ابتدای فایل می‌رود؛ بقیهٔ این قطعه پس از دریافت ورودی قرار می‌گیرد.
 TryParse موفقیت را به صورت bool برمی‌گرداند.
 مقدار تبدیل‌شده از طریق out در estimatedHours قرار می‌گیرد.
 اگر تبدیل شکست بخورد، برای این overload مقدار خروجی صفر می‌شود؛ معیار موفقیت همان parsed است.

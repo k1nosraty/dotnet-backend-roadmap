@@ -29,6 +29,8 @@ string first = hasher.HashPassword(user, password);
 string second = hasher.HashPassword(user, password);
 ```
 
+salt یک مقدار تصادفی است که hasher هنگام ساخت هر hash تولید می‌کند و همراه اطلاعات hash نگه می‌دارد؛ لازم نیست راز جداگانه‌ای مثل password باشد. به همین دلیل دو حساب با رمز یکسان الزاماً hash یکسان ندارند.
+
 دو خروجی برابر نیستند، چون salt مستقل دارند.
 همان password می‌تواند هر دو را با موفقیت verify کند.
 نمونه فقط مقایسه را گزارش می‌کند، نه خود hashها را.

@@ -10,7 +10,7 @@ public sealed class TicketService(AccountContext db, AccountAccess accounts, IAu
     {
         var actor = await accounts.ReadAsync(user);
         if (actor is null) return Results.Forbid();
-        if (term is { Length: > 120 }) return Results.BadRequest();
+        if (term is { Length: > 120 } || term?.Contains('\0') == true) return Results.BadRequest();
         // Scope before projection, search and limit. Values become SQL parameters, not SQL syntax.
         var query = db.Tickets.AsNoTracking().Where(t => t.OwnerId == actor.UserId && t.TenantId == actor.TenantId);
         if (!string.IsNullOrEmpty(term)) query = query.Where(t => t.Title.Contains(term));
@@ -46,5 +46,5 @@ public sealed class TicketService(AccountContext db, AccountAccess accounts, IAu
             .ExecuteUpdateAsync(setters => setters.SetProperty(t => t.Title, title), ct);
         return changed == 1 ? Results.NoContent() : Results.NotFound();
     }
-    private static string? ValidTitle(string? value) => value?.Trim() is { Length: >= 3 and <= 120 } title ? title : null;
+    private static string? ValidTitle(string? value) => value?.Trim() is { Length: >= 3 and <= 120 } title && !title.Contains('\0') ? title : null;
 }

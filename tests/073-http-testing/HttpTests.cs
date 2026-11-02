@@ -34,6 +34,7 @@ public sealed class HttpTests
     }
     [Theory] [InlineData("{broken")] [InlineData("{\"title\":\"ab\"}")]
     [InlineData("{\"title\":\"Network\",\"ownerId\":\"bob\"}")]
+    [InlineData("{\"title\":\"Bad\\u0000title\"}")]
     public async Task Invalid_json_or_contract_returns_400(string json)
     {
         using var factory = new TicketFactory(); using var client = factory.As("alice");
@@ -49,6 +50,7 @@ public sealed class HttpTests
         Assert.Equal(HttpStatusCode.Conflict, (await client.PostAsJsonAsync(path+"/resolve", new { resolution = "Cable fixed" })).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await client.PostAsync(path+"/start", null)).StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsJsonAsync(path+"/resolve", new { resolution = "ab" })).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsJsonAsync(path+"/resolve", new { resolution = "Bad\0resolution" })).StatusCode);
         Assert.Equal("InProgress", (await client.GetFromJsonAsync<TicketView>(path))!.Status);
         var responses = await Task.WhenAll(Enumerable.Range(0, 8).Select(i => client.PostAsJsonAsync(path+"/resolve", new { resolution = "Fixed cable "+i })));
         Assert.Single(responses, x => x.StatusCode == HttpStatusCode.OK);

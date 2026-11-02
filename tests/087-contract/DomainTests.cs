@@ -9,7 +9,7 @@ public sealed class DomainTests
     public void Priority_sets_server_owned_due_date(string priority,int hours)
     { var request=DeskRequest.Open(Owner,Guid.NewGuid(),"Printer",priority,DateTimeOffset.UnixEpoch); Assert.Equal(hours,(request.DueAt-DateTimeOffset.UnixEpoch).TotalHours); }
     [Theory]
-    [InlineData("ab")] [InlineData(" ")] [InlineData(null)]
+    [InlineData("ab")] [InlineData(" ")] [InlineData(null)] [InlineData("Bad\0title")]
     public void Invalid_title_is_rejected(string? title)=>Assert.Throws<ArgumentException>(()=>DeskRequest.Open(Owner,Guid.NewGuid(),title,"normal",DateTimeOffset.UnixEpoch));
     [Fact]
     public void Unicode_scalar_boundary_and_unknown_priority_are_explicit()
@@ -34,5 +34,14 @@ public sealed class DomainTests
         var request=DeskRequest.Open(Owner,Guid.NewGuid(),"Printer","normal",DateTimeOffset.UnixEpoch);
         var other=new Actor("other",Guid.NewGuid(),true); var peer=new Actor("peer",Tenant,false);
         Assert.False(request.Visible(other)); Assert.False(request.Visible(peer)); Assert.False(request.Claim(other,1));
+    }
+    [Fact]
+    public void Nul_in_resolution_is_rejected_without_changing_state_or_version()
+    {
+        var request=DeskRequest.Open(Owner,Guid.NewGuid(),"Printer","normal",DateTimeOffset.UnixEpoch);
+        Assert.True(request.Claim(Agent,1));
+        Assert.False(request.Close(Agent,2,"Bad\0resolution"));
+        Assert.Equal(DeskState.InProgress,request.State); Assert.Equal(2,request.Version);
+        Assert.Null(request.Resolution);
     }
 }

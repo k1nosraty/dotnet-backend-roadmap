@@ -9,8 +9,8 @@ public sealed record TicketTitle
     {
         ArgumentNullException.ThrowIfNull(value);
         string normalized = value.Trim();
-        if (normalized.Length < 3 || normalized.Length > 120)
-            throw new ArgumentException("Title must contain 3-120 characters.", nameof(value));
+        if (normalized.Contains('\0') || normalized.Length < 3 || normalized.Length > 120)
+            throw new ArgumentException("Title must contain 3-120 characters and no NUL.", nameof(value));
         return new TicketTitle(normalized);
     }
     public override string ToString() => Value;
