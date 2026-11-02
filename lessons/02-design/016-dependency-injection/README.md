@@ -97,6 +97,28 @@ GetRequiredService قرار نیست null برای dependency ضروری بده�
 داخل TicketSummaryService به IServiceProvider وابسته نمی‌شویم تا خودش همه‌چیز را جست‌وجو کند.
 این کار dependencyها را پنهان می‌کند و الگوی service locator ایجاد می‌کند.
 
+## یک نگاه: همان شیء یا شیء تازه؟
+
+جعبه‌های سمت راست شیءهای ساخته‌شده‌اند. داخل scope A هر resolveِ Scoped همان S-A را می‌دهد؛ scope B شیء S-B خودش را دارد. در یک provider، Transient هر بار تازه است، Scoped داخل یک scope مشترک است و Singleton بین scopeها مشترک می‌ماند.
+
+```mermaid
+flowchart LR
+    accTitle: همان شیء یا شیء تازه؟
+    accDescr: Transient در هر resolve تازه است، Scoped داخل یک scope مشترک است و Singleton بین scopeهای همان provider مشترک می‌ماند.
+    T["Transient"] -->|resolve 1|T1["T1"]
+    T -->|resolve 2|T2["T2"]
+    S["Scoped"] -->|scope A|SA["S-A"]
+    S -->|scope B|SB["S-B"]
+    G["Singleton"] -->|هر دو محدوده|One["یک شیء مشترک"]
+```
+
+**مکث کوتاه:** دو کاربر در دو درخواست وب الزاماً همان scoped service را می‌گیرند؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ scoped یعنی یک شیء در هر scope، نه یک شیء برای هر کاربر یا برای همهٔ کاربران. در وب، درخواست‌های جدا معمولاً scope جدا دارند.</p>
+</details>
+
 ## ۶. طول عمرها
 
 | lifetime | نمونهٔ تازه کی ساخته می‌شود؟ | کاربرد آموزشی |

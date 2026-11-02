@@ -36,6 +36,31 @@ salt یک مقدار تصادفی است که hasher هنگام ساخت هر ha
 نمونه فقط مقایسه را گزارش می‌کند، نه خود hashها را.
 لو رفتن hash همچنان خطر offline guessing دارد و مجوز انتشار آن نیست.
 
+## یک نگاه: یک رمز، دو salt و دو hash
+
+در این تصویر رمز ورودی یکسان است، ولی hasher هر بار salt تازه می‌سازد. برای بررسی رمز، VerifyHashedPassword به کار می‌رود؛ انتظار برابری مستقیم دو hash نداریم.
+
+```mermaid
+flowchart LR
+    accTitle: یک رمز، دو salt و دو hash
+    accDescr: در این تصویر رمز ورودی یکسان است، ولی hasher هر بار salt تازه می‌سازد. برای بررسی رمز، VerifyHashedPassword به کار می‌رود؛ انتظار برابری مستقیم دو hash نداریم.
+    Password["رمز یکسان"] --> H1["hasher 1"]
+    Salt1["salt 1"] --> H1
+    Password --> H2["hasher 2"]
+    Salt2["salt 2"] --> H2
+    H1 --> Hash1["hash 1"]
+    H2 --> Hash2["hash 2"]
+    Hash1 --> Verify["بررسی با همان رمز: موفق"]
+    Hash2 --> Verify
+```
+
+**مکث کوتاه:** متفاوت بودن hashها یعنی یکی از رمزها اشتباه بوده است؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ salt تصادفی باعث تفاوت خروجی می‌شود. هر دو hash می‌توانند همان رمز ورودی را معتبر تشخیص دهند؛ با مقایسهٔ متن hashها تصمیم نمی‌گیریم.</p>
+</details>
+
 ## ارتقای hash
 
 PasswordVerificationResult سه حالت مهم دارد:

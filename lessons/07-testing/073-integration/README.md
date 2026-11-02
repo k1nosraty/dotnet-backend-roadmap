@@ -35,6 +35,27 @@ python scripts/testing_smoke.py
 اجرای عادی app، /health عمومی و API خصوصیِ بسته دارد. provider ورود واقعی در این lab اضافه نشده است.
 این تصمیم اجازه نمی‌دهد هویت تست به میان‌بر محیط واقعی تبدیل شود؛ برای authentication واقعی به نمونه‌های بخش ششم رجوع کن.
 
+## یک نگاه: داخل تست چه چیزهایی واقعی‌اند؟
+
+در TestServer، pipeline و endpoint و use case اجرا می‌شوند؛ در این درس store حافظه‌ای است و هویت فقط داخل test assembly جایگزین می‌شود. اتصال TCP و TLS این مسیر نیستند.
+
+```mermaid
+flowchart LR
+    accTitle: داخل تست چه چیزهایی واقعی‌اند؟
+    accDescr: در TestServer، pipeline و endpoint و use case اجرا می‌شوند؛ در این درس store حافظه‌ای است و هویت فقط داخل test assembly جایگزین می‌شود. اتصال TCP و TLS این مسیر نیستند.
+    Test["HttpClient"] --> Pipeline["ASP.NET Core pipeline"]
+    Pipeline --> UseCase["Application + Domain"]
+    UseCase --> Store["MemoryTicketStore"]
+    TestIdentity["هویت آزمایشی"] -.-> Pipeline
+```
+
+**مکث کوتاه:** آیا موفقیت این تست ثابت می‌کند login و گواهی HTTPS محصول درست‌اند؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ این suite آن‌ها را اجرا نمی‌کند. ورود و TLS به شاهد جدا نیاز دارند؛ host عادی نیز باید header هویت تست را رد کند.</p>
+</details>
+
 ## هویت ساختگی را کجا قرار می‌دهیم؟
 
 TestIdentity فقط در assembly تست compile می‌شود و فقط داخل TicketFactory در ConfigureTestServices ثبت می‌شود.

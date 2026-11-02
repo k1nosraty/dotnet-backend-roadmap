@@ -31,6 +31,26 @@ Infrastructure این قرارداد را پیاده می‌کند.
 Program implementation را انتخاب می‌کند و handler همان ITicketStore را دریافت می‌کند.
 port ابزار پنهان کردن تمام تفاوت‌های جهان واقعی نیست؛ تضمین‌هایش باید نوشته و بررسی شوند.
 
+## یک نگاه: یک قرارداد، دو روش انجام کار
+
+ResolveTicket به ITicketStore تکیه دارد. Program یکی از دو adapter را انتخاب می‌کند؛ فقط همان adapter انتخاب‌شده کار ذخیره را انجام می‌دهد.
+
+```mermaid
+flowchart LR
+    accTitle: یک قرارداد، دو روش انجام کار
+    accDescr: ResolveTicket به ITicketStore تکیه دارد. Program یکی از دو adapter را انتخاب می‌کند؛ فقط همان adapter انتخاب‌شده کار ذخیره را انجام می‌دهد.
+    UseCase["ResolveTicket"] --> Port["ITicketStore"]
+    Port -.->|انتخاب در Program|Memory["InMemoryTicketStore"]
+    Port -.->|انتخاب جایگزین|Json["JsonTicketStore"]
+```
+
+**مکث کوتاه:** اگر یک adapter در خطای فایل null بدهد، فقط امضای interface را رعایت کرده یا قرارداد رفتاری را هم؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>قرارداد رفتاری را شکسته است. null برای دادهٔ ناموجود است؛ خرابی فایل باید خطای فنی بماند و نباید با Missing مخلوط شود.</p>
+</details>
+
 ## قرارداد رفتاری
 
 | عملیات یا حالت | تعهد همین port |

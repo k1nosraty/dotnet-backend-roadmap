@@ -64,6 +64,31 @@ curl.exe --noproxy '*' --cacert "$env:TEMP/course80-root.crt" https://localhost:
 --cacert اعتماد را به همین درخواست و همان فایل محدود می‌کند. از -k یا خاموش کردن اعتبارسنجی certificate استفاده نکن؛ آن کار hostname و اعتماد به CA را آزمایش نمی‌کند.
 کلید خصوصی CA را خارج نکن و CA آزمایش را در trust store سراسری نصب نکن.
 
+## یک نگاه: دو اتصال، دو پروتکل
+
+در این lab، TLS در Caddy پایان می‌یابد. Kestrel اتصال داخلی HTTP را می‌بیند و فقط header پراکسی مورد اعتماد را برای scheme اصلی می‌پذیرد.
+
+```mermaid
+sequenceDiagram
+    accTitle: دو اتصال، دو پروتکل
+    accDescr: در این lab، TLS در Caddy پایان می‌یابد. Kestrel اتصال داخلی HTTP را می‌بیند و فقط header پراکسی مورد اعتماد را برای scheme اصلی می‌پذیرد.
+    participant B as Client
+    participant P as Caddy
+    participant A as Kestrel
+    B->>P: HTTPS با گواهی معتبر localhost
+    P->>A: HTTP داخلی؛ X-Forwarded-Proto = https
+    A->>A: بررسی KnownProxy و سپس scheme
+    A-->>P: scheme = https
+    P-->>B: پاسخ روی همان اتصال TLS
+```
+
+**مکث کوتاه:** اگر client مستقیماً header جعلی proto=https بفرستد، همیشه باید پذیرفته شود؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ فقط peer مورد اعتماد حق اصلاح scheme را دارد. پذیرفتن header از هر فرستنده، مرز اعتماد proxy را حذف می‌کند.</p>
+</details>
+
 ## ۴. چرا برنامه https می‌بیند؟
 
 Caddy مقدار X-Forwarded-Proto را بر اساس اتصال واقعی client تنظیم می‌کند.

@@ -37,6 +37,31 @@ status=200; attempts=2
 نام `partner` باعث می‌شود فقط تنظیمات همین وابستگی را بگیریم. client کوتاه‌عمر را dispose می‌کنیم؛ factory مدیریت handler مشترک را بر عهده دارد.
 در یک singleton، client ساخته‌شده را برای همیشه نگه ندار؛ factory را بگیر و برای هر عملیات client بساز.
 
+## یک نگاه: یک بار درخواست؛ دو تلاش
+
+PartnerClient یک درخواست به HttpClient می‌دهد و pipeline سیاست retry را اجرا می‌کند. transport ساختگی ابتدا 503 و بعد 200 می‌دهد؛ تصویر دو ورود به handler را نشان می‌دهد، نه تماس اینترنتی واقعی یا حلقهٔ دستی در PartnerClient.
+
+```mermaid
+sequenceDiagram
+    accTitle: یک بار درخواست؛ دو تلاش
+    accDescr: PartnerClient یک درخواست به HttpClient می‌دهد و pipeline سیاست retry را اجرا می‌کند. transport ساختگی ابتدا 503 و بعد 200 می‌دهد؛ تصویر دو ورود به handler را نشان می‌دهد، نه تماس اینترنتی واقعی یا حلقهٔ دستی در PartnerClient.
+    participant C as HttpClient pipeline
+    participant H as DemoPartnerHandler
+    C->>H: تلاش اول GET
+    H-->>C: 503
+    Note over C: سیاست retry اجازه می‌دهد
+    C->>H: تلاش دوم GET
+    H-->>C: 200
+    Note over C: attempts = 2
+```
+
+**مکث کوتاه:** MaxRetryAttempts برابر ۲ یعنی مجموعاً فقط دو تلاش داریم؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ دو retry بعد از تلاش اول است، پس حداکثر سه تلاش. در توالی تصویر، موفقیتِ تلاش دوم باعث می‌شود تلاش سوم لازم نباشد.</p>
+</details>
+
 ## ۳. یک درخواست، چند تلاش؟
 
 این جدول قرارداد **همین نمونه** است:

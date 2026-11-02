@@ -36,6 +36,27 @@ local یعنی برای این اجرای دستی commit تزریق نکرده�
 workflow قدیمی Check course هم بخش‌های قبلی را بررسی می‌کند؛ موفقیت این workflow جای موفقیت آن را نمی‌گیرد.
 در PR، GITHUB_SHA معمولاً commit آزمایشیِ merge است؛ آن را با SHA شاخهٔ head اشتباه نگیر.
 
+## یک نگاه: سه بررسی، یک دروازهٔ تحویل
+
+artifact-gate بعد از موفقیت هر سه job شروع می‌شود و همان artifact لینوکسِ quality را دریافت می‌کند. فلش‌ها وابستگی job هستند؛ این workflow روی سرور عمومی deploy نمی‌کند.
+
+```mermaid
+flowchart LR
+    accTitle: سه بررسی، یک دروازهٔ تحویل
+    accDescr: artifact-gate بعد از موفقیت هر سه job شروع می‌شود و همان artifact لینوکسِ quality را دریافت می‌کند. فلش‌ها وابستگی job هستند؛ این workflow روی سرور عمومی deploy نمی‌کند.
+    Quality["quality"] --> Gate["artifact-gate"]
+    Containers["containers"] --> Gate
+    Operations["operations-integration"] --> Gate
+    Gate --> Verify["بررسی بستهٔ دریافت‌شده"]
+```
+
+**مکث کوتاه:** اگر در gate دوباره از سورس publish کنیم، هنوز همان بستهٔ دریافت‌شده را تأیید کرده‌ایم؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ بستهٔ تازه ساخته‌ایم. هدف این gate بررسی همان فایل‌های منتقل‌شده با provenance و hash مورد انتظار است.</p>
+</details>
+
 ## ۳. quality gate یعنی چه؟
 
 اسکریپت production_smoke خروجی واقعی TRX را بررسی می‌کند: تست کشف‌شده باید اجرا و pass شده باشد؛ skip را موفقیت حساب نمی‌کند.

@@ -31,6 +31,26 @@ CQRS الزام به Event Sourcing، event bus یا consistency نهایی ند
 اگر read database جدا بسازی، مسئلهٔ هماهنگی و lag اضافه می‌شود؛ این درس آن topology را ندارد.
 استفاده از نام Handler هم به‌تنهایی CQRS را ایجاد نمی‌کند.
 
+## یک نگاه: خواندن و تغییر، دو مسیر در یک سرویس
+
+هر دو مسیر از همان storage محلی استفاده می‌کنند. مسیر query فقط خروجی نمایشی می‌خواهد؛ مسیر command قواعد تغییر و نسخه را رعایت می‌کند.
+
+```mermaid
+flowchart LR
+    accTitle: خواندن و تغییر، دو مسیر در یک سرویس
+    accDescr: هر دو مسیر از همان storage محلی استفاده می‌کنند. مسیر query فقط خروجی نمایشی می‌خواهد؛ مسیر command قواعد تغییر و نسخه را رعایت می‌کند.
+    Get["GET"] --> Read["ITicketQueries"] --> Storage["ذخیره‌ساز مشترک"]
+    Change["Command"] --> Domain["قواعد دامنه"] --> Write["ITicketStore"] --> Storage
+    Storage -.-> DTO["DTO"]
+```
+
+**مکث کوتاه:** برای این جداسازی، حتماً دو دیتابیس و یک message bus لازم است؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ این نمونه دو قرارداد خواندن و نوشتن روی همان storage دارد. دیتابیس جدا، هماهنگی و تأخیر داده را هم به مسئله اضافه می‌کند.</p>
+</details>
+
 ## port خواندن
 
 src/Application/Shared/ITicketQueries.cs:

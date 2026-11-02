@@ -38,6 +38,26 @@ metric به‌صورت دوره‌ای و هنگام flush در پایان Host 
 
 این نمونه کاری را به صف یا دیتابیس ارسال نمی‌کند؛ accepted/rejected دو نتیجهٔ مصنوعی برای دیدن ابزارها هستند.
 
+## یک نگاه: زنده است؛ آماده نیست
+
+در حالت not-ready همین lab، process همچنان پاسخ می‌دهد ولی کار تازه نمی‌پذیرد. readiness این نمونه فقط initialization محلی را می‌سنجد.
+
+```mermaid
+flowchart LR
+    accTitle: زنده است؛ آماده نیست
+    accDescr: در حالت not-ready همین lab، process همچنان پاسخ می‌دهد ولی کار تازه نمی‌پذیرد. readiness این نمونه فقط initialization محلی را می‌سنجد.
+    Host["برنامه روشن؛ آماده‌سازی ناتمام"] --> Live["health/live: 200"]
+    Host --> Ready["health/ready: 503"]
+    Host --> Work["work: 503"]
+```
+
+**مکث کوتاه:** آیا 200 گرفتن از liveness یعنی دیتابیس و همهٔ وابستگی‌ها سالم‌اند؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ liveness این درس اصلاً dependency check ندارد. برای آمادگیِ وابستگی واقعی باید check مشخص، کوتاه و قابل لغو طراحی شود.</p>
+</details>
+
 ## ۳. liveness و readiness را یکی نکن
 
 | endpoint | سؤال | اگر false شد چه تصمیمی ممکن است لازم باشد؟ |

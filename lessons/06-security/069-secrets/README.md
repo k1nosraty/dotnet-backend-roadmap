@@ -49,6 +49,27 @@ ILogger در transaction دیتابیس نیست. نوشتن console می‌تو
 شناسه‌های داخلی همچنان دادهٔ قابل ارتباط با اشخاص‌اند؛ کم کردن فیلدها مساوی ناشناس‌سازی کامل نیست.
 خط‌مشی نگهداری، دسترسی، حذف/آرشیو و حفاظت از backup باید تعیین شود. این lab job retention ندارد.
 
+## یک نگاه: audit جزئی از موفقیت همین تغییر است
+
+در rename این نمونه، update و ثبت audit داخل یک transaction هستند. رویداد موفق console پس از commit ثبت می‌شود و خودش داخل transaction دیتابیس نیست.
+
+```mermaid
+flowchart LR
+    accTitle: audit جزئی از موفقیت همین تغییر است
+    accDescr: در rename این نمونه، update و ثبت audit داخل یک transaction هستند. رویداد موفق console پس از commit ثبت می‌شود و خودش داخل transaction دیتابیس نیست.
+    Begin["BEGIN"] --> Update["تغییر عنوان"]
+    Update --> Audit{"ذخیرهٔ رویداد موفق؟"}
+    Audit -->|بله|Commit["COMMIT"] --> Log["رویداد موفق در خروجی"]
+    Audit -->|خیر|Rollback["ROLLBACK"]
+```
+
+**مکث کوتاه:** اگر update موفق شد ولی ذخیرهٔ audit شکست خورد، عنوان تازه باید باقی بماند؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>در قرارداد همین نمونه نه؛ transaction برمی‌گردد. این تضمین برای audit داخل همان PostgreSQL است و خودکار شامل سرویس خارجی یا console نمی‌شود.</p>
+</details>
+
 ## چرا ثبت بعد از update به‌تنهایی کافی نیست؟
 
 Create، entity تیکت و AuditEntry را پیش از یک SaveChanges اضافه می‌کند؛ provider تراکنشی هر دو را با هم commit می‌کند.

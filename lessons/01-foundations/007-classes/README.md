@@ -129,6 +129,26 @@ Close هم فقط از InProgress به Closed می‌رود.
 کلاس از Console و فایل چیزی نمی‌داند.
 رابط کنسول مسئول پیام است و مدل مسئول قانون وضعیت.
 
+## یک نگاه: دو نام، یک شیء
+
+فلش در این تصویر یعنی «اشاره به شیء». انتساب alias = first یک Ticket تازه نمی‌سازد؛ new برای second شیء مستقلی می‌سازد.
+
+```mermaid
+flowchart LR
+    accTitle: دو نام، یک شیء
+    accDescr: فلش در این تصویر یعنی «اشاره به شیء». انتساب alias = first یک Ticket تازه نمی‌سازد؛ new برای second شیء مستقلی می‌سازد.
+    First["first"] --> Shared["درخواست ۱"]
+    Alias["alias"] --> Shared
+    Second["second"] --> Other["درخواست ۲"]
+```
+
+**مکث کوتاه:** اگر alias عنوان را عوض کند، first و second چه می‌بینند؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>first عنوان تازه را می‌بیند چون به همان شیء اشاره می‌کند. second به شیء دیگری اشاره می‌کند و عنوانش عوض نمی‌شود.</p>
+</details>
+
 ## ۷. reference چیست؟
 
 ```csharp

@@ -46,6 +46,29 @@ Application قرارداد ITicketStore را تعریف می‌کند و CloseTi
 Program در composition root می‌تواند factory زیرساخت را فراخوانی کند.
 این استثنا دلیل مناسبی برای وابستگی Domain به Infrastructure نیست.
 
+## یک نگاه: جهت reference با جهت اجرا یکی نیست
+
+هر فلش یعنی پروژهٔ مبدأ برای کامپایل به پروژهٔ مقصد reference دارد. Domain هیچ فلش خروجی ندارد؛ host در نقطهٔ اتصال برنامه، پیاده‌سازی را می‌سازد.
+
+```mermaid
+flowchart TB
+    accTitle: جهت reference با جهت اجرا یکی نیست
+    accDescr: هر فلش یعنی پروژهٔ مبدأ برای کامپایل به پروژهٔ مقصد reference دارد. Domain هیچ فلش خروجی ندارد؛ host در نقطهٔ اتصال برنامه، پیاده‌سازی را می‌سازد.
+    Host["Host: Program"] --> Application["Application"]
+    Host --> Infrastructure["Infrastructure"]
+    Host --> Domain["Domain"]
+    Infrastructure --> Application
+    Infrastructure --> Domain
+    Application --> Domain
+```
+
+**مکث کوتاه:** اگر Application در اجرا SaveAsync را روی adapter زیرساخت صدا بزند، باید به Infrastructure reference بدهد؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ Application فقط interface متعلق به خودش را می‌شناسد. Program یک پیاده‌سازی واقعی را به آن می‌دهد. فراخوانی زمان اجرا، جهت reference سورس را عوض نمی‌کند.</p>
+</details>
+
 ## از پروژهٔ کوچک شروع کن
 
 ابتدا فقط Domain را جدا کن.

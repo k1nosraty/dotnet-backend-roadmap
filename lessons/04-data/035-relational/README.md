@@ -16,6 +16,27 @@ store حافظه‌ای با restart پاک می‌شود و بین چند proce
 پایگاه دادهٔ رابطه‌ای علاوه بر نگهداری داده، زبان query، constraint و transaction می‌دهد.
 صرف ذخیره در PostgreSQL به معنی طراحی درست schema یا امنیت کامل نیست.
 
+## یک نگاه: هر مفهوم در کدام ظرف است؟
+
+این تصویر فقط جای داده‌ها را نشان می‌دهد: database شامل schema است، schema جدول دارد و جدول از ردیف‌های هم‌شکل تشکیل می‌شود. فایل JSON این ساختار مدیریتی را ایجاد نمی‌کند.
+
+```mermaid
+flowchart TB
+    accTitle: هر مفهوم در کدام ظرف است؟
+    accDescr: این تصویر فقط جای داده‌ها را نشان می‌دهد: database شامل schema است، schema جدول دارد و جدول از ردیف‌های هم‌شکل تشکیل می‌شود. فایل JSON این ساختار مدیریتی را ایجاد نمی‌کند.
+    Database["database: supportdesk_lab"] --> Schema["فضای نام آزمایش"]
+    Schema --> Table["table: tickets"]
+    Table --> First["ردیف: درخواست ۱"]
+    Table --> Second["ردیف: درخواست ۲"]
+```
+
+**مکث کوتاه:** title یک table است یا column؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>در این مدل یک column از جدول tickets است. هر row مقدار title خودش را دارد؛ خود title جدول جداگانه‌ای نیست.</p>
+</details>
+
 ## ۲. مفاهیم پایه
 
 | مفهوم | مثال |

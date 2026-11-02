@@ -34,6 +34,27 @@ HttpOnly دسترسی مستقیم JavaScript به cookie را محدود می�
 SameSite هم جای طراحی کامل CSRF نیست.
 نگهداری token در localStorage راه‌حل پیش‌فرضِ بی‌خطر برای مرورگر نیست.
 
+## یک نگاه: مرورگر خودش می‌فرستد یا client صریح؟
+
+اینجا تفاوتِ حمل credential را می‌بینی. cookie در درخواست واجد شرایط مرورگر خودکار همراه می‌شود؛ برای مسیرهای تغییر‌دهندهٔ cookie در این نمونه، CSRF token نیز لازم است.
+
+```mermaid
+flowchart TB
+    accTitle: مرورگر خودش می‌فرستد یا client صریح؟
+    accDescr: اینجا تفاوتِ حمل credential را می‌بینی. cookie در درخواست واجد شرایط مرورگر خودکار همراه می‌شود؛ برای مسیرهای تغییر‌دهندهٔ cookie در این نمونه، CSRF token نیز لازم است.
+    Cookie["Cookie"] --> Browser["ارسال خودکار مرورگر"]
+    Browser --> Csrf["بررسی هویت و ضدجعل"]
+    Token["Access token"] --> Header["Authorization: Bearer"]
+    Header --> Bearer["اعتبارسنجی توکن"]
+```
+
+**مکث کوتاه:** داشتن cookie معتبر، مسیر BearerOnly را باز می‌کند؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ scheme آن مسیر bearer می‌خواهد. همین‌طور access token با reset token یا CSRF token یک وظیفه ندارد؛ نام token به معنی قابل جایگزین بودن این داده‌ها نیست.</p>
+</details>
+
 ## token این نمونه چیست؟
 
 از AddIdentityApiEndpoints برای ثبت schemeهای framework استفاده می‌کنیم، ولی routeهای محدود آزمایش را صریح تعریف می‌کنیم.

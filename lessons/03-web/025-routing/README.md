@@ -45,6 +45,28 @@ app.MapGet("/tickets/{id:int}", ([FromRoute] int id, [FromServices] TicketStore 
 FromRoute محل دریافت مقدار را صریح نشان می‌دهد.
 store از DI می‌آید و نباید از JSON کاربر ساخته شود.
 
+## یک نگاه: ۴۰۴ از کجا آمد؟
+
+این دو مسیر برای یک ورودی abc به نتیجه‌های متفاوت می‌رسند. constraint انتخاب route را محدود می‌کند؛ binding پس از انتخاب route، متن را به int تبدیل می‌کند.
+
+```mermaid
+flowchart TB
+    accTitle: ۴۰۴ از کجا آمد؟
+    accDescr: این دو مسیر برای یک ورودی abc به نتیجه‌های متفاوت می‌رسند. constraint انتخاب route را محدود می‌کند؛ binding پس از انتخاب route، متن را به int تبدیل می‌کند.
+    Input["id = abc"] --> Constrained["GET /tickets/abc"]
+    Constrained --> NoMatch["تطبیق مسیر رد شد: 404"]
+    Input --> Plain["GET /lookup/abc"]
+    Plain --> Binding["مسیر انتخاب شد؛ تبدیل به عدد شکست خورد"]
+    Binding --> Bad["400"]
+```
+
+**مکث کوتاه:** آیا هر 404 یعنی دیتابیس جست‌وجو شده و تیکت پیدا نشده است؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ در مسیر constraintدار همین مثال، پیش از اجرای handler مسیر تطبیق نمی‌کند. ممکن است lookup داده اصلاً اجرا نشده باشد.</p>
+</details>
+
 ## ۴. constraint و validation
 
 /tickets/abc با constraint :int تطبیق نمی‌کند و معمولاً به ۴۰۴ می‌رسد.

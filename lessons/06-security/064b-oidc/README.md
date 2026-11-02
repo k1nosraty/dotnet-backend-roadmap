@@ -26,6 +26,36 @@
 
 authorization code کوتاه‌عمر و برای تبادل است، نه credential مستقیم /api/tickets. client secret و code_verifier باید در backchannel، یعنی ارتباط backend با token endpoint بمانند. این جریان را با implicit flow یا فرستادن password کاربر به client عوض نکن.
 
+## یک نگاه: ورود را بین سه بازیگر دنبال کن
+
+خط‌های افقی پیام‌اند و زمان از بالا به پایین می‌رود. مرورگر رمز کاربر را به IdP می‌دهد؛ secret برنامه و code_verifier در تبادل backend با IdP می‌مانند.
+
+```mermaid
+sequenceDiagram
+    accTitle: ورود را بین سه بازیگر دنبال کن
+    accDescr: خط‌های افقی پیام‌اند و زمان از بالا به پایین می‌رود. مرورگر رمز کاربر را به IdP می‌دهد؛ secret برنامه و code_verifier در تبادل backend با IdP می‌مانند.
+    participant B as مرورگر
+    participant W as Web client
+    participant I as IdP
+    B->>W: GET /login
+    W-->>B: redirect با state و nonce و challenge
+    B->>I: درخواست ورود
+    Note over B,I: ورود کاربر در صفحهٔ معتبر IdP
+    I-->>B: redirect به callback با code و state
+    B->>W: callback
+    W->>I: code و verifier و احراز هویت client
+    I-->>W: پاسخ token
+    W->>W: اعتبارسنجی ID token و nonce
+    W-->>B: cookie نشست محلی
+```
+
+**مکث کوتاه:** cookie محلیِ آخر مسیر را باید به جای access token به API مکمل JWT بدهی؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ cookie برای نشست همین Web client است. access token برای API مقصد و scope/audience آن است. این مکمل تماس downstream به API را پیاده نکرده است.</p>
+</details>
+
 ## ۳. state، nonce و PKCE چه مشکلی را حل می‌کنند؟
 
 | سازوکار | چه چیزی را به چه چیزی وصل می‌کند؟ |

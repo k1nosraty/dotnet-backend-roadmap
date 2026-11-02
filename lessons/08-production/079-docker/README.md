@@ -62,6 +62,27 @@ docker run --rm --name course79 -p 127.0.0.1:8080:8080 supportdesk-79:lab
 
 EXPOSE در Dockerfile فقط پورت مورد انتظار را بیان می‌کند؛ جای -p نیست.
 
+## یک نگاه: یک مرحله برای ساخت، یک مرحله برای اجرا
+
+در Dockerfile چندمرحله‌ای، خروجی publish به image نهایی می‌رود. SDK برای ساخت استفاده می‌شود؛ اجرای framework-dependent هنوز runtime لازم دارد.
+
+```mermaid
+flowchart TB
+    accTitle: یک مرحله برای ساخت، یک مرحله برای اجرا
+    accDescr: در Dockerfile چندمرحله‌ای، خروجی publish به image نهایی می‌رود. SDK برای ساخت استفاده می‌شود؛ اجرای framework-dependent هنوز runtime لازم دارد.
+    Source["سورس برنامه"] --> SDK["SDK: publish"]
+    SDK --> Files["out"]
+    Files --> Runtime["ASP.NET runtime"]
+    Runtime --> Container["container"]
+```
+
+**مکث کوتاه:** اگر فایل داخل یک container را تغییر بدهی، image اصلی هم عوض می‌شود؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ آن تغییر داخل همان اجراست. برای نسخهٔ تازهٔ برنامه، سورس و image تازه می‌سازی؛ حذف container نیز دادهٔ لایهٔ نوشتنی آن را از بین می‌برد.</p>
+</details>
+
 ## ۴. Dockerfile را از بالا بخوان
 
 فایل [Dockerfile نمونه](../../../samples/78-container-lab/Dockerfile) دو مرحله دارد:

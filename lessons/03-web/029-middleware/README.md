@@ -16,6 +16,33 @@ exception handler باید پیش از endpointهایی باشد که failure آ
 مدیریت exception با تبدیل نتیجهٔ معتبر ۴۰۴ به ۵۰۰ تفاوت دارد.
 هر response ناموفق الزاماً exception ایجاد نمی‌کند.
 
+## یک نگاه: خطا در کدام محدوده گرفته می‌شود؟
+
+در مسیر خطای این نمونه، exception از endpoint به handler برمی‌گردد. ثبت callback شناسه پیش از handler انجام شده تا پاسخ خطا هم request ID داشته باشد.
+
+```mermaid
+sequenceDiagram
+    accTitle: خطا در کدام محدوده گرفته می‌شود؟
+    accDescr: در مسیر خطای این نمونه، exception از endpoint به handler برمی‌گردد. ثبت callback شناسه پیش از handler انجام شده تا پاسخ خطا هم request ID داشته باشد.
+    participant R as RequestId
+    participant H as ExceptionHandler
+    participant E as Endpoint
+    R->>R: ثبت OnStarting
+    R->>H: next
+    H->>E: اجرای endpoint
+    E-->>H: exception
+    H->>H: ساخت ProblemDetails عمومی
+    Note over R,H: پیش از ارسال، OnStarting شناسه را به header اضافه می‌کند
+    H-->>R: پایان next
+```
+
+**مکث کوتاه:** خطایی که پیش از رسیدن به ExceptionHandler، در خود RequestId رخ دهد، داخل این محدوده است؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ handler اجرای پایین‌دست خودش را احاطه می‌کند. middleware پیش از آن، در محدودهٔ همین handler قرار ندارد.</p>
+</details>
+
 ## ۲. ترتیب واقعی این نمونه
 
 ```csharp

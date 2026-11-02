@@ -43,6 +43,30 @@ acknowledgment یا ack یعنی اعلام پذیرفته‌شدن پایان �
 Lease علاوه بر JobId یک Token تازه دارد. JobId هویت کار است؛ Token هویت یک تلاشِ دارای مالکیت است.
 زمان‌های مهلت از clock دیتابیس می‌آیند تا اختلاف ساعت workerها تصمیم مالکیت را تعیین نکند.
 
+## یک نگاه: job ثابت است؛ مالک تلاش عوض می‌شود
+
+lease اجازهٔ موقتِ پردازش است. در claim بعدی، همان JobId با token تلاش تازه تحویل می‌شود؛ سقف تلاش و dead شدن همچنان برقرارند.
+
+```mermaid
+stateDiagram-v2
+    accTitle: job ثابت است؛ مالک تلاش عوض می‌شود
+    accDescr: lease اجازهٔ موقتِ پردازش است. در claim بعدی، همان JobId با token تلاش تازه تحویل می‌شود؛ سقف تلاش و dead شدن همچنان برقرارند.
+    direction LR
+    [*] --> Pending
+    Pending --> Leased: claim و token تازه
+    Leased --> Done: Complete معتبر و اثر محلی
+    Leased --> Pending: Fail و تلاش باقی‌مانده
+    Leased --> Leased: انقضا و claim دوباره با token تازه
+    Leased --> Dead: پایان تلاش‌ها و Fail یا انقضا
+```
+
+**مکث کوتاه:** worker قدیمی بعد از انقضای lease، فقط با داشتن JobId می‌تواند کار را done کند؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ token تلاش فعلی، state و مهلت زیر قفل بررسی می‌شوند. مالک قدیمی نباید حقِ تلاش جدید را مصرف کند؛ اثر خارجی هم خودکار داخل این transaction نیست.</p>
+</details>
+
 ## ۳. دو worker چطور یک کار را برندارند؟
 
 در Persistence/QueueStore.cs متد ClaimAsync را ببین.

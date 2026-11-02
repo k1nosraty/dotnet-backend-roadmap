@@ -48,6 +48,29 @@ HasMaxLength حداکثر ستون را می‌سازد و جای Trim یا حد
 در SQL دستی باید همین نام‌ها را رعایت کنی؛ درس ۴۰ schema مستقلی با نام‌های کوچک داشت.
 این snapshot ادامهٔ migration آن schema نیست.
 
+## یک نگاه: شیء تغییر کرد؛ دیتابیس هم تغییر کرد؟
+
+این مسیر وضعیت entity در tracker را نشان می‌دهد. فلش‌های SaveChanges جایی هستند که تغییر برای ذخیره به دیتابیس فرستاده می‌شود.
+
+```mermaid
+stateDiagram-v2
+    accTitle: شیء تغییر کرد؛ دیتابیس هم تغییر کرد؟
+    accDescr: این مسیر وضعیت entity در tracker را نشان می‌دهد. فلش‌های SaveChanges جایی هستند که تغییر برای ذخیره به دیتابیس فرستاده می‌شود.
+    direction LR
+    [*] --> Detached: new
+    Detached --> Added: Add
+    Added --> Unchanged: SaveChanges موفق
+    Unchanged --> Modified: تغییر Title و DetectChanges
+    Modified --> Unchanged: SaveChanges موفق
+```
+
+**مکث کوتاه:** پس از Add و پیش از SaveChanges، آیا حتماً یک ردیف تازه در جدول داریم؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ Added وضعیت tracker است. درج در این نمونه با SaveChanges انجام می‌شود و نتیجه با context تازه بررسی می‌شود.</p>
+</details>
+
 ## واحد کار و وضعیت entity
 
 | مرحله | وضعیت | اثر روی دیتابیس |

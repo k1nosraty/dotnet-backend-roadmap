@@ -29,6 +29,29 @@ principal نمایش هویتِ پذیرفته‌شده در برنامه است
 
 policy مجموعهٔ شرط‌های لازم برای گزارش است. requirement یک شرطِ قابل بررسی در آن و handler کدی است که آن شرط را ارزیابی می‌کند. مثلاً roleonly شناخته شده و عضو SupportAgent است، اما permission لازم را ندارد؛ پس handler موفقیت اعلام نمی‌کند و گزارش 403 می‌دهد.
 
+## یک نگاه: سه شرط، با هم
+
+برای گزارش کارکنان، هویت معتبر، نقش SupportAgent و permission فعلی tickets.manage لازم‌اند. نقش و permission در این نمونه با AND بررسی می‌شوند.
+
+```mermaid
+flowchart TB
+    accTitle: سه شرط، با هم
+    accDescr: برای گزارش کارکنان، هویت معتبر، نقش SupportAgent و permission فعلی tickets.manage لازم‌اند. نقش و permission در این نمونه با AND بررسی می‌شوند.
+    Identity{"هویت معتبر؟"} -->|خیر|C401["401"]
+    Identity -->|بله|Role{"SupportAgent"}
+    Role -->|خیر|C403["403"]
+    Role -->|بله|Permission{"tickets.manage"}
+    Permission -->|خیر|C403
+    Permission -->|بله|C200["200: گزارش کارکنان"]
+```
+
+**مکث کوتاه:** roleonly با نقش درست ولی بدون permission چه پاسخی می‌گیرد؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>403. هویت معتبر دارد اما تمام شرط‌های policy برقرار نیستند. افزودن X-Permission در header هم grant معتبر ایجاد نمی‌کند.</p>
+</details>
+
 ## تقسیم مسئولیت
 
 | فایل | مسئولیت |

@@ -28,6 +28,27 @@ statement یعنی یک دستور SQL مانند INSERT یا UPDATE. transactio
 connection کانال ارتباط برنامه با DB و session وضعیت همان ارتباط در سمت server است. در آزمایش دو connection می‌خواهیم تا دو مصرف‌کنندهٔ مستقل واقعاً بتوانند دادهٔ مشترک را تغییر دهند.
 اما transaction به تنهایی تمام invariantهای چند writer را بدون isolation و locking مناسب حفظ نمی‌کند.
 
+## یک نگاه: دو نوشتن، یک تصمیم نهایی
+
+هر دو INSERT در یک transaction هستند. اگر یادداشت رد شود، درخواستِ همان تلاش هم rollback می‌شود؛ رسیدن به INSERT اول به معنی commit نیست.
+
+```mermaid
+flowchart LR
+    accTitle: دو نوشتن، یک تصمیم نهایی
+    accDescr: هر دو INSERT در یک transaction هستند. اگر یادداشت رد شود، درخواستِ همان تلاش هم rollback می‌شود؛ رسیدن به INSERT اول به معنی commit نیست.
+    Begin["BEGIN"] --> Ticket["ثبت درخواست"]
+    Ticket --> Note{"ثبت یادداشت موفق؟"}
+    Note -->|بله|Commit["COMMIT"]
+    Note -->|خیر|Rollback["ROLLBACK"]
+```
+
+**مکث کوتاه:** اگر پس از COMMIT پاسخ شبکه گم شود، client می‌تواند با خیال راحت بگوید چیزی ذخیره نشده؟
+
+<details>
+<summary>پاسخ را ببین</summary>
+<p>نه؛ ممکن است commit انجام شده باشد و فقط پاسخ نرسیده باشد. این وضعیت نامعلوم به بررسی state و قرارداد idempotency نیاز دارد، نه retry کور.</p>
+</details>
+
 ## ۲. چهار مفهوم ACID
 
 | مفهوم | برداشت عملی |
