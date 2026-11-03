@@ -7,11 +7,11 @@
 هیچ جدول یا hash دست‌ساز برای credential ساخته نمی‌شود.
 
 پیش‌نیاز: [درس 061](../061-threat-model/README.md)، EF Core، scope و PostgreSQL بخش چهارم.
-این نمونه کنسولی است و HTTP login ندارد؛ بررسی چرخهٔ حساب را از حمل‌ونقل credential جدا می‌کند.
+این نمونه کنسولی است و endpoint ورود HTTP ندارد. ابتدا خودِ چرخهٔ حساب، مثل ساخت، تأیید و lockout، را بررسی می‌کنیم. اینکه مدرک ورود یا credential چگونه با cookie یا header حمل شود، تصمیم جداگانهٔ درس ۶۴ است.
 
 ## Identity چه چیزی را برعهده می‌گیرد؟
 
-UserManager مسئول عملیات حساب و policy و store است.
+کلاس UserManager مسئول عملیات حساب و policy و store است.
 SignInManager قواعد ورود مانند تأیید ایمیل، lockout و صدور session را هماهنگ می‌کند.
 IdentityDbContext شکل ذخیرهٔ حساب، نقش، claim و tokenهای مربوط را به EF معرفی می‌کند.
 وجود جدول نقش به معنی تعریف مجوز business در برنامه نیست.
@@ -58,13 +58,13 @@ options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
 
 قواعد پیچیدگی پیش‌فرض Identity در این نمونه حفظ شده‌اند؛ ۱۲ حداقل طول انتخابی آزمایش است.
 این اعداد نسخهٔ همیشگی برای هر محصول نیستند؛ usability، MFA، تهدید و rate limit باید با هم تصمیم‌گیری شوند.
-lockout حساب به‌تنهایی جلوی password spraying را نمی‌گیرد و می‌تواند هدف denial of service شود.
+نام `lockout` یعنی پس از تعداد مشخصی تلاش ناموفق، ورود به حساب موقتاً محدود شود. اما در حملهٔ `password spraying`، مهاجم یک رمز رایج را روی حساب‌های زیاد امتحان می‌کند و ممکن است هر حساب هنوز به سقف نرسد. همچنین مهاجم می‌تواند با تلاش ناموفق عمدی، ورود صاحب حساب را مختل کند؛ این یک شکل `denial of service` است.
 بودجهٔ درخواست و کنترل سوءاستفاده در درس ۶۸ اضافه می‌شوند.
 
 ## ساخت و normalization
 
-UserName و Email در این آزمایش هر دو همان آدرس ایمیل‌اند.
-CreateAsync نتیجهٔ IdentityResult می‌دهد؛ شکست را نادیده نگیر.
+دو property به نام‌های `UserName` و `Email` در این آزمایش هر دو همان آدرس ایمیل را دارند.
+متد `CreateAsync` یک `IdentityResult` می‌دهد؛ باید `Succeeded` و خطاهایش را بررسی کنی. برگشتن متد بدون exception الزاماً یعنی حساب ساخته شده نیست؛ رمز یا نام نامعتبر می‌تواند در همین نتیجهٔ ناموفق گزارش شود.
 نمونه همان username را با حروف بزرگ دوباره امتحان می‌کند؛ normalization و index نام کاربر از تکرار جلوگیری می‌کنند.
 برای policy متفاوتِ username و email، uniqueness و race دیتابیس را جدا طراحی کن.
 RequireUniqueEmail را بدون بررسی index و شکل داده، معادل هر تضمین هم‌زمانی دلخواه فرض نکن.
@@ -79,7 +79,7 @@ GenerateEmailConfirmationTokenAsync و ConfirmEmailAsync نمونهٔ تغییر
 
 ## password check با sign-in یکسان نیست
 
-CheckPasswordAsync فقط بخشی از بررسی credential است.
+متد CheckPasswordAsync فقط بخشی از بررسی credential است.
 CheckPasswordSignInAsync policyهای ورود را هم بررسی می‌کند، اما در آزمایش کنسولی session صادر نمی‌کنیم.
 پس از پنج failure، حساب قفل می‌شود و حتی رمز درست تا پایان lockout آن را دور نمی‌زند.
 userId و PasswordHash را در response عمومی serialize نکن؛ hash هم دادهٔ حساس است.
@@ -98,9 +98,9 @@ dotnet run --project samples/61-identity/SupportDesk.csproj -- --keep
 خروجی شامل `PASS: Identity account creation, normalization, confirmation and lockout` و `PASS: lesson scenario` است.
 password تصادفی و tokenها به خروجی نمی‌روند.
 
-CreateTables در این مثال فقط روی schema تازهٔ تحت مالکیت Lab اجرا می‌شود.
+متد CreateTables در این مثال فقط روی schema تازهٔ تحت مالکیت Lab اجرا می‌شود.
 آن را جایگزین migration دیتابیس برنامه نکن؛ مسیر migration بخش چهارم برای محصول باقی است.
-Data Protection در این دو آزمایش کنسولی ephemeral است و برای token بین دو process مناسب نیست؛ درس ۶۴ key ring پایدار دارد.
+کلیدهای `Data Protection` در این دو آزمایش کنسولی موقتی یا `ephemeral` هستند. بنابراین token تولیدشده را نباید برای مصرف در process مستقل دیگری معتبر فرض کرد. در درس ۶۴ مجموعهٔ کلیدها یا `key ring` را پایدار نگه می‌داریم تا این مرز هم آزمایش شود.
 
 ## بررسی و سناریوهای شکست
 
@@ -128,7 +128,7 @@ PasswordHash، SecurityStamp و tokenها نباید در DTO باشند.
 
 ### سرنخ
 
-IdentityUser را مدل دامنهٔ تیکت نکن.
+کلاس IdentityUser را مدل دامنهٔ تیکت نکن.
 از UserManager برای تغییر credential استفاده کن؛ setter مستقیم PasswordHash راه‌حل reset نیست.
 
 ## معیار عبور

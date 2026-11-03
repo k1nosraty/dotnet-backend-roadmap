@@ -7,7 +7,7 @@
 | 013 | [encapsulation و invariant](013-encapsulation/README.md) | نوشته‌شده |
 | 014 | [composition و inheritance](014-composition/README.md) | نوشته‌شده |
 | 015 | [interface و قرارداد](015-interfaces/README.md) | نوشته‌شده |
-| 016 | [تزریق وابستگی و طول عمر](016-dependency-injection/README.md) | نوشته‌شده |
+| 016 | [Dependency Injection و lifetime](016-dependency-injection/README.md) | نوشته‌شده |
 | 017 | [SOLID با بازآرایی یک قابلیت](017-solid/README.md) | نوشته‌شده |
 | 018 | [record و value object](018-value-objects/README.md) | نوشته‌شده |
 | 019 | [جداسازی presentation و application و persistence](019-separation/README.md) | نوشته‌شده |

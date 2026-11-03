@@ -10,18 +10,18 @@
 
 ## پیش‌نیاز
 
-کلاس و سازنده، encapsulation و قرارداد mutation در درس ۰۱۳.
+کلاس و constructor، encapsulation و قرارداد mutation در درس ۰۱۳.
 interface خودمان را در درس بعد طراحی می‌کنیم؛ نمونهٔ این درس dependency concrete دارد.
 
 ## واژگان
 
 | اصطلاح | معنی |
 | --- | --- |
-| composition | ساخت قابلیت با همکاری اجزای دیگر |
-| inheritance | تعریف یک نوع مشتق از نوع پایه |
+| composition | یک کلاس برای انجام کار از شیء دیگری استفاده می‌کند؛ مثلاً service یک policy در اختیار دارد. |
+| inheritance | تعریف نوعی بر پایهٔ نوع دیگر؛ مثلاً گزارش خلاصه یک نوع TicketReport است و قرارداد آن را رعایت می‌کند. |
 | polymorphism | استفاده از چند implementation از طریق قرارداد مشترک |
 | virtual / override | رفتار قابل جایگزینی و پیاده‌سازی جایگزین آن |
-| abstract | تعریف ناقص برای تکمیل در نوع مشتق |
+| abstract | پایه‌ای که مستقیم نمونه‌سازی نمی‌شود و می‌تواند بخشی از رفتار را برای پیاده‌سازی در نوع مشتق باقی بگذارد. |
 
 ## ۱. نیازمندی جدید
 
@@ -29,7 +29,7 @@ interface خودمان را در درس بعد طراحی می‌کنیم؛ نم
 در این مثال NoteThreshold عددی بین ۱ و ۵ است.
 اگر درخواست Closed است، NeedsReview همیشه false است.
 اگر بسته نیست و تعداد یادداشت به threshold رسیده، true است.
-این یک heuristic آموزشی است؛ تعداد یادداشت در محصول واقعی الزاماً معیار پیچیدگی نیست.
+این معیار یک `heuristic` آموزشی است؛ یعنی نشانه‌ای ساده برای تصمیم اولیه، نه اثبات پیچیده‌بودن درخواست. در محصول واقعی ممکن است تعداد یادداشت اصلاً معیار مناسبی برای نیاز به بررسی نباشد.
 
 با threshold برابر ۲ و دو یادداشت، درخواست نیاز به review دارد.
 با همان Ticket و threshold برابر ۳، هنوز ندارد.
@@ -83,9 +83,7 @@ public sealed class TicketReviewService
 }
 ```
 
-service با policy همکاری می‌کند و آن را در خودش new نمی‌کند.
-caller policy مناسب را انتخاب می‌کند.
-این تزریق دستی وابستگی است؛ برای DI container هنوز package لازم نداریم.
+کلاس service برای تصمیم‌گیری به policy نیاز دارد؛ این همان dependency آن است. policy بیرون از service ساخته و از constructor به آن داده می‌شود، به‌جای اینکه service خودش با `new` انتخابش کند. به این کار `constructor injection` می‌گویند. اینجا اتصال دستی است و هنوز نیازی به DI container یا package جدا نداریم.
 private readonly رابطه را روشن می‌کند، نه اینکه همهٔ objectهای dependency به طور عمومی thread-safe باشند.
 
 ## ۵. ساخت دو ترکیب
@@ -124,7 +122,7 @@ public abstract class TicketReport
 }
 ```
 
-Generate قرارداد public خواندن و گزارش را ارائه می‌دهد.
+متد Generate قرارداد public خواندن و گزارش را ارائه می‌دهد.
 Format بخش متغیر گزارش است و protected است؛ caller عادی آن را مستقیم صدا نمی‌زند.
 abstract class مستقیم با new ساخته نمی‌شود.
 متد abstract بدنه ندارد و مشتق concrete باید آن را پیاده کند.
@@ -138,12 +136,12 @@ public sealed class PlainTextTicketReport : TicketReport
 }
 ```
 
-: TicketReport رابطهٔ ارث‌بری را اعلام می‌کند.
+عبارت `: TicketReport` رابطهٔ ارث‌بری را اعلام می‌کند.
 override قرارداد Format پایه را تکمیل می‌کند.
 در اینجا base state mutable یا setterهای حساس نداریم.
 به همین دلیل مثال از ارث‌بری برای مدل Ticket کم‌خطرتر و معنی‌دارتر است.
 
-DetailedTicketReport هم Format دیگری دارد و Notes.Count را نمایش می‌دهد.
+کلاس DetailedTicketReport هم Format دیگری دارد و Notes.Count را نمایش می‌دهد.
 هر دو باید بدون تغییر Ticket گزارش بدهند.
 اگر یکی در Format درخواست را ببندد، قرارداد گزارش را نقض کرده است، حتی اگر کامپایل شود.
 
@@ -157,10 +155,7 @@ foreach (TicketReport report in reports)
 }
 ```
 
-caller با نوع پایه کار می‌کند.
-پیاده‌سازی مناسب Format در runtime بر اساس نوع واقعی اجرا می‌شود.
-اگر caller برای هر نوع خاص یک if بنویسد، ممکن است benefit قرارداد مشترک را از دست بدهیم.
-polymorphism فقط از inheritance کلاس نمی‌آید؛ interface نیز آن را فراهم می‌کند.
+کد گزارش‌گیر فقط می‌داند با یک `TicketReport` کار می‌کند. هنگام فراخوانی، نسخهٔ `Format` مطابق نوع واقعی شیء، مثلاً گزارش خلاصه یا تفصیلی، اجرا می‌شود. این رفتار `polymorphism` است: یک قرارداد مشترک، رفتارهای مشخصِ متفاوت را در اختیار کد مصرف‌کننده می‌گذارد، بدون اینکه برای هر نوع یک `if` جدا بنویسد. در درس بعد همین امکان را از طریق interface هم می‌بینی.
 
 ## ۱۰. virtual و new
 

@@ -31,18 +31,18 @@
 
 | اصل | سؤال عملی |
 | --- | --- |
-| SRP | این جزء به چه دلیل مستقل تغییر می‌کند؟ |
-| OCP | یک تنوع مشخص را بدون دست‌کاری core چگونه اضافه کنیم؟ |
-| LSP | implementation جایگزین قرارداد caller را حفظ می‌کند؟ |
-| ISP | caller فقط قابلیت‌هایی را می‌بیند که نیاز دارد؟ |
-| DIP | use case به قرارداد وابسته است یا جزئیات storage؟ |
+| SRP: Single Responsibility Principle | این جزء به چه دلیل مستقل تغییر می‌کند؟ |
+| OCP: Open/Closed Principle | قالب گزارش تازه را چگونه بدون تغییر منطق گزارش‌گیر اضافه کنیم؟ |
+| LSP: Liskov Substitution Principle | implementation جایگزین همان ورودی‌ها را می‌پذیرد و تعهدهای قرارداد را حفظ می‌کند؟ |
+| ISP: Interface Segregation Principle | caller فقط قابلیت‌هایی را می‌بیند که نیاز دارد؟ |
+| DIP: Dependency Inversion Principle | عملیات ثبت به قرارداد نوشتن وابسته است یا به جزئیات storage؟ |
 
 این اصول ابزار قضاوت‌اند؛ رعایت آن‌ها با شمارش interfaceها اندازه‌گیری نمی‌شود.
 طراحی کوچک هم می‌تواند خوب باشد.
 
 ## ۲. SRP: یک دلیل منسجم برای تغییر
 
-SRP به معنی «هر کلاس فقط یک متد» نیست.
+اصل SRP به معنی «هر کلاس فقط یک متد» نیست.
 یک کلاس می‌تواند چند عملیات مرتبط با همان مسئولیت داشته باشد.
 Ticket عنوان، یادداشت و وضعیت مرتبط خود را مدیریت می‌کند.
 InMemoryTicketStore نگهداری و lookup داده را انجام می‌دهد.
@@ -56,7 +56,7 @@ public interface ITicketWriter { int Add(string title); }
 public interface ITicketReader { Ticket? FindById(int id); }
 ```
 
-registration فقط writer می‌خواهد.
+مرحلهٔ registration فقط writer می‌خواهد.
 report فقط reader می‌خواهد.
 یک InMemoryTicketStore می‌تواند هر دو را پیاده کند؛ لازم نیست دو storage موازی بسازیم.
 تفکیک interface به معنی تکثیر داده نیست.
@@ -78,7 +78,7 @@ public int Register(string title)
 }
 ```
 
-service با writer از constructor کار می‌کند و storage را درون خودش new نمی‌کند.
+سرویس، writer را از constructor دریافت می‌کند و برای ذخیره‌سازی از همان استفاده می‌کند؛ خودش storage تازه‌ای با `new` نمی‌سازد.
 این نسخه یک use case کوچک است؛ wrapper بدون نیاز واقعی همیشه به service جدا احتیاج ندارد.
 در این مسیر بعداً قواعد و persistence واقعی رشد می‌کنند.
 validation فعلی در application و مدل تکرار دارد؛ در درس بعد مفهوم عنوان معتبر را متمرکز می‌کنیم.
@@ -93,7 +93,7 @@ public interface ITicketFormatter
 }
 ```
 
-PlainTextFormatter و CompactFormatter دو قالب دارند.
+دو کلاس `PlainTextFormatter` و `CompactFormatter` دو قالب متفاوت ارائه می‌کنند.
 TicketReportService برای formatter تازه branch اضافه نمی‌کند.
 composition root implementation را انتخاب می‌کند.
 این یک محور تغییر مشخص است: قالب گزارش.
@@ -124,7 +124,7 @@ failure reader همچنان exception می‌ماند.
 
 ## ۸. LSP برای reader
 
-reader خراب نباید برای تمام شناسه‌ها null برگرداند و به caller بگوید داده‌ای وجود ندارد.
+کد reader خراب نباید برای تمام شناسه‌ها null برگرداند و به caller بگوید داده‌ای وجود ندارد.
 Id نامعتبر هم نباید در یک implementation خطا و در دیگری Ticket جعلی بدهد.
 contract مشترک درس ۰۱۵ برای همهٔ implementationها بررسی می‌شود.
 جایگزینی درست شامل رفتار، شرایط ورودی و failure است.
@@ -139,7 +139,7 @@ contract مشترک درس ۰۱۵ برای همهٔ implementationها بررس�
 
 ## ۱۰. DIP: جهت وابستگی
 
-Application قرارداد reader و writer را تعریف می‌کند.
+لایهٔ Application قرارداد reader و writer را تعریف می‌کند.
 Infrastructure آن قراردادها را پیاده می‌کند.
 use case برای اجرای business flow به Dictionary یا FilePath اشاره نمی‌کند.
 Program implementation را می‌شناسد تا اجزا را متصل کند.
@@ -147,15 +147,11 @@ Program implementation را می‌شناسد تا اجزا را متصل کند
 
 ## ۱۱. DI و DIP یک چیز نیستند
 
-constructor injection راهی برای رساندن dependency است.
-DIP دربارهٔ انتخاب مرز و جهت وابستگی است.
-اگر یک service concrete و بسیار وابسته به فایل را فقط inject کنیم، همهٔ couplingها خودکار حل نمی‌شوند.
-اگر interfaceی تمام جزئیات SQL را لو بدهد، نام I به تنهایی مرز خوبی ایجاد نمی‌کند.
-اصل را با مشکل caller بررسی کن.
+روش `constructor injection` می‌گوید dependency را چگونه به کلاس برسانیم؛ اصل `DIP` می‌پرسد کلاس باید به چه چیزی وابسته باشد. در نمونه، عملیات ثبت و گزارش یا `use case` به قرارداد reader و writer نیاز دارد. اگر به‌جای قرارداد، کلاس وابسته به مسیر فایل را فقط از constructor بدهیم، جزئیات فایل هنوز به آن عملیات راه یافته است. میزان گره‌خوردن این اجزا به هم را `coupling` می‌نامند. حتی interface هم اگر همهٔ جزئیات SQL را به caller تحمیل کند، این مشکل را حل نمی‌کند.
 
 ## ۱۲. ثبت ناموفق و شناسه
 
-store ابتدا Ticket معتبر می‌سازد، سپس در dictionary اضافه و nextId را زیاد می‌کند.
+کد store ابتدا Ticket معتبر می‌سازد، سپس در dictionary اضافه و nextId را زیاد می‌کند.
 اگر ساخت Title شکست بخورد، شمارنده افزایش پیدا نمی‌کند.
 nextId از نوع long است تا بررسی ظرفیت int پیش از cast انجام شود.
 این generator تک‌نخی است؛ concurrent storage یا دیتابیس نیست.
@@ -170,7 +166,7 @@ nextId از نوع long است تا بررسی ظرفیت int پیش از cast �
 6. سناریوهای failure و حفظ state را بررسی کن.
 
 هم‌زمان قواعد دامنه را تغییر نده تا علت تفاوت خروجی مشخص باشد.
-نباید برای «زیباتر شدن» refactor خطای ثبت را به موفقیت خاموش تبدیل کند.
+در refactor شکل کد را تغییر می‌دهیم، اما خطای ثبت همچنان باید همان شکست قابل مشاهده بماند؛ ظاهر مرتب‌ترِ کد دلیل پنهان‌کردن خطا یا اعلام موفقیت نیست.
 
 ## ۱۴. چیدمان نمونه
 

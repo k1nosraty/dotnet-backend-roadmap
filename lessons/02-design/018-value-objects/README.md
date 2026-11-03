@@ -4,10 +4,7 @@
 
 ## خروجی درس
 
-یک TicketTitle معتبر و immutable می‌سازی.
-برابری ارزش و برابری reference را جدا می‌کنی.
-با with یک DTO را کپی می‌کنی و محدودیت shallow copy را مشاهده می‌کنی.
-می‌توانی توضیح بدهی چرا هر record خودکار value object سالم نیست.
+دو عنوان را جداگانه می‌سازی و بررسی می‌کنی چرا می‌توانند مقدار یکسان، اما reference متفاوت داشته باشند. سپس با `with` یک DTO را کپی می‌کنی و می‌بینی فهرست داخل آن ممکن است هنوز مشترک بماند. بر همین اساس، نوع `TicketTitle` را طوری می‌نویسی که فقط عنوان معتبر بپذیرد و مقدارش پس از ساخت عوض نشود؛ این تغییرناپذیری `immutability` نام دارد.
 
 ## پیش‌نیاز
 
@@ -33,9 +30,9 @@ string می‌تواند عنوان، مسیر فایل، ایمیل یا هر �
 دو عنوان با ارزش یکسان می‌توانند از نظر این قرارداد برابر باشند.
 معیار equality یک تصمیم دامنه است، نه انتخاب صرفاً نحوی class یا record.
 
-entity را با «کدام مورد است؟» می‌شناسیم: Ticket شمارهٔ ۱ حتی پس از Rename همان درخواست است. value object را با «چه مقداری دارد؟» مقایسه می‌کنیم: دو TicketTitle با متن یکسانِ پس از Trim، در قرارداد این درس یک ارزش را بیان می‌کنند، حتی اگر جدا ساخته شده باشند. DTO هم فقط شکل انتقال داده است و به‌تنهایی تضمین قواعد کسب‌وکار نمی‌دهد.
+مفهوم entity را با «کدام مورد است؟» می‌شناسیم: Ticket شمارهٔ ۱ حتی پس از Rename همان درخواست است. value object را با «چه مقداری دارد؟» مقایسه می‌کنیم: دو TicketTitle با متن یکسانِ پس از Trim، در قرارداد این درس یک ارزش را بیان می‌کنند، حتی اگر جدا ساخته شده باشند. DTO هم فقط شکل انتقال داده است و به‌تنهایی تضمین قواعد کسب‌وکار نمی‌دهد.
 
-record ابزار زبان برای امکاناتی مانند equality و copy است. value object نقش طراحی است: مقدار معتبر، معیار برابری روشن و تغییرناپذیریِ لازم دارد. پس نوشتن record به‌تنهایی این نقش را کامل نمی‌کند.
+مفهوم record ابزار زبان برای امکاناتی مانند equality و copy است. value object نقش طراحی است: مقدار معتبر، معیار برابری روشن و تغییرناپذیریِ لازم دارد. پس نوشتن record به‌تنهایی این نقش را کامل نمی‌کند.
 
 ## ۲. یک record ساده برای DTO
 
@@ -43,11 +40,7 @@ record ابزار زبان برای امکاناتی مانند equality و copy
 public sealed record TicketSummary(int Id, string Title);
 ```
 
-این declaration یک record class می‌سازد.
-کامپایلر equality مبتنی بر اعضا، نمایش ToString و امکانات copy را فراهم می‌کند.
-propertyهای positional record class معمولاً init دارند.
-این DTO خودش طول عنوان یا مثبت بودن Id را enforce نمی‌کند.
-نام record به معنی معتبر شدن همهٔ داده‌های ورودی نیست.
+در این `record class`، مقدارهای داخل پرانتز، propertyهای مدل را تعریف می‌کنند؛ به این شکل `positional record` می‌گویند. کامپایلر امکاناتی مثل مقایسهٔ اعضا یا `value equality`، نمایش `ToString` و کپی با `with` را فراهم می‌کند. propertyهای این شکل معمولاً `init` دارند، اما هیچ‌کدام خودشان طول عنوان یا مثبت‌بودن شناسه را بررسی نمی‌کنند. این قرارداد انتقال داده یا `DTO` است و برای ورود به مدل درخواست هنوز validation لازم دارد.
 
 ## ۳. == و ReferenceEquals
 
@@ -56,7 +49,7 @@ TicketTitle first = TicketTitle.Create("  Network issue  ");
 TicketTitle second = TicketTitle.Create("Network issue");
 ```
 
-first و second دو instance جدا هستند.
+دو متغیر first و second دو instance جدا هستند.
 پس ReferenceEquals باید false باشد.
 بعد از normalization ارزش هر دو برابر است و == برای این record true می‌شود.
 record equality با reference equality کلاس معمولی یکسان نیست.
@@ -68,7 +61,7 @@ record equality با reference equality کلاس معمولی یکسان نیس�
 | آیا متن معتبر نهایی یکی است؟ | True | فاصله‌های دو سر ورودی اول حذف شده‌اند |
 | آیا هر دو نام به همان شیء اشاره می‌کنند؟ | False | Create دو بار، دو instance جدا ساخته است |
 
-normalization یعنی تبدیل ورودی به شکل قراردادی؛ اینجا فقط Trim است. validation یعنی بررسی مجازبودن مقدار پس از آن. Create ابتدا شکل قراردادی را می‌سازد، سپس طول را می‌سنجد و فقط در صورت موفقیت شیء معتبر می‌دهد.
+اصطلاح normalization یعنی تبدیل ورودی به شکل قراردادی؛ اینجا فقط Trim است. validation یعنی بررسی مجازبودن مقدار پس از آن. Create ابتدا شکل قراردادی را می‌سازد، سپس طول را می‌سنجد و فقط در صورت موفقیت شیء معتبر می‌دهد.
 نوع runtime نیز در equality record class نقش دارد؛ sealed مدل را در این مثال محدود می‌کند.
 
 ## ۴. قرارداد TicketTitle
@@ -103,7 +96,7 @@ public sealed record TicketTitle
 }
 ```
 
-constructor خصوصی است و caller عادی باید Create را استفاده کند.
+این constructor خصوصی است و caller عادی باید Create را استفاده کند.
 Value فقط getter دارد؛ setter یا init عمومی برای دور زدن guard وجود ندارد.
 ToString یک نمایش متنی فراهم می‌کند؛ برای serialization file همچنان قرارداد جدا می‌سازیم.
 به شکل پیام ToString برای API پایدار تکیه نمی‌کنیم.
@@ -123,9 +116,7 @@ TicketSummary original = new(1, "Network issue");
 TicketSummary changed = original with { Title = "Printer issue" };
 ```
 
-original تغییر نمی‌کند.
-changed همان Id و عنوان تازه دارد.
-این nondestructive mutation روی record است.
+عبارت `with` یک record تازه می‌سازد و فقط propertyهای نوشته‌شده در آن را برای نسخهٔ تازه تنظیم می‌کند. بنابراین `original` عنوان قبلی را دارد و `changed` با همان شناسه و عنوان تازه ساخته می‌شود. به ساخت نسخهٔ تغییرکرده بدون دست‌زدن به نسخهٔ اصلی، `nondestructive mutation` می‌گویند.
 DTO سادهٔ این مثال guard دامنه ندارد؛ نباید changed را بدون تبدیل معتبر وارد Ticket کنی.
 یک record برای نقل داده و یک value object برای invariant نقش‌های متفاوت دارند.
 
@@ -135,7 +126,7 @@ DTO سادهٔ این مثال guard دامنه ندارد؛ نباید changed 
 public sealed record ReportLines(List<string> Lines);
 ```
 
-property Lines init است، اما List داخل آن mutable است.
+در property به نام `Lines` از `init` استفاده شده است، اما List داخل آن mutable است؛ یعنی هنوز می‌توان عضوهایش را تغییر داد.
 caller هنوز می‌تواند Lines.Add یا Clear را صدا بزند.
 record declaration لیست را frozen نمی‌کند.
 همان نکتهٔ collection درس ۰۱۳ اینجا هم برقرار است.
@@ -175,15 +166,12 @@ record را بدون بررسی عضوهایش به عنوان کلید semantic
 HashSet<TicketTitle> titles = new() { first, second };
 ```
 
-با دو عنوان برابر Count برابر ۱ است.
-HashSet از equality و hash مناسب record استفاده می‌کند.
-اگر عضو مؤثر بر hash پس از درج عوض شود، lookup collection می‌تواند رفتار اشتباه بدهد.
-TicketTitle با مقدار ثابت در این زمینه مناسب است.
+دو عنوان برابر در `HashSet` یک عضو حساب می‌شوند. این مجموعه با `hash` محل جست‌وجوی مقدار را انتخاب می‌کند و سپس equality را می‌سنجد. اگر دادهٔ مؤثر بر hash را پس از درج تغییر بدهیم، محل مورد انتظار برای یافتنش ممکن است عوض شود و جست‌وجو به نتیجهٔ درست نرسد. مقدار ثابت `TicketTitle` جلوی این تغییر را در همین نمونه می‌گیرد.
 immutable بودن تمام ارزش‌های مؤثر را برای value objectهای پیچیده‌تر بررسی کن.
 
 ## ۱۲. record struct و مقدار پیش‌فرض
 
-record class و record struct یک چیز نیستند.
+نوع `record class` با نوع `record struct` تفاوت دارد.
 record struct نوع value است و default می‌تواند بدون اجرای constructor سفارشی ساخته شود.
 برای نوعی که نمی‌خواهد حالت default نامعتبر داشته باشد، این موضوع مهم است.
 در این درس TicketTitle یک record class است؛ default آن null است و caller باید قرارداد null را رعایت کند.
@@ -221,7 +209,7 @@ Shallow original count: 2
 List content equality automatic: False
 ```
 
-false آخر نشان می‌دهد برابر بودن محتوا درون دو لیست از record ساده نتیجه نمی‌شود.
+مقدار false آخر نشان می‌دهد برابر بودن محتوا درون دو لیست از record ساده نتیجه نمی‌شود.
 
 ## تمرین مستقل
 
@@ -251,7 +239,7 @@ setter عمومی برای Value یا Title نساز.
 
 ## سرنخ
 
-record syntax را با domain semantics یکی نگیر.
+مفهوم record syntax را با domain semantics یکی نگیر.
 value object باید دلیل business داشته باشد، نه فقط wrapper دور همهٔ primitiveها.
 برای عنوان، invariant و استفادهٔ تکرارشونده دلیل ساخت این نوع است.
 

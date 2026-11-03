@@ -2,8 +2,7 @@
 
 ## خروجی قابل مشاهده
 
-یک حساب PostgreSQL با cookie یا protected bearer خود Identity وارد می‌شود.
-مرز scheme، CSRF، refresh، logout و key ring پایدار با HTTP واقعی بررسی می‌شود.
+ورود حساب ذخیره‌شده در PostgreSQL را با دو روش آزمایش می‌کنی: cookie مرورگر و protected bearer صادرشدهٔ Identity. سپس با همان credential به مسیرهای مختلف درخواست می‌فرستی تا ببینی هر مسیر کدام scheme را می‌پذیرد. جریان CSRF، refresh و logout و اثر نگه‌داری key ring در restart را جدا بررسی می‌کنی.
 credential دست‌ساز، X-User و X-Role هیچ هویتی ایجاد نمی‌کنند.
 
 پیش‌نیاز: [درس 063](../063-passwords/README.md)، Identity، middleware و مدل تهدید.
@@ -21,7 +20,7 @@ credential دست‌ساز، X-User و X-Role هیچ هویتی ایجاد نم�
 | credential | چیزی که برای اثبات هویت ارائه می‌شود؛ مانند password موقع login یا cookie/token صادرشده بعد از آن |
 | scheme | نام تنظیمات و handler مربوط به یک روش احراز هویت در برنامه |
 
-Identity امکانات حساب و ورود را فراهم می‌کند؛ به‌تنهایی نمی‌گوید هر کاربر کدام تیکت را می‌تواند تغییر بدهد. این موضوع در درس‌های نقش و مالکیت ادامه دارد. token هم نام عمومی یک دادهٔ صادرشده با کاربرد مشخص است؛ access token، refresh token و reset token وظیفهٔ یکسان ندارند.
+چارچوب Identity امکانات حساب و ورود را فراهم می‌کند؛ به‌تنهایی نمی‌گوید هر کاربر کدام تیکت را می‌تواند تغییر بدهد. این موضوع در درس‌های نقش و مالکیت ادامه دارد. token هم نام عمومی یک دادهٔ صادرشده با کاربرد مشخص است؛ access token، refresh token و reset token وظیفهٔ یکسان ندارند.
 
 | روش | رفتار client | تصمیم‌های مهم |
 | --- | --- | --- |
@@ -29,9 +28,8 @@ Identity امکانات حساب و ورود را فراهم می‌کند؛ ب�
 | Bearer header | client صریحاً credential را می‌فرستد | نگهداری امن، عمر، دامنهٔ مصرف و refresh |
 | OAuth/OIDC | قرارداد استاندارد با issuer مشخص | audience، issuer، policy و provider واقعی |
 
-Bearer شکل حمل credential است؛ الزاماً JWT نیست.
-HttpOnly دسترسی مستقیم JavaScript به cookie را محدود می‌کند، ولی XSS را به‌طور کامل خنثی نمی‌کند.
-SameSite هم جای طراحی کامل CSRF نیست.
+نام Bearer شکل حمل credential است؛ الزاماً JWT نیست.
+گزینهٔ `HttpOnly` خواندن مستقیم cookie از JavaScript را محدود می‌کند، اما جلوی همهٔ کارهای کد مخرب داخل صفحه را نمی‌گیرد؛ این نوع اجرای کد در صفحه را `XSS` می‌نامند. گزینهٔ `SameSite` هم در ارسال cookie بین سایت‌ها نقش دارد و به‌تنهایی جای کل طراحی CSRF را نمی‌گیرد. جریان ضد CSRF همین نمونه را در بخش مربوط دنبال می‌کنیم.
 نگهداری token در localStorage راه‌حل پیش‌فرضِ بی‌خطر برای مرورگر نیست.
 
 ## یک نگاه: مرورگر خودش می‌فرستد یا client صریح؟
@@ -72,7 +70,7 @@ SignInManager با IdentityConstants.BearerScheme، handler رسمی را برا
 | Persistence/AccountContext.cs | جداول Identity در PostgreSQL |
 | Hosting/LabProvisioning.cs | فقط فرمان محلی ساخت آزمایشگاه تازه |
 
-Authentication قبل از Authorization اجرا می‌شود.
+مرحلهٔ Authentication قبل از Authorization اجرا می‌شود.
 GET /api/me فقط userId سروری می‌دهد و IdentityUser کامل serialize نمی‌شود.
 /api/cookie-action و /api/bearer-action فقط شاهد scheme هستند و هنوز منطق تغییر تیکت ندارند.
 نقش و کنترل مالکیت در درس‌های بعد به use case و منبع وصل می‌شوند.
@@ -91,7 +89,7 @@ GET /api/me فقط userId سروری می‌دهد و IdentityUser کامل seri
 | POST /api/bearer-action | فقط scheme bearer |
 
 ورودی credential خراب، حساب ناموجود، رمز نادرست و ورود نامجاز پاسخ عمومی 401 دارند.
-برابری shape پاسخ به معنی تضمین یکسان بودن زمان پاسخ یا حل کامل user enumeration نیست.
+این پاسخ‌های عمومی شکل یکسانی دارند تا از متن پاسخ نتوان وجود حساب را تشخیص داد. اما یکسان‌بودن متن، یکسان‌بودن زمان پاسخ را ثابت نمی‌کند. تلاش برای پیداکردن حساب‌های موجود از همین تفاوت‌ها `user enumeration` نام دارد و بررسی کامل آن فراتر از این آزمایش است.
 خطاهای فنی پاسخ 500 عمومی دارند.
 
 ## CSRF از همین مرحله
@@ -101,7 +99,7 @@ GET /api/me فقط userId سروری می‌دهد و IdentityUser کامل seri
 برای cookie-action و logout، token را در X-CSRF-TOKEN بفرست.
 مسیر bearer-only به cookie برای ورود تکیه نمی‌کند و ambient cookie آن را مجاز نمی‌کند.
 
-ambient cookie یعنی credentialای که مرورگر برای درخواست واجد شرایط، خودکار همراه می‌کند. CSRF از این خودکاربودن سوءاستفاده می‌کند: ممکن است درخواست ناخواسته‌ای با هویت مرورگر کاربر ارسال شود. token ضد CSRF شاهد جداگانه‌ای است که این نمونه برای عملیات cookie لازم می‌داند؛ password یا access token نیست.
+اصطلاح ambient cookie یعنی credentialای که مرورگر برای درخواست واجد شرایط، خودکار همراه می‌کند. CSRF از این خودکاربودن سوءاستفاده می‌کند: ممکن است درخواست ناخواسته‌ای با هویت مرورگر کاربر ارسال شود. token ضد CSRF شاهد جداگانه‌ای است که این نمونه برای عملیات cookie لازم می‌داند؛ password یا access token نیست.
 
 مسیر cookie همین نمونه را روی کاغذ دنبال کن:
 
@@ -115,27 +113,27 @@ ambient cookie یعنی credentialای که مرورگر برای درخواست
 
 ## عمر و ابطال
 
-cookie بیست دقیقه و بدون sliding expiration است؛ در این login غیرpersistent صادر می‌شود.
+عمر cookie بیست دقیقه است و sliding expiration ندارد؛ استفادهٔ دوباره مهلتش را تمدید نمی‌کند. در این login، cookie به شکل non-persistent صادر می‌شود و برای باقی‌ماندن پس از بستن مرورگر تنظیم نشده است.
 بررسی security stamp cookie هر یک دقیقه تنظیم شده است.
 access token پنج دقیقه و refresh token بیست دقیقه اعتبار دارند.
 reset-token پانزده‌دقیقه‌ای درس قبل قرارداد دیگری است.
 
-Refresh با protector مربوط و expiry و ValidateSecurityStampAsync بررسی می‌شود.
-هر refresh یک pair تازه می‌دهد، ولی پیاده‌سازی فعلی ledger مصرف یا تشخیص reuse ندارد؛ refresh قبلی ممکن است تا انقضا و تغییر stamp دوباره کار کند.
+عملیات Refresh با protector مربوط و expiry و ValidateSecurityStampAsync بررسی می‌شود.
+هر refresh یک جفت access token و refresh token تازه می‌دهد. اما این پیاده‌سازی دفتر ثبت مصرف، یعنی `ledger`، ندارد تا بداند refresh token قبلی قبلاً استفاده شده است. پس صدور جفت تازه به معنی یک‌بارمصرف‌شدن قبلی نیست و قبلی ممکن است تا انقضا یا تغییر stamp دوباره پذیرفته شود.
 Logout این route، cookie را از client پاک می‌کند و access token قبلی را فوراً باطل نمی‌کند.
 همچنین کپی دزدیده‌شدهٔ cookie الزاماً با حذف cookie مرورگر خودبه‌خود باطل نمی‌شود.
 برای revocation فوری و session management و replay detection به قابلیت جدا و تست آن نیاز داریم.
 
-refresh یعنی درخواست credential دسترسی تازه با refresh token؛ نه دوباره فرستادن password، و نه اجازهٔ نادیده‌گرفتن انقضا. revocation یعنی اعتبار credential صادرشده را پیش از پایان عمرش از سمت server پس بگیریم. replay یعنی یک دادهٔ قابل استفاده دوباره فرستاده شود؛ صدور pair تازه خودبه‌خود ثابت نمی‌کند pair قبلی دیگر قابل استفاده نیست.
+مفهوم refresh یعنی درخواست credential دسترسی تازه با refresh token؛ نه دوباره فرستادن password، و نه اجازهٔ نادیده‌گرفتن انقضا. revocation یعنی اعتبار credential صادرشده را پیش از پایان عمرش از سمت server پس بگیریم. replay یعنی یک دادهٔ قابل استفاده دوباره فرستاده شود؛ صدور pair تازه خودبه‌خود ثابت نمی‌کند pair قبلی دیگر قابل استفاده نیست.
 
-SecurityStamp علامت وضعیت امنیتی حساب است؛ در مسیرهایی که آن را اعتبارسنجی می‌کنند می‌توان تغییر وضعیت امنیتی حساب را تشخیص داد. key ring هم مجموعهٔ کلیدهای Data Protection برای حفاظت و خواندن credentialهای همین برنامه است؛ با password حساب یا token ضد CSRF یکی نیست. به همین دلیل ماندگاری DB به تنهایی برای خواندن cookie قبلی پس از restart کافی نیست.
+ویژگی SecurityStamp علامت وضعیت امنیتی حساب است؛ در مسیرهایی که آن را اعتبارسنجی می‌کنند می‌توان تغییر وضعیت امنیتی حساب را تشخیص داد. key ring هم مجموعهٔ کلیدهای Data Protection برای حفاظت و خواندن credentialهای همین برنامه است؛ با password حساب یا token ضد CSRF یکی نیست. به همین دلیل ماندگاری DB به تنهایی برای خواندن cookie قبلی پس از restart کافی نیست.
 
 ## کلیدهای پایدار
 
-TEAMDESK_KEYS یک پوشهٔ خصوصیِ متعلق به host است.
+متغیر محیطی TEAMDESK_KEYS یک پوشهٔ خصوصیِ متعلق به host است.
 Data Protection با SetApplicationName ثابت، token و cookie را در restart همان برنامه قابل خواندن نگه می‌دارد.
 تغییر app name یا از دست دادن key ring می‌تواند session و tokenها را غیرقابل استفاده کند.
-این فایل‌های lab برای نمایش persistence هستند؛ حفاظت at-rest، ACL، backup و encryption کلید باید در محیط واقعی جدا طراحی شوند.
+فایل‌های این lab ماندگاری کلید را نشان می‌دهند، اما حفاظت کلیدِ ذخیره‌شده یا `at-rest protection` را کامل نمی‌کنند. دسترسی فایل با `ACL`، یعنی قواعد مجازبودن دسترسی، و شیوهٔ backup و encryption کلید در محیط واقعی تصمیم‌های جداگانه‌اند.
 کلید، password و token را در repo، URL عیب‌یابی یا log نگذار.
 
 ## راه‌اندازی آزمایشگاه محلی
@@ -160,7 +158,7 @@ Remove-Item Env:TEAMDESK_LAB_EMAIL
 dotnet run --project samples/63-cookie-bearer/SupportDesk.csproj -- --urls http://127.0.0.1:5064
 ```
 
-password موقت را از مدیر رمز/حافظهٔ خودت برای آزمایش client بگیر؛ آن را در تاریخچهٔ فرمان وارد نکن.
+مقدار password موقت را از مدیر رمز/حافظهٔ خودت برای آزمایش client بگیر؛ آن را در تاریخچهٔ فرمان وارد نکن.
 --init-lab فقط با Development و flag صریح اجرا می‌شود و تأیید حساب را در همان فرمان مورد اعتماد انجام می‌دهد؛ endpoint عمومیِ تأیید خودکار نیست.
 این فرمان ایمیل واقعی نمی‌فرستد و برای ثبت‌نام production طراحی نشده است.
 ابتدا schema بساز و بعد host عادی را اجرا کن؛ startup معمول DDL ندارد.
@@ -180,7 +178,7 @@ flag HTTP فقط در Development و برای remote IP از loopback مجاز �
 python scripts/security_smoke.py
 ```
 
-SDK 10، PostgreSQL و psql لازم‌اند؛ راهنمای env آزمایش در فهرست بخش آمده است.
+ابزار SDK 10، PostgreSQL و psql لازم‌اند؛ راهنمای env آزمایش در فهرست بخش آمده است.
 اسکریپت حساب و schema و key خصوصیِ موقت خودش را می‌سازد و password/token چاپ نمی‌کند.
 موارد بررسی: credential جعلی، رمز نادرست، token خراب، refresh، CSRF قبل و بعد از login، logout، مرز scheme و باقی ماندن حساب و key در restart.
 انقضای پنج‌دقیقه‌ای با انتظار واقعی و مرورگرهای مختلف به‌صورت دستی آزمایش نشده‌اند؛ آن را با تست time provider مستقل تکمیل کن.

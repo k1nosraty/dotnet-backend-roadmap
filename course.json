@@ -37,7 +37,7 @@
   },
   {
     "id": 7,
-    "title": "کلاس، سازنده و property",
+    "title": "کلاس، constructor و property",
     "path": "lessons/01-foundations/007-classes/README.md",
     "status": "written"
   },
@@ -91,7 +91,7 @@
   },
   {
     "id": 16,
-    "title": "تزریق وابستگی و طول عمر",
+    "title": "Dependency Injection و lifetime",
     "path": "lessons/02-design/016-dependency-injection/README.md",
     "status": "written"
   },

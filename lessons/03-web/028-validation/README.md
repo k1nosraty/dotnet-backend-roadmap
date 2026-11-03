@@ -4,9 +4,7 @@
 
 ## مسئله و خروجی
 
-client باید بتواند شکست validation را بدون خواندن جمله‌های پراکنده تحلیل کند.
-از DataAnnotations، رفتار ApiController و ValidationProblemDetails استفاده می‌کنیم.
-خطای binding را از خطای معنی داده و از failure غیرمنتظره جدا نگه می‌داریم.
+اگر عنوان واردشده نامعتبر است، client باید بداند کدام فیلد مشکل دارد تا پیام را کنار همان ورودی نشان بدهد. در این درس، با `DataAnnotations` قواعدی را روی propertyهای DTO می‌نویسیم و خروجی شکست را در قالب `ValidationProblemDetails` می‌گیریم. این مسیر را از JSON خراب، تبدیل ناموفق نوع و خطای غیرمنتظرهٔ server جدا آزمایش می‌کنیم.
 این درس کتابخانهٔ validation خارجی نصب نمی‌کند.
 
 ## ۱. چهار مرز نامعتبر بودن
@@ -18,7 +16,7 @@ client باید بتواند شکست validation را بدون خواندن جم
 | DTO validation | title غایب یا خیلی بلند | ۴۰۰ خودکار ApiController |
 | guard پس از normalization | عنوان دوحرفی همراه فاصله | ۴۰۰ از controller |
 
-Domain نیز باید در برابر caller داخلی عنوان خراب محافظت کند.
+لایهٔ Domain نیز باید در برابر caller داخلی عنوان خراب محافظت کند.
 ندیدن action در debugger به معنی اجرا نشدن هیچ کدی در framework نیست.
 ModelState می‌تواند پیش از ورود به action نامعتبر شده باشد.
 
@@ -32,27 +30,23 @@ public sealed class CreateTicketRequest
 }
 ```
 
-Required مقدار null، خالی و whitespace را با پیش‌فرض این annotation رد می‌کند.
+صفت Required مقدار null، خالی و whitespace را با پیش‌فرض این annotation رد می‌کند.
 StringLength طول string را محدود می‌کند.
 از این snapshot requestهای validated کلاس با init هستند و annotation روی property قرار دارد.
 این تغییر نسبت به record کوچک درس قبل انتخاب آگاهانه برای metadata روشن property است.
-در positional recordهای MVC، metadata اعتبارسنجی باید روی پارامتر سازنده باشد؛ property: را بی‌دلیل از مثال‌های schema یا Minimal API کپی نکن.
+در positional recordهای MVC، metadata اعتبارسنجی باید روی پارامتر constructor باشد؛ property: را بی‌دلیل از مثال‌های schema یا Minimal API کپی نکن.
 رفتار record و class را با نوع واقعی DTO و pipeline همان framework تست کن.
 
 ## ۳. raw در برابر normalized
 
-annotation روی متن deserializeشده اجرا می‌شود و خودکار Trim انجام نمی‌دهد.
-controller سپس Trim می‌کند و طول normalized را دوباره بررسی می‌کند.
+قواعد annotation روی متن دریافتی یا `raw` اجرا می‌شوند و خودشان `Trim` نمی‌کنند. سپس controller فاصله‌های ابتدا و انتها را حذف می‌کند؛ این شکل آمادهٔ مقایسه را در این درس `normalized` می‌نامیم. طول همین متن آماده نیز دوباره بررسی می‌شود، چون حذف فاصله می‌تواند نتیجهٔ قانون حداقل طول را عوض کند.
 مثلاً عنوان « ab » ممکن است از حداقل طول خام عبور کند ولی پس از Trim رد می‌شود.
 در مقابل raw طولانی‌تر از ۱۲۰ حتی اگر پس از Trim کوتاه شود، در این قرارداد رد می‌شود.
 این سیاست ورودیِ نمونه است؛ اگر محصول سیاست دیگری می‌خواهد باید validation قبل و بعد را هماهنگ طراحی کنی.
 
 ## ۴. ApiController و ModelState
 
-وقتی مدل نامعتبر است، ApiController به صورت خودکار پاسخ ۴۰۰ ایجاد می‌کند.
-نوشتن if (!ModelState.IsValid) در ابتدای همهٔ actionهای این نمونه لازم نیست.
-اما valid بودن ModelState تضمین موجود بودن Ticket یا مجاز بودن تغییر وضعیت نیست.
-این‌ها نیاز به lookup و بررسی قواعد دارند.
+مجموعهٔ `ModelState` نتیجهٔ binding و validation مدل ورودی را نگه می‌دارد. اگر نامعتبر باشد، رفتار `[ApiController]` پیش از ورود به action پاسخ ۴۰۰ می‌سازد؛ پس لازم نیست ابتدای همهٔ actionها همان `if (!ModelState.IsValid)` را تکرار کنیم. اما ModelState نمی‌داند شناسهٔ درخواست در storage موجود است یا تغییر وضعیت آن مجاز است؛ این بررسی‌ها بعداً در مسیر عملیات انجام می‌شوند.
 annotation نباید برای خواندن تصادفی دیتابیس در getter به کار برود.
 
 ## ۵. شکل ProblemDetails
@@ -98,10 +92,10 @@ Id غیرمثبت ۴۰۰ و route متن غیرعددی با constraint درس �
 
 ## ۸. AddProblemDetails و status code pages
 
-AddProblemDetails سرویس نوشتن مشکل را ثبت می‌کند.
+متد AddProblemDetails سرویس نوشتن مشکل را ثبت می‌کند.
 UseStatusCodePages می‌تواند پاسخ خطای بدون body مانند مسیر ناموجود را به body مسئله تبدیل کند.
 این middleware پاسخ موفق را به خطا تبدیل نمی‌کند و body موجود را دوباره نمی‌نویسد.
-رفتار negotiation به Accept و writerهای ثبت‌شده وابسته است.
+انتخاب قالب پاسخ یا `content negotiation` به header برابر `Accept` و writerهای ثبت‌شده بستگی دارد؛ برنامه باید قالبی پیدا کند که بتواند بنویسد و درخواست‌کننده آن را بپذیرد.
 تست‌های این دوره درخواست‌های JSON معمولی را بررسی می‌کنند؛ ادعای خروجی یکسان برای هر Accept نداریم.
 
 ## ۹. ۴۱۵ جدا از ۴۰۰
@@ -130,10 +124,10 @@ catch(Exception) و return BadRequest برای همهٔ failureها معنی API
 
 ## ۱۲. معیار طول متن
 
-string.Length تعداد واحدهای UTF-16 است و لزوماً تعداد کاراکتر دیداری کاربر نیست.
+عضو string.Length تعداد واحدهای UTF-16 است و لزوماً تعداد کاراکتر دیداری کاربر نیست.
 emoji و بعضی ترکیب‌های نوشتاری می‌توانند شمارش متفاوتی داشته باشند.
 این درس از سیاست سادهٔ UTF-16 مدل قبلی استفاده می‌کند.
-اگر محصول روی تعداد grapheme محدودیت دارد، باید قانون domain و UI و ذخیره‌سازی را هماهنگ تغییر دهی.
+اگر معیار محصول تعداد `grapheme`، یعنی واحدهایی است که کاربر به شکل یک نویسه می‌بیند، قانون domain، رابط کاربر و ذخیره‌سازی باید با همین معیار هماهنگ شوند؛ عوض‌کردن فقط شمارش داخل DTO کافی نیست.
 
 
 ## نمونهٔ قابل اجرا و ابزارهای لازم
@@ -169,7 +163,7 @@ curl.exe -i http://127.0.0.1:5280/api/tickets/1
 
 ## تمرین تکمیلی
 
-InvalidModelStateResponseFactory را در شاخهٔ تمرینی بررسی کن.
+گزینهٔ InvalidModelStateResponseFactory را در شاخهٔ تمرینی بررسی کن.
 اگر آن را سفارشی می‌کنی status ۴۰۰، errors و media type را حفظ کن.
 customization نباید همهٔ خطاها را به ۲۰۰ تبدیل کند.
 برای تغییر شکل عمومی پاسخ یک تصمیم کوتاه در README ثبت کن.

@@ -6,11 +6,11 @@
 
 ## حافظه را با دوام جایگزین کن
 
-snapshot این درس مستقل و کامل‌تر است: Identity، PostgreSQL، claim، close، reopen و audit دارد. ترتیب مطالعه: Persistence/DeskContext.cs برای جدول و unique index؛ Hosting/Bootstrap.cs برای حساب‌های lab؛ Endpoints/DeskEndpoints.cs برای مرز HTTP؛ Application/DeskService.cs برای transaction؛ Domain برای قانون.
+نسخهٔ snapshot این درس مستقل و کامل‌تر است: ASP.NET Core Identity اطلاعات حساب و نقش را مدیریت می‌کند، PostgreSQL داده را پس از پایان process نگه می‌دارد و برنامه عملیات claim، close و reopen را ثبت می‌کند. هر تغییر موفق، یک رکورد audit هم دارد تا مشخص باشد چه کسی چه عملی را روی درخواست انجام داده است. ترتیب مطالعه: Persistence/DeskContext.cs برای جدول و unique index؛ Hosting/Bootstrap.cs برای حساب‌های lab؛ Endpoints/DeskEndpoints.cs برای مرز HTTP؛ Application/DeskService.cs برای transaction؛ Domain برای قانون.
 
-در create ابتدا ورودی معتبر می‌شود؛ request ذخیره می‌شود، audit ذخیره می‌شود و سپس transaction commit می‌شود. اگر audit ذخیره نشود، ذخیرهٔ اول هم برمی‌گردد. در رقابت، Version یک concurrency token است: UPDATE نسخهٔ قبلی را شرط می‌کند؛ اگر کسی زودتر تغییر داده باشد، نتیجه 409 است. unique index از create تکراری بین دو process جلوگیری می‌کند؛ lock حافظه این کار را نمی‌کند.
+در create ابتدا ورودی معتبر می‌شود؛ request ذخیره می‌شود، audit ذخیره می‌شود و سپس transaction commit می‌شود. اگر audit ذخیره نشود، ذخیرهٔ اول هم برمی‌گردد. در رقابت، `Version` یک concurrency token است؛ یعنی مقدارش برای تشخیص تغییر هم‌زمان به کار می‌رود. دستور `UPDATE` علاوه بر شناسه، نسخهٔ قبلی را هم در شرط دارد. اگر دیگری زودتر همان درخواست را تغییر داده باشد، این شرط دیگر برقرار نیست و تغییر دوم به پاسخ 409 می‌رسد. این token شمارهٔ نسخهٔ داده است و با token ورود کاربر فرق دارد. unique index از create تکراری بین دو process جلوگیری می‌کند؛ lock حافظه این کار را نمی‌کند.
 
-Tenant و IsAgent از رکورد فعلی کاربر می‌آیند. ارسال tenant در body به خاطر property ناشناخته 400 است؛ ساختن claim روی header هم auth نیست. test مجوز باید با token قدیمی پس از حذف نقش شکست بخورد: درخواست دیگران 404 و claim روی درخواست خود فرد 403 می‌شود. کوتاه بودن عمر token جایگزین بررسی مجوز فعلی نشده است.
+دو مقدار Tenant و IsAgent از رکورد فعلی کاربر می‌آیند. ارسال tenant در body به خاطر property ناشناخته 400 است؛ ساختن claim روی header هم auth نیست. test مجوز باید با token قدیمی پس از حذف نقش شکست بخورد: درخواست دیگران 404 و claim روی درخواست خود فرد 403 می‌شود. کوتاه بودن عمر token جایگزین بررسی مجوز فعلی نشده است.
 
 تست PostgreSQL را با Docker واقعی اجرا کن. WebApplicationFactory مسیر HTTP را اجرا می‌کند، ولی TLS واقعی نیست؛ آن شاهد در درس بعد است. برای اجرای دستی حساب‌ها و تنظیمات از راهنمای تحویل استفاده کن؛ connection و key directory اجباری‌اند و startup با config ناقص عمداً شکست می‌خورد.
 
@@ -52,7 +52,7 @@ flowchart TB
 
 این ابزارها جای هم نیستند: unique index از close قدیمی جلوگیری نمی‌کند و concurrency token به تنهایی کلید create را یکتا نمی‌کند. در [DeskService](../../../samples/88-servicedesk-hardening/Application/DeskService.cs)، مسیر create را تا commit دنبال کن. با SaveChanges اول SQL اجرا شده، ولی transaction هنوز commit نشده است؛ نقطهٔ اصلی فهم rollback همین تفاوت است.
 
-در [تست‌ها](../../../tests/089-capstone/CapstoneTests.cs)، `Audit_failure_after_first_database_write_rolls_back_request` را بخوان. interceptor هنگام ذخیرهٔ audit خطا می‌دهد؛ سپس context جدا تعداد رکوردها را بررسی می‌کند. این با تستی که فقط می‌گوید «SaveAsync صدا زده شد» فرق دارد. در تست grant revocation نیز همان token استفاده می‌شود تا login تازه نتیجه را مخفی نکند.
+در [تست‌ها](../../../tests/089-capstone/CapstoneTests.cs)، `Audit_failure_after_first_database_write_rolls_back_request` را بخوان. interceptor هنگام ذخیرهٔ audit خطا می‌دهد؛ سپس context جدا تعداد رکوردها را بررسی می‌کند. این با تستی که فقط می‌گوید «SaveAsync صدا زده شد» فرق دارد. grant revocation یعنی مجوزی که قبلاً داده شده بود از کاربر گرفته شود. تست مربوط همان token ورود قبلی را بعد از حذف نقش دوباره می‌فرستد؛ بنابراین نتیجه نشان می‌دهد برنامه مجوز فعلی حساب را بررسی کرده است. اگر تست دوباره login می‌کرد، دیگر نمی‌فهمیدیم token قبلی هم پس از حذف نقش محدود شده است یا نه.
 
 ## فرمان از ریشهٔ مخزن
 

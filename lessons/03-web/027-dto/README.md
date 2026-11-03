@@ -17,7 +17,7 @@
 | Ticket / TicketTitle | Id و عنوان معتبر | منطق برنامه |
 | TicketResponse | id و title خروجی | قرارداد خواندن client |
 
-DTO همان entity با نام تازه نیست.
+نام `DTO` مخفف `Data Transfer Object` است؛ یعنی نوعی که شکل دادهٔ عبوری از یک مرز را مشخص می‌کند. مثلاً client برای ساخت درخواست فقط عنوان می‌فرستد، اما پاسخ، شناسهٔ ساخته‌شده در server را هم دارد. پس DTO همان entity با نام تازه نیست.
 CreateTicketRequest عمداً Id ندارد چون Id را server می‌سازد.
 Response عمداً setter برای تغییر state برنامه ندارد.
 وجود قرارداد مجزا اجازه می‌دهد در آینده فیلد داخلی بدون تغییر API اضافه شود.
@@ -29,7 +29,7 @@ public sealed record CreateTicketRequest(string? Title);
 public sealed record ReplaceTitleRequest(string? Title);
 ```
 
-nullable بودن Title واقعیت ورودی غایب یا null را نشان می‌دهد.
+اعلان `Title` به شکل nullable نشان می‌دهد که ممکن است این مقدار در ورودی غایب یا `null` باشد.
 پس از deserialize نباید فقط به نام type اعتماد کرد.
 دو record فعلاً شبیه هم‌اند اما دو عملیات جدا را نمایندگی می‌کنند.
 اگر بعداً create فیلد بیشتری بخواهد، مجبور نیستیم update را هم تغییر دهیم.
@@ -42,9 +42,7 @@ public static TicketResponse ToResponse(this Ticket ticket) =>
     new(ticket.Id, ticket.Title);
 ```
 
-این extension در Mapping/TicketMapping.cs داخل کلاس static قرار دارد.
-this روی اولین پارامتر یعنی با `ticket.ToResponse()` می‌توان همان `TicketMapping.ToResponse(ticket)` را صدا زد.
-namespace آن باید با using در scope باشد؛ این syntax عضو private به Ticket اضافه نمی‌کند و به invariantها دسترسی ویژه نمی‌دهد.
+این کد یک `extension method` است که در کلاس static داخل `Mapping/TicketMapping.cs` نوشته شده است. کلمهٔ `this` روی پارامتر اول اجازه می‌دهد متد را به شکل `ticket.ToResponse()` صدا بزنیم؛ همان کار `TicketMapping.ToResponse(ticket)` را انجام می‌دهد. برای در دسترس‌بودن آن باید namespace مربوط را با `using` وارد کنیم. این شکل فراخوانی، متد را عضو واقعی کلاس `Ticket` نمی‌کند و دسترسی تازه‌ای به اعضای private نمی‌دهد.
 [مرجع syntaxهای کاربردی](../../../handbook/csharp-syntax.md) نمونه‌های delegate، primary constructor و collection expression را کنار هم توضیح می‌دهد.
 controller پس از service از آن استفاده می‌کند.
 Domain به TicketResponse یا System.Text.Json وابسته نمی‌شود.
@@ -53,12 +51,7 @@ Mapping اینجا یک انتخاب presentation است و جادوی runtime �
 
 ## ۴. مسیر نوشتن و خواندن
 
-ورودی HTTP به request تبدیل می‌شود.
-controller syntax و guard transport را بررسی می‌کند.
-TicketService عنوان را به TicketTitle معتبر تبدیل می‌کند.
-store یک Ticket immutable برمی‌گرداند.
-mapping پاسخ مناسب client را می‌سازد.
-serialization در پایان از پاسخ JSON تولید می‌کند.
+مسیر داده را از ورودی دنبال کن: ابتدا JSON به request DTO تبدیل می‌شود. controller ورودی مربوط به HTTP را بررسی می‌کند و service عنوان معتبر می‌سازد. پس از برگشت مدل از store، متد mapping فقط فیلدهای قرارداد پاسخ را انتخاب می‌کند. در پایان، serializer همین response DTO را به متن JSON تبدیل می‌کند. به تبدیل دادهٔ برنامه به قالب قابل ارسال، `serialization` و به خواندن آن قالب در نوع برنامه، `deserialization` می‌گویند.
 هیچ مرحله‌ای به client اجازهٔ ساخت مستقیم entity ذخیره‌شده نمی‌دهد.
 
 ## ۵. پیش‌فرض JSON وب
@@ -85,9 +78,7 @@ status هم وارد domain نمی‌شود چون در DTO ورودی چنین 
 
 ## ۷. چرا entity را FromBody نمی‌گیریم؟
 
-با دریافت entity، شکل داخلی و شکل transport به هم گره می‌خورند.
-ممکن است client فیلدهایی مثل OwnerId یا وضعیت داخلی بفرستد که مجاز به کنترلشان نیست.
-DTO کوچک سطح نوشتن را مشخص می‌کند.
+اگر خود entity را ورودی HTTP بگیریم، client ممکن است فیلدهای داخلی مانند `OwnerId` یا وضعیت را هم بفرستد. پذیرفتن فیلدهایی بیش از اختیار موردنظر عملیات، خطر `overposting` ایجاد می‌کند. DTO کوچک مشخص می‌کند client دقیقاً چه داده‌ای را می‌تواند پیشنهاد بدهد؛ در این مثال، شناسه را server می‌سازد.
 مجوز عملیاتی همچنان به کنترل هویت و مالکیت نیاز دارد که بخش امنیت دارد.
 حذف یک property از DTO به تنهایی همهٔ مسیرهای دسترسی برنامه را ایمن نمی‌کند.
 

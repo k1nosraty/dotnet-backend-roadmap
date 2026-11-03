@@ -23,11 +23,11 @@
 - Open مستقیم به Closed نمی‌رود.
 - تیکت بسته note تازه نمی‌پذیرد.
 
-Resolve یک قابلیت مشخص است؛ قرار نیست هر تغییر کوچک Ticket به یک «سرویس عمومی همه‌کاره» سپرده شود.
+قابلیت Resolve یک کار مشخص انجام می‌دهد؛ قرار نیست هر تغییر کوچک Ticket به یک «سرویس عمومی همه‌کاره» سپرده شود.
 
 ## واژگان و مرزها
 
-**Orchestration** یعنی ترتیب دادن مراحل یک use case و هماهنگ کردن وابستگی‌های آن.
+اصطلاح **Orchestration** یعنی ترتیب دادن مراحل یک use case و هماهنگ کردن وابستگی‌های آن.
 **Invariant** قاعده‌ای است که وضعیت معتبر مدل باید حفظ کند.
 Application تعیین می‌کند چه زمانی load و commit انجام شود.
 Domain تعیین می‌کند AddNote یا ChangeStatus مجاز هست یا نیست.
@@ -45,7 +45,7 @@ Presentation نتیجه را به پیام کنسول یا HTTP تبدیل می�
 | Program.cs | نمایش اجرای ResolveTicket |
 | Verification.cs | شکست مرحلهٔ دوم، conflict، IO و لغو |
 
-command فقط Id و Resolution دارد؛ connection string، HttpContext و DbContext ندارد.
+ورودی command فقط Id و Resolution دارد؛ connection string، HttpContext و DbContext ندارد.
 OperationResult هم response مستقل از framework می‌دهد.
 ترکیب command و service در یک فایل کوتاه انتخاب محلی است، نه الزام «همیشه همهٔ typeها در یک فایل».
 
@@ -69,10 +69,7 @@ var closed = withNote.ChangeStatus("Closed");
 if (closed is null) return OperationResult.Conflict();
 ```
 
-متغیر withNote هنوز ذخیره نشده است.
-اگر تیکت Open باشد، note در یک مدل موقت ساخته می‌شود ولی بستن رد می‌شود.
-مدل اصلی immutable است، پس نه حافظهٔ store و نه snapshot قبلی تغییر نکرده‌اند.
-این ویژگی برای جلوگیری از تغییر نیمه‌کاره مهم است.
+خروجی `AddNote` در `withNote` فقط مدل تازه‌ای در حافظه است؛ هنوز `SaveAsync` اجرا نشده است. اگر تیکت Open باشد، مرحلهٔ افزودن یادداشت می‌تواند مدل تازه بسازد، اما مرحلهٔ بستن رد می‌شود. چون مدل قبلی immutable است، ساخت این مقدار میانی به snapshot اصلی یا دادهٔ داخل store دست نزده است. پس می‌توان شکست مرحلهٔ دوم را بدون ذخیرهٔ یادداشتِ نیمه‌کاره گزارش کرد.
 اگر مدل mutable یا tracked بود، باید rollback و پاک کردن state را جدا مدیریت می‌کردیم.
 
 مرحلهٔ چهارم: فقط نتیجهٔ نهایی را ذخیره کن:
@@ -81,7 +78,7 @@ if (closed is null) return OperationResult.Conflict();
 var saved = await store.SaveAsync(original, closed, ct);
 ```
 
-adapter یک بار زیر lock نسخه را مقایسه و کل مدل را جایگزین می‌کند.
+کد adapter یک بار زیر lock نسخه را مقایسه و کل مدل را جایگزین می‌کند.
 در adapter واقعی PostgreSQL این قرارداد باید با concurrency token و commit اتمی اجرا شود؛
 نمونهٔ پایدار درس ۴۸ مبنای آن آزمایش‌هاست.
 فقط نوشتن نام SaveAsync، اتمی بودن یک implementation دیگر را تضمین نمی‌کند.
@@ -112,13 +109,13 @@ Application Service نباید بدون شناخت تضمین adapter ادعای
 | اجرای کامل | Success | note و Closed با یک افزایش نسخه |
 | خطای فنی غیرمنتظره | exception برای host | مطابق قرارداد failure adapter |
 
-Catch عمومی که همهٔ exceptionها را Missing کند، قطعی ذخیره را با نبودن تیکت اشتباه می‌گیرد.
+شاخهٔ Catch عمومی که همهٔ exceptionها را Missing کند، قطعی ذخیره را با نبودن تیکت اشتباه می‌گیرد.
 CancellationToken از ورودی تا store منتقل می‌شود.
 لغو قبل از commit در این نمونه داده را حفظ می‌کند؛ لغو پس از commit الزاماً تغییر را برنمی‌گرداند.
 
 ## تکرار درخواست و تعارض
 
-CloseTicket تکراری روی Closed موفق است؛ business state دوباره تغییر نمی‌کند.
+عملیات CloseTicket تکراری روی Closed موفق است؛ business state دوباره تغییر نمی‌کند.
 ResolveTicket تکراری موفق نیست: این عملیات note تازه می‌افزاید و تیکت بسته note نمی‌پذیرد.
 بنابراین درخواست دوباره Conflict می‌دهد.
 برای retry پس از گم شدن پاسخ شبکه، قرارداد idempotency مستقل لازم است؛ در این درس جعل آن را با «اگر بسته بود موفق بده» جایگزین نمی‌کنیم.
@@ -139,8 +136,7 @@ store حافظه‌ای است و اجرای تازه seed تازه دارد.
 
 ## بررسی failure با test double
 
-Verification یک RejectingStore کوچک دارد.
-Load را به store حافظه‌ای واقعی واگذار می‌کند ولی Save را با Conflict، Missing یا IOException رد می‌کند.
+یک `test double` جایگزین قابل کنترلِ dependency برای آزمایش است. در اینجا `RejectingStore` خواندن را به store حافظه‌ای می‌سپارد، اما در ذخیره عمداً Conflict، Missing یا IOException تولید می‌کند. بنابراین می‌توان بررسی کرد orchestration با هر نتیجه چه می‌کند، بدون اینکه منتظر خرابی تصادفی محیط بمانیم.
 انتظار این است که Application نتیجه را درست تفسیر کند و note نیمه‌کاره ذخیره نشود.
 این double فقط orchestration را بررسی می‌کند؛ خرابی واقعی شبکه یا transaction PostgreSQL را بازتولید نمی‌کند.
 تست double عمدی exception را قبل از هر write می‌دهد؛ تضمین آن را به تمام providerها تعمیم نده.
@@ -148,7 +144,7 @@ Load را به store حافظه‌ای واقعی واگذار می‌کند و�
 ## تمرین مستقل
 
 قابلیت «بازگشایی همراه دلیل» را تحلیل و سپس پیاده کن.
-ابتدا مشخص کن قانون فعلی مدل Closed را terminal می‌داند؛ پس تغییر این نیازمند تصمیم business و تغییر صریح Domain است.
+ابتدا قانون جدید را بنویس: در مدل فعلی، وضعیت `Closed` یک وضعیت `terminal` است، یعنی مسیر خروجی به وضعیت دیگر ندارد. اجازهٔ بازگشایی باید صریحاً به قواعد Domain اضافه شود؛ صرف افزودن endpoint یا فرمان جدید این قانون را تغییر نمی‌دهد.
 دلیل بازگشایی باید معتبر باشد، سقف note روشن بماند و وضعیت و دلیل با یک save ثبت شوند.
 برای «تیکت از ابتدا بسته نبود»، «سقف note پر بود» و «نسخه هم‌زمان عوض شد» رفتار مورد انتظار را پیش از کد بنویس.
 

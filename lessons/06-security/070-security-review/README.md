@@ -3,7 +3,7 @@
 ## خروجی قابل مشاهده
 
 بخش امنیت را با یک ماتریس شواهد تحویل می‌دهی: چه چیزی اجرا و بررسی شده، چه ریسکی باقی است و چه چیزی هنوز پیاده نشده است.
-دستور CLI فهرست routeهای واقعی و policy و budget آن‌ها را بررسی می‌کند؛ یک public route ساختگیِ ناخواسته نیز باید رد شود.
+دستور CLI، routeهای واقعی ثبت‌شدهٔ برنامه را می‌خواند و policy و بودجهٔ rate limit آن‌ها را با قرارداد مقایسه می‌کند. سپس یک route عمومی ناخواسته را فقط به ورودیِ بررسی اضافه می‌کند تا ببیند خودِ بررسی می‌تواند تخلف را رد کند.
 پیش‌نیاز: [درس ۶۹](../069-secrets/README.md) و تمام تمرین‌های بخش امنیت.
 
 ## منظور از بازبینی چیست؟
@@ -15,7 +15,7 @@
 
 ## مرزهای نسخهٔ نهایی
 
-AccountAccess هویت و tenant فعلی را از DB می‌خواند. handler منبع، owner و tenant و operation را بررسی می‌کند.
+کلاس AccountAccess هویت و tenant فعلی را از DB می‌خواند. handler منبع، owner و tenant و operation را بررسی می‌کند.
 مسیرهای تیکت BearerOnly هستند و cookie-action و logout و login cookie قرارداد CSRF دارند.
 AuditReadHandler، permission مستقل audit.read را از DB می‌سنجد و endpoint audit سازمان فعلی را فیلتر می‌کند.
 write و audit ماندگار یک commit دارند و logger نتیجه را پس از commit می‌گوید.
@@ -66,8 +66,8 @@ metadata نمی‌تواند منطق handler، SQL scope، اعتبارسنجی
 | public route ناخواسته | شکست CLI review | final و --review |
 
 برای هر تست توضیح بده «اگر این کنترل حذف شود، کدام assertion شکست می‌خورد؟»
-خود CLI review یک mutation check دارد. ساخت موفق تنها به معنی اجرای سناریوهای DB نیست.
-آزمون fault injection فقط روی schema تصادفی متعلق به تست اجرا و همان schema cleanup می‌شود.
+در `mutation check` عمداً یک کنترل یا دادهٔ ورودی بررسی را خراب می‌کنیم تا مطمئن شویم تست نسبت به تخلف حساس است؛ نمونهٔ این درس همان افزودن route عمومی ناخواسته است. در مقابل، build موفق فقط قابل ساخت بودن کد را می‌گوید و اجرای سناریوهای دیتابیس را ثابت نمی‌کند.
+آزمون `fault injection` یعنی ایجاد عمدی خرابی در نقطهٔ مشخص، مثلاً از دسترس خارج‌کردن جدول audit پس از update. این کار فقط روی schema تصادفی متعلق به تست انجام می‌شود و در پایان همان محیط پاک می‌شود؛ هدف دیدن رفتار شکست واقعی است، نه انتظار برای خرابی تصادفی.
 
 ## اجرای نمونه
 
@@ -90,7 +90,7 @@ Remove-Item Env:TEAMDESK_LAB_PASSWORD
 dotnet run --project samples/69-security-review/SupportDesk.csproj -- --urls http://127.0.0.1:5070
 ```
 
-TEAMDESK_KEYS باید absolute و خصوصی باشد؛ اعتبارسنجی absolute بودن، ACL یا encryption واقعی را ثابت نمی‌کند.
+متغیر محیطی TEAMDESK_KEYS باید absolute و خصوصی باشد؛ اعتبارسنجی absolute بودن، ACL یا encryption واقعی را ثابت نمی‌کند.
 Include Error Detail و Log Parameters باید false باشند؛ فعال کردن آن‌ها باعث شکست startup می‌شود.
 schema باید auth70_ و ۳۲ رقم hex کوچک باشد؛ public یا schema نسخهٔ دیگر پذیرفته نمی‌شود.
 startup عادی جدول نمی‌سازد و init روی جدول موجود شکست می‌خورد، نه اینکه آن را جایگزین کند.
@@ -110,7 +110,7 @@ python scripts/security_final_smoke.py --build-only
 python scripts/security_final_smoke.py
 ```
 
---build-only هر دو snapshot را می‌سازد و startup نامعتبر، anonymous HTTP و بررسی CLI درس ۷۰ را اجرا می‌کند؛ audit واقعی DB را تأیید نمی‌کند.
+گزینهٔ --build-only هر دو snapshot را می‌سازد و startup نامعتبر، anonymous HTTP و بررسی CLI درس ۷۰ را اجرا می‌کند؛ audit واقعی DB را تأیید نمی‌کند.
 حالت کامل به SUPPORTDESK_PG و psql نیاز دارد. متغیرهای SUPPORTDESK_TEST_PGHOST، SUPPORTDESK_TEST_PGPORT، SUPPORTDESK_TEST_PGDATABASE، SUPPORTDESK_TEST_PGUSER و SUPPORTDESK_TEST_PGPASSWORD را مطابق همان اتصال تنظیم کن؛ [فهرست بخش](../README.md) راهنما دارد.
 اسکریپت schema و key ring موقت خودش را می‌سازد، خروجی publish را از پوشهٔ جدا اجرا می‌کند و فقط schema خودش را حذف می‌کند.
 برای بازبینی کامل بخش، security_smoke و security_next_smoke را نیز اجرا کن؛ این اسکریپت جایگزین سناریوهای درس‌های قبلی نیست.

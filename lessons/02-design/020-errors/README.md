@@ -10,15 +10,14 @@
 
 ## پیش‌نیاز
 
-exception، nullable، interface و value object.
+آشنایی با exception، nullable، interface و value object.
 در این درس result type کوچک خودمان را می‌نویسیم؛ برای فهم قرارداد، NuGet نتیجه‌محور نصب نمی‌کنیم.
 
 ## مسئله
 
 عنوان کوتاه و شناسهٔ ناموجود در کار روزمره رخ می‌دهند.
 می‌توان آن‌ها را با exception گزارش کرد، اما caller ممکن است برای رفتار عادی پر از try/catch شود.
-می‌خواهیم نتیجهٔ قابل انتظار use case را در signature و مسیر branch روشن کنیم.
-خرابی دیسک را هم به «عنوان نامعتبر» تبدیل نکنیم.
+می‌خواهیم کد فراخواننده از روی نوع خروجی و شاخهٔ نتیجه بفهمد ثبت موفق شده، ورودی نامعتبر بوده یا داده‌ای پیدا نشده است. در عین حال، خرابی دیسک از جنس این نتیجه‌های عادی نیست و نباید پیام «عنوان نامعتبر» بگیرد.
 
 ## ۱. ماتریس تصمیم
 
@@ -42,7 +41,7 @@ public enum ErrorCode { InvalidInput, NotFound, InvalidState, CapacityReached }
 public sealed record AppError(ErrorCode Code, string Message);
 ```
 
-Code برای تصمیم caller است و Message برای توضیح انسانی.
+مقدار Code برای تصمیم caller است و Message برای توضیح انسانی.
 caller نباید متن دقیق Message را parse کند تا بفهمد خطا چیست.
 متن خطا ممکن است برای زبان یا UX تغییر کند.
 در API آینده، code و HTTP status mapping جدا تعریف می‌شوند.
@@ -71,18 +70,13 @@ public sealed class Outcome<T> where T : class
 }
 ```
 
-constructor خصوصی است؛ factoryها تنها مسیر ساخت عادی‌اند.
-Success بدون value و Failure با value هم‌زمان در مسیر عمومی ساخته نمی‌شوند.
-where T : class برای کوچک نگه داشتن این نمونه است.
+این `result type` دو حالت مجاز دارد: موفقیت همراه مقدار نتیجه، یا شکست همراه توضیح خطا. constructor خصوصی است و متدهای ساخت یا `factory` فقط همین دو حالت را می‌سازند؛ کد بیرونی نمی‌تواند نتیجه‌ای بسازد که هم‌زمان مقدار موفق و خطا داشته باشد. عبارت `where T : class` نیز نوع نتیجه را در این نمونه به reference type محدود می‌کند.
 اگر generic constraint یا delegateهای callback برایت تازه است، [مرجع syntax](../../../handbook/csharp-syntax.md) را کنار کد باز کن.
 برای نتیجهٔ عددی یا بدون payload، می‌توان نوع wrapper یا طراحی دیگری داشت؛ این Outcome راه‌حل جامع همهٔ پروژه‌ها نیست.
 
 ## ۴. قرارداد استفاده
 
-اول IsSuccess را بررسی کن.
-در success از Value استفاده کن.
-در failure، Error معنی دارد و Value را نخوان.
-خواندن Value در failure اشتباه caller است و exception می‌دهد.
+برای مصرف نتیجه، ابتدا `IsSuccess` را بررسی کن. در شاخهٔ موفق، `Value` دادهٔ ثبت یا جست‌وجو را دارد؛ در شاخهٔ شکست، `Error` دلیل آن را مشخص می‌کند. خواندن `Value` از نتیجهٔ شکست، خطای برنامه‌نویسی caller است و `InvalidOperationException` می‌دهد. بنابراین قبل از خواندن داده، باید شاخهٔ درست را انتخاب کنی.
 از default TicketSummary یا Ticket با شناسهٔ صفر برای نمایش failure استفاده نمی‌کنیم.
 
 ## ۵. nullable و Error
@@ -95,16 +89,13 @@ where T : class برای کوچک نگه داشتن این نمونه است.
 
 ## ۶. TryCreate برای value object
 
-TicketTitle در این نمونه TryCreate دارد:
+نوع TicketTitle در این نمونه TryCreate دارد:
 
 ```csharp
 public static bool TryCreate(string? raw, [NotNullWhen(true)] out TicketTitle? title)
 ```
 
-وقتی true باشد، title معتبر و non-null است.
-وقتی false باشد، title null است.
-NotNullWhen به تحلیل nullable این رابطه را اطلاع می‌دهد.
-attribute خودش validation انجام نمی‌دهد؛ implementation باید قرارداد را رعایت کند.
+اگر `TryCreate` مقدار `true` بدهد، پارامتر خروجی `title` یک عنوان معتبر و غیرnull است؛ اگر `false` بدهد، خروجی `null` است. علامت `[NotNullWhen(true)]` یک `attribute` برای اطلاع‌دادن همین رابطه به کامپایلر است تا در شاخهٔ موفق هشدار بی‌دلیل ندهد. خود attribute ورودی را بررسی نمی‌کند؛ بدنهٔ متد باید واقعاً این قرارداد را رعایت کند.
 Create همچنان برای callerی که ساخت نامعتبر را exception می‌خواهد وجود دارد.
 هر دو از یک تعریف قانون استفاده می‌کنند.
 
@@ -126,7 +117,7 @@ Success تنها پس از برگشت موفق writer ساخته می‌شود.
 
 ## ۸. نتیجهٔ جست‌وجو
 
-Find با Id غیرمثبت InvalidInput می‌دهد.
+متد Find با Id غیرمثبت InvalidInput می‌دهد.
 reader نتیجهٔ null را برای ناموجود برمی‌گرداند و application آن را NotFound می‌کند.
 درون application دیگر لازم نیست تمام callerها semantics null reader را از نو تعریف کنند.
 این تبدیل یک مرز policy است؛ خطای reader همچنان failure زیرساخت می‌ماند.
@@ -141,7 +132,7 @@ use case برای سناریوی عادی کاربر پیش از mutation وضع
 
 ## ۱۰. خطای storage را کجا بگیریم؟
 
-Program یا presentation می‌تواند خطای شناخته‌شده را به پیام و کد خروج تبدیل کند.
+کد presentation در `Program` می‌تواند خطای شناخته‌شده را به پیام و کد خروج تبدیل کند.
 application نباید IOException را به Success یا NotFound تبدیل کند.
 در سیستم واقعی logging علت، مسیر عیب‌یابی و trace باید جدا از پیام عمومی باشد.
 نام فایل خصوصی و secret را در پیام عمومی بی‌دلیل چاپ نکن.
@@ -151,7 +142,7 @@ application نباید IOException را به Success یا NotFound تبدیل ک
 
 اگر مالک token لغو خواسته باشد، OperationCanceledException باید در مسیر مناسب مدیریت شود.
 آن را به InvalidInput یا StorageFailed عمومی تبدیل نکن.
-لغو بعد از commit الزاماً داده را rollback نمی‌کند.
+اگر درخواست لغو پس از نهایی‌شدن ذخیره یا `commit` برسد، دادهٔ ثبت‌شده خودکار به حالت قبلی برنمی‌گردد؛ `rollback` تضمین‌شده‌ای از صرف لغو نتیجه نمی‌شود.
 در CLI نهایی pre-cancel با کد ۱۳۰ نمایش داده می‌شود؛ این یک policy برنامه است.
 
 ## ۱۲. نتیجهٔ بدون عملیات
@@ -188,7 +179,7 @@ dotnet run --project samples/19-ticket-outcomes/SupportDesk.csproj -- --failure
 
 ## ۱۴. محدودیت این نمونه
 
-writer حافظه‌ای ظرفیت Id را با exception گزارش می‌کند، چون port آن نتیجهٔ capacity مدل نکرده است.
+کد writer حافظه‌ای ظرفیت Id را با exception گزارش می‌کند، چون port آن نتیجهٔ capacity مدل نکرده است.
 CLI نهایی با state پایدار و Outcome، CapacityReached را پیش از ثبت گزارش می‌کند.
 Result نباید برای پوشاندن قرارداد ناقص dependency استفاده شود.
 در هر مرز مشخص کن کدام failure جزو semantics عادی آن است.

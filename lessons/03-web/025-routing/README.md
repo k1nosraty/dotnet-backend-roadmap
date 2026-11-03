@@ -4,22 +4,19 @@
 
 ## خروجی درس
 
-route، query string، header و JSON body را به پارامترهای handler متصل می‌کنی.
+مقدارهای route، query string، header و JSON body را به پارامترهای handler متصل می‌کنی.
 تطبیق مسیر، تبدیل نوع و validation business را از هم جدا می‌کنی.
 علت تفاوت ۴۰۰، ۴۰۴، ۴۰۵ و ۴۱۵ را در یک API واقعی مشاهده می‌کنی.
 
 ## پیش‌نیاز
 
-HTTP، host، DI، nullable و TryParse.
+آشنایی با HTTP، host، DI، nullable و `TryParse`.
 این درس Minimal API دارد؛ controller و action درس ۰۲۶ است.
 validation پیشرفته و ProblemDetails نیز درس ۰۲۸ خواهد بود.
 
 ## ۱. routing
 
-routing انتخاب handler مناسب بر اساس مسیر، method و metadata endpoint است.
-binding تبدیل ورودی انتخاب‌شده به پارامترهای handler است.
-validation بررسی می‌کند مقدار تبدیل‌شده برای عملیات مورد نظر مجاز است یا نه.
-این سه مرحله معنی یکسانی ندارند.
+برای درخواست `GET /tickets/1` سه پرسش جدا داریم. در `routing` مشخص می‌شود کدام handler، یعنی کد رسیدگی به درخواست، با مسیر و method سازگار است. در `binding` متن `1` از مسیر گرفته و به پارامتر عددی handler تبدیل می‌شود. در `validation` بررسی می‌کنیم همین عدد برای عملیات مجاز است یا نه؛ مثلاً شناسه باید مثبت باشد. موفقیت یک مرحله، موفقیت مرحلهٔ بعد را تضمین نمی‌کند.
 
 ## ۲. جدول قرارداد endpointها
 
@@ -31,7 +28,7 @@ validation بررسی می‌کند مقدار تبدیل‌شده برای عم
 | GET /client | X-Client header اختیاری | label یا unknown |
 | POST /tickets | JSON title | ۲۰۱ و Location |
 
-lookup فقط برای مقایسهٔ آموزشی است؛ در یک API واقعی endpoint تکراری بی‌دلیل نمی‌سازیم.
+مسیر lookup فقط برای مقایسهٔ آموزشی است؛ در یک API واقعی endpoint تکراری بی‌دلیل نمی‌سازیم.
 ذخیرهٔ این نمونه حافظه‌ای است و پس از restart پاک می‌شود.
 
 ## ۳. route parameter
@@ -40,10 +37,7 @@ lookup فقط برای مقایسهٔ آموزشی است؛ در یک API واق
 app.MapGet("/tickets/{id:int}", ([FromRoute] int id, [FromServices] TicketStore store) => Find(id, store));
 ```
 
-{id} بخشی از مسیر را نام‌گذاری می‌کند.
-:int یک constraint برای تطبیق مسیر است.
-FromRoute محل دریافت مقدار را صریح نشان می‌دهد.
-store از DI می‌آید و نباید از JSON کاربر ساخته شود.
+بخش `{id}` نام مقدار گرفته‌شده از مسیر است. پسوند `:int` یک `constraint` است؛ یعنی فقط مسیرهایی برای این endpoint انتخاب می‌شوند که آن بخش به عدد صحیح بخورد. علامت `FromRoute` هم به binding می‌گوید مقدار را از همین بخش مسیر بگیرد. در مقابل، پارامتر `store` دادهٔ کاربر نیست؛ dependency ثبت‌شدهٔ برنامه است و از DI دریافت می‌شود.
 
 ## یک نگاه: ۴۰۴ از کجا آمد؟
 
@@ -69,7 +63,7 @@ flowchart TB
 
 ## ۴. constraint و validation
 
-/tickets/abc با constraint :int تطبیق نمی‌کند و معمولاً به ۴۰۴ می‌رسد.
+مسیر /tickets/abc با constraint :int تطبیق نمی‌کند و معمولاً به ۴۰۴ می‌رسد.
 /tickets/-1 با int قابل تطبیق است، اما Id مثبت نیست و handler ۴۰۰ می‌دهد.
 استفاده از :min(1) می‌تواند مقدار منفی را به no route match تبدیل کند؛ اگر policy خطای ورودی ۴۰۰ است، این انتخاب را آگاهانه انجام بده.
 constraint را فقط برای «همهٔ validationها» استفاده نکن.
@@ -103,14 +97,11 @@ app.MapGet("/tickets", ([FromQuery(Name = "q")] string? query,
 });
 ```
 
-q نام بیرونی query است و query نام متغیر C#.
-limit اگر غایب باشد null است و پیش‌فرض ۲۰ اعمال می‌شود.
-اگر limit=abc باشد، تبدیل به int? شکست می‌خورد و پیش از handler ۴۰۰ می‌دهد.
-nullable بودن به معنی پذیرفتن هر متن غیرقابل تبدیل نیست.
+در URL، پارامتر جست‌وجو `q` نام دارد، اما در کد آن را با متغیر `query` دریافت می‌کنیم. اگر `limit` ارسال نشود، مقدار پارامتر nullable برابر `null` است و پیش‌فرض ۲۰ انتخاب می‌شود. اگر `limit=abc` ارسال شود، تبدیل به عدد شکست می‌خورد و پیش از اجرای handler پاسخ ۴۰۰ داده می‌شود. پس اختیاری‌بودن ورودی با پذیرفتن متن نامعتبر فرق دارد.
 
 ## ۷. قواعد query
 
-limit باید بین ۱ و ۵۰ باشد.
+مقدار limit باید بین ۱ و ۵۰ باشد.
 q طول حداکثر ۱۲۰ دارد؛ مقدار غایب، خالی یا whitespace در این نمونه به معنی بدون فیلتر است.
 Title.Contains با OrdinalIgnoreCase انجام می‌شود و ترتیب نتایج از store بر اساس Id است.
 این جست‌وجوی زبانی پیشرفتهٔ فارسی یا جست‌وجوی full-text دیتابیس نیست.
@@ -127,7 +118,7 @@ app.MapGet("/client", ([FromHeader(Name = "X-Client")] string? client) =>
 });
 ```
 
-header اختیاری است و absence مقدار unknown می‌دهد.
+پارامتر header اختیاری است و absence مقدار unknown می‌دهد.
 این label فقط دادهٔ ارسالی client است.
 با ارسال X-Client: admin کسی مجوز admin پیدا نمی‌کند.
 authentication و authorization مرزهای جدا دارند و در فصل امنیت آموزش داده می‌شوند.
@@ -139,7 +130,7 @@ public sealed record CreateTicketRequest(string? Title);
 ```
 
 در handler از [FromBody] CreateTicketRequest استفاده می‌کنیم.
-record قرارداد transport است؛ Title هنوز ممکن است null یا کوتاه باشد.
+این record شکل دادهٔ جابه‌جاشده روی HTTP یا قرارداد `transport` است. خوانده‌شدن موفق آن از JSON به معنی معتبرشدن عنوان نیست؛ مقدار `Title` هنوز ممکن است null یا کوتاه باشد.
 در این نمونه AddValidation خودکار ثبت نشده و طول عنوان را صریح بررسی می‌کنیم.
 بعد از موفقیت، TicketTitle.Create ارزش معتبر می‌سازد.
 DTO معتبر از نظر JSON الزاماً domain value معتبر نیست.
@@ -162,7 +153,7 @@ DTO معتبر از نظر JSON الزاماً domain value معتبر نیست.
 
 ## ۱۱. service binding
 
-FromServices صریح نشان می‌دهد TicketStore dependency برنامه است.
+صفت `FromServices` صریح نشان می‌دهد TicketStore dependency برنامه است.
 در Minimal API بعضی typeهای ثبت‌شده بدون attribute نیز از DI inferred می‌شوند.
 برای آموزش این درس منبع پارامترها را صریح نگه داشته‌ایم.
 ثبت service را با ارسال property از body جایگزین نکن.
@@ -198,7 +189,7 @@ curl.exe -i "http://127.0.0.1:5250/tickets?limit=abc"
 curl.exe -i -H "X-Client: desktop" http://127.0.0.1:5250/client
 ```
 
-query دارای & را در PowerShell quote کن تا shell آن را جدا تفسیر نکند.
+متن query دارای & را در PowerShell quote کن تا shell آن را جدا تفسیر نکند.
 
 ## ۱۴. تست وضعیت منبع
 
@@ -231,7 +222,7 @@ requestهای معتبر، غایب و خراب را با status و اثر رو�
 ## تمرین تکمیلی
 
 قرارداد endpoint جدیدی را بنویس که route Id و body title بگیرد.
-مشخص کن Id در کدام بخش authority دارد و اگر body هم Id داشت چه می‌کنی.
+مشخص کن شناسهٔ مرجع برای انتخاب درخواست، همان Id مسیر است یا مقدار دیگری؛ اگر body هم Id داشت، رفتار سازگار با این تصمیم را تعریف کن.
 پیاده‌سازی تغییر عنوان در درس controller و DTO توسعه داده می‌شود؛ فعلاً contract و سناریوها را کامل بنویس.
 
 ## معیار عبور

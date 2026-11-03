@@ -15,7 +15,7 @@ rollback، خطای serialization و انتظار واقعی row lock را بر�
 اگر اولی موفق و دومی شکست بخورد، وضعیت نیمه‌کاره می‌تواند باقی بماند.
 transaction مشخص می‌کند کدام مجموعه تغییر باید با هم commit یا rollback شوند.
 
-statement یعنی یک دستور SQL مانند INSERT یا UPDATE. transaction گروهی از این دستورها با یک مرز موفقیت است: commit یعنی تغییرهای transaction را تأیید کنیم؛ rollback یعنی تغییرهای تأییدنشدهٔ آن را برگردانیم. rollback دکمهٔ Undo برای هر commit قبلی نیست.
+هر statement یک دستور SQL مانند `INSERT` یا `UPDATE` است. transaction گروهی از این دستورها با یک مرز موفقیت است: commit یعنی تغییرهای transaction را تأیید کنیم؛ rollback یعنی تغییرهای تأییدنشدهٔ آن را برگردانیم. rollback دکمهٔ Undo برای هر commit قبلی نیست.
 
 برای ثبت درخواست همراه note، این مسیر را تصور کن:
 
@@ -25,7 +25,7 @@ statement یعنی یک دستور SQL مانند INSERT یا UPDATE. transactio
 | INSERT note به دلیل FK خراب شکست می‌خورد | مسیر commit عادی را ادامه نمی‌دهیم |
 | rollback انجام می‌شود | درخواستِ همین تلاش هم باقی نمی‌ماند |
 
-connection کانال ارتباط برنامه با DB و session وضعیت همان ارتباط در سمت server است. در آزمایش دو connection می‌خواهیم تا دو مصرف‌کنندهٔ مستقل واقعاً بتوانند دادهٔ مشترک را تغییر دهند.
+هر connection کانال ارتباط برنامه با DB و session وضعیت همان ارتباط در سمت server است. در آزمایش دو connection می‌خواهیم تا دو مصرف‌کنندهٔ مستقل واقعاً بتوانند دادهٔ مشترک را تغییر دهند.
 اما transaction به تنهایی تمام invariantهای چند writer را بدون isolation و locking مناسب حفظ نمی‌کند.
 
 ## یک نگاه: دو نوشتن، یک تصمیم نهایی
@@ -58,7 +58,7 @@ flowchart LR
 | Isolation | مشاهده و تداخل transactionها طبق سطح و رفتار server کنترل شود |
 | Durability | commit با سیاست و پیکربندی server ماندگار شود |
 
-ACID را تضمین نبودن bug، وجود backup یا مجوز درست کاربر ندان.
+ویژگی‌های ACID را تضمین نبودن bug، وجود backup یا مجوز درست کاربر ندان.
 قطع اتصال بعد از ارسال COMMIT می‌تواند نتیجه را برای client نامعلوم کند.
 rollback بعدی client لزوماً commit انجام‌شده را برنمی‌گرداند.
 
@@ -69,7 +69,7 @@ await using var connection = await db.OpenConnectionAsync(token);
 await using var transaction = await connection.BeginTransactionAsync(token);
 ```
 
-statementهای همان transaction باید از connection مربوط استفاده کنند.
+دستورهای SQL همان transaction باید از connection مربوط استفاده کنند.
 CreateCommand روی DataSource ممکن است connection دیگری بگیرد و بیرون transaction تو اجرا شود.
 در نمونه NpgsqlCommand با connection و transaction مشخص ساخته می‌شود.
 connection مشترک را هم‌زمان برای دو command مستقل فعال مصرف نمی‌کنیم.
@@ -83,7 +83,7 @@ await command.ExecuteNonQueryAsync(token);
 await transaction.CommitAsync(token);
 ```
 
-commit را پس از موفق شدن همهٔ مراحل انجام بده.
+عملیات commit را پس از موفق شدن همهٔ مراحل انجام بده.
 Success را قبل از commit به client اعلام نکن.
 exception باید مسیر rollback و disposal را روشن کند.
 Dispose transaction باز معمولاً rollback می‌کند، اما در کد آزمایشی شکست مورد انتظار را صریح RollbackAsync می‌کنیم.
@@ -98,7 +98,7 @@ exception عمومی را به Success تبدیل نمی‌کنیم.
 
 ## ۶. Id پس از rollback
 
-sequence معمولاً مقدار مصرف‌شده را به خاطر rollback پس نمی‌دهد.
+مولد sequence معمولاً مقدار مصرف‌شده را به خاطر rollback پس نمی‌دهد.
 پس ممکن است یک Id دیگر در داده نباشد ولی شمارهٔ بعدی جلو رفته باشد.
 این با atomicity ردیف‌های business تضاد ندارد؛ قرارداد sequence بدون فاصله نیست.
 برای شماره‌گذاری حقوقی بدون فاصله، نیاز و هزینهٔ طراحی دیگری داریم.
@@ -111,7 +111,7 @@ sequence معمولاً مقدار مصرف‌شده را به خاطر rollback
 خواندن بعدی connection اول در همان transaction، مقدار تازه را می‌بیند.
 پس transaction باز به تنهایی تضمین نمی‌کند دو SELECT یک جواب بدهند.
 
-isolation یعنی وقتی دیگری هم‌زمان کار می‌کند، این transaction چه چیزی را می‌بیند. snapshot در این بحث نمای قابل مشاهدهٔ دادهٔ commitشده است، نه فایل backup.
+مفهوم isolation یعنی وقتی دیگری هم‌زمان کار می‌کند، این transaction چه چیزی را می‌بیند. snapshot در این بحث نمای قابل مشاهدهٔ دادهٔ commitشده است، نه فایل backup.
 
 | ترتیب آزمایش | Read Committed | Repeatable Read در بخش بعد |
 | --- | --- | --- |
@@ -119,15 +119,11 @@ isolation یعنی وقتی دیگری هم‌زمان کار می‌کند، ا
 | نویسندهٔ دیگر B را commit می‌کند | تغییر نویسنده انجام شده | تغییر نویسنده انجام شده |
 | خواننده در همان transaction دوباره SELECT می‌زند | B را می‌بیند | همچنان A را می‌بیند |
 
-A و B در این جدول فقط نام دو مقدار هستند؛ متن دقیق هر سناریو را در Program ببین. ثابت‌ماندن مشاهده در Repeatable Read به معنی توقف تمام نویسنده‌ها نیست. برای فهم جدول، هر بار مشخص کن کدام connection می‌خواند و کدام commit می‌کند.
+دو نام A و B در این جدول فقط نام دو مقدار هستند؛ متن دقیق هر سناریو را در Program ببین. ثابت‌ماندن مشاهده در Repeatable Read به معنی توقف تمام نویسنده‌ها نیست. برای فهم جدول، هر بار مشخص کن کدام connection می‌خواند و کدام commit می‌کند.
 
 ## ۸. Repeatable Read
 
-در transaction دوم، snapshot با نخستین query داده‌ای تثبیت می‌شود.
-پس از commit connection دیگر، SELECT بعدی هنوز مقدار snapshot قبلی را می‌بیند.
-این سطح همهٔ تغییرهای جهان را قفل نمی‌کند و همهٔ anomalyها را هم حذف نمی‌کند.
-در PostgreSQL می‌تواند رفتار snapshot isolation و failure serialization مرتبط داشته باشد.
-رفتار نام isolation را برای تمام DBMSها یکسان فرض نکن.
+در آزمایش `Repeatable Read`، نخستین query داده‌ای نمای قابل مشاهدهٔ transaction را تعیین می‌کند. نویسندهٔ دوم می‌تواند مقدار تازه را commit کند، اما SELECT بعدی خواننده هنوز مقدار نمای قبلی را می‌بیند. ثابت‌ماندن این مشاهده به معنی قفل‌شدن همهٔ نویسنده‌ها یا حذف همهٔ تداخل‌های نامطلوب نیست. همچنین رفتار دقیق این نام در دیتابیس‌های مختلف یکسان نیست؛ این درس دربارهٔ PostgreSQL است.
 
 ## ۹. SQLSTATE 40001
 
@@ -137,13 +133,12 @@ PostgreSQL خطای serialization با کد 40001 می‌دهد.
 در use case واقعی، retry باید تمام transaction را از ابتدا و با تعداد تلاش محدود تکرار کند.
 تکرار فقط آخرین UPDATE در transaction aborted یا snapshot قبلی راه‌حل نیست.
 
-aborted یعنی transaction به وضعیتی رسیده که ادامهٔ عادی آن ممکن نیست. خطای 40001 هم اینجا خطای تبدیل JSON نیست؛ server تغییرِ مورد نظر را با وضعیت رقابتی این transaction قابل قبول ندانسته است. retryِ کل transaction یعنی دوباره از خواندن دادهٔ معتبر شروع کنیم، تصمیم را دوباره بگیریم و بعد برای ذخیره تلاش کنیم؛ با سقف تلاش مشخص.
+حالت aborted یعنی transaction به وضعیتی رسیده که ادامهٔ عادی آن ممکن نیست. خطای 40001 هم اینجا خطای تبدیل JSON نیست؛ server تغییرِ مورد نظر را با وضعیت رقابتی این transaction قابل قبول ندانسته است. retryِ کل transaction یعنی دوباره از خواندن دادهٔ معتبر شروع کنیم، تصمیم را دوباره بگیریم و بعد برای ذخیره تلاش کنیم؛ با سقف تلاش مشخص.
 ارسال ایمیل و side effect بیرونی را هم نباید با هر retry بی‌حساب تکرار کنیم.
 
 ## ۱۰. Serializable و محدودیت نام‌گذاری
 
-Serializable هدف معادل شدن اجرا با یک ترتیب serial معتبر را دنبال می‌کند.
-ممکن است برای حفظ این قرارداد بعضی transactionها را abort کند؛ برنامه باید failure مناسب را مدیریت کند.
+سطح `Serializable` می‌خواهد اثر اجرای transactionهای هم‌زمان با یک ترتیب معتبرِ اجرای پشت سر هم سازگار باشد. برای حفظ این رفتار ممکن است server یکی از transactionها را متوقف کند؛ پس برنامه هنوز به رسیدگی به شکست و در صورت مناسب‌بودن، retry کل عملیات نیاز دارد.
 این سطح «هرگز خطا نمی‌دهد» یا «همه چیز را به ترتیب قفل می‌کند» نیست.
 در این نمونه Serializable اجرا نشده و تمرکز تست روی Read Committed و Repeatable Read است.
 در PostgreSQL، Read Uncommitted نیز مانند Read Committed رفتار می‌کند؛ این نکتهٔ اختصاصی server است.
@@ -155,14 +150,14 @@ SELECT id FROM tickets WHERE id=1 FOR UPDATE;
 ```
 
 داخل transaction، row انتخاب‌شده برای عملیات ناسازگار writer دیگر قفل می‌شود.
-خواندن معمول MVCC الزاماً مانند UPDATE منتظر همان قفل نمی‌ماند.
+در روش `MVCC`، PostgreSQL نسخه‌های داده را برای مشاهدهٔ transactionها مدیریت می‌کند؛ یک SELECT معمولی ممکن است نسخهٔ قابل مشاهدهٔ خودش را بخواند و مثل UPDATE منتظر همان row lock نماند. بنابراین آزمایش انتظار نویسنده را با انتظار هر نوع خواندن یکی نگیر.
 قفل تا پایان transaction نگه داشته می‌شود؛ transaction را هنگام انتظار کاربر یا تماس HTTP بیرونی باز نگذار.
 ترتیب ثابت گرفتن قفل چند row، احتمال deadlock را کم می‌کند ولی همهٔ علت‌ها را حذف نمی‌کند.
 کد 40P01 را با 40001 یک خطای متنی یکسان parse نکن.
 
 ## ۱۲. مشاهدهٔ واقعی انتظار
 
-LockDemo با connection اول row را قفل می‌کند.
+متد LockDemo با connection اول row را قفل می‌کند.
 UPDATE connection دوم به صورت asynchronous شروع می‌شود.
 یک query سوم با pg_blocking_pids بررسی می‌کند که backend دوم واقعاً blocker دارد.
 پس از مشاهده، transaction اول rollback و آزاد می‌شود و UPDATE دوم commit می‌شود.

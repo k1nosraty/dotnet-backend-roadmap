@@ -1,7 +1,9 @@
 # درس ۰۸۱ — همان بسته‌ای را بررسی کن که قرار است تحویل بدهی
 
-«روی کامپیوتر من اجرا شد» کافی نیست. می‌خواهیم تست‌ها روی runner تمیز اجرا شوند، بستهٔ Release ساخته شود و job بعدی **همان فایل‌ها** را بدون build دوباره بررسی کند.
+«روی کامپیوتر من اجرا شد» کافی نیست. CI یا Continuous Integration تغییرهای مخزن را در یک محیط خودکار بررسی می‌کند. runner ماشینی است که دستورهای این بررسی را اجرا می‌کند و job یک گروه از این دستورهاست. در این درس می‌خواهیم تست‌ها روی runner تمیز اجرا شوند، بستهٔ Release ساخته شود و job بعدی **همان فایل‌ها** را بدون build دوباره بررسی کند.
 در این درس خط لولهٔ واقعی مخزن را می‌خوانیم؛ فقط یک YAML نمایشی نمی‌نویسیم.
+
+مفهوم artifact خروجی ذخیره‌شدهٔ یک job است؛ در این نمونه، پوشه‌ای شامل فایل‌های منتشرشدهٔ برنامه و یک manifest. manifest فهرست فایل‌ها و اطلاعات لازم برای بررسی آن‌هاست. با منتقل کردن همین پوشه به job بعدی، می‌توانیم بررسی کنیم بستهٔ تحویلی واقعاً همان بستهٔ ساخته‌شده است.
 
 ## ۱. نمونهٔ نسخهٔ ساخته‌شده
 
@@ -17,7 +19,7 @@ dotnet run --project samples/80-release-artifact/SupportDesk.csproj --urls http:
 {"service":"release-lab","version":"1.0.0","commit":"local"}
 ```
 
-local یعنی برای این اجرای دستی commit تزریق نکرده‌ایم. در CI، CourseCommit هنگام publish برابر GITHUB_SHA همان اجرا می‌شود.
+مقدار local یعنی برای این اجرای دستی commit تزریق نکرده‌ایم. در CI، CourseCommit هنگام publish برابر GITHUB_SHA همان اجرا می‌شود.
 این metadata به‌تنهایی امضای دیجیتال یا اثبات اعتماد نیست؛ برای تشخیص اینکه چه نسخه‌ای بالا آمده مفید است.
 برنامه را با Ctrl+C تمام کن.
 
@@ -32,13 +34,13 @@ local یعنی برای این اجرای دستی commit تزریق نکرده�
 | operations-integration | Redis و صف پایدار و restore/rollback درس‌های ۸۳ تا ۸۶ | شروع workflow |
 | artifact-gate | دریافت artifact لینوکس، بررسی hash و commit، اجرای DLL بدون build | موفقیت quality و containers و operations-integration |
 
-`needs` وابستگی اجرای jobها را مشخص می‌کند. اگر تست یا TLS شکست بخورد، artifact-gate اجرا نمی‌شود.
+با `needs` مشخص می‌کنیم اجرای یک job به موفقیت کدام jobهای دیگر وابسته است. اگر تست یا TLS شکست بخورد، artifact-gate اجرا نمی‌شود.
 workflow قدیمی Check course هم بخش‌های قبلی را بررسی می‌کند؛ موفقیت این workflow جای موفقیت آن را نمی‌گیرد.
 در PR، GITHUB_SHA معمولاً commit آزمایشیِ merge است؛ آن را با SHA شاخهٔ head اشتباه نگیر.
 
 ## یک نگاه: سه بررسی، یک دروازهٔ تحویل
 
-artifact-gate بعد از موفقیت هر سه job شروع می‌شود و همان artifact لینوکسِ quality را دریافت می‌کند. فلش‌ها وابستگی job هستند؛ این workflow روی سرور عمومی deploy نمی‌کند.
+مرحلهٔ تحویل artifact-gate بعد از موفقیت هر سه job شروع می‌شود و همان artifact لینوکسِ quality را دریافت می‌کند. فلش‌ها وابستگی job هستند؛ این workflow روی سرور عمومی deploy نمی‌کند.
 
 ```mermaid
 flowchart LR
@@ -69,12 +71,12 @@ flowchart LR
 | commit | commit مورد انتظار pipeline |
 | files | نام نسبی هر فایل و SHA-256 آن |
 
-اسکریپت در کپی موقت DLL را تغییر می‌دهد و باید checksum mismatch بگیرد؛ commit اشتباه را هم رد می‌کند.
+الگوریتم SHA-256 از محتوای هر فایل یک مقدار hash می‌سازد. تغییر محتوای فایل باید hash آن را هم تغییر دهد؛ gate مقدار محاسبه‌شده را با مقدار ثبت‌شده در manifest مقایسه می‌کند. اسکریپت برای آزمایش این کنترل، DLL را در یک کپی موقت تغییر می‌دهد و باید خطای `checksum mismatch` بگیرد؛ commit اشتباه را هم رد می‌کند.
 فایل اصلی دست‌نخورده می‌ماند. خطای عمدی در این کپی، بخشی از آزمایش gate است، نه شکستِ پنهان‌شدهٔ تست اصلی.
 
 ## ۴. دریافت و اجرای همان artifact
 
-upload-artifact با نام شامل github.sha فایل‌ها را ذخیره می‌کند. download-artifact همان نام را در job بعد می‌گیرد.
+اکشن `upload-artifact` با نام شامل `github.sha` فایل‌ها را ذخیره می‌کند. download-artifact همان نام را در job بعد می‌گیرد.
 release_gate.py موارد زیر را بررسی می‌کند:
 
 1. commit دقیقاً برابر مقدار مورد انتظار باشد.
@@ -83,11 +85,11 @@ release_gate.py موارد زیر را بررسی می‌کند:
 4. DLL بدون rebuild اجرا شود و /version همان commit و /health/live پاسخ Healthy بدهد.
 
 اگر بین دو job دوباره publish کنیم، دیگر تحویل گرفتن همان artifact را اثبات نکرده‌ایم.
-این نمونه framework-dependent است؛ runner مقصد runtime .NET 10 لازم دارد و بستهٔ نهایی apphost ندارد.
+این نمونه framework-dependent است: runtime همراه بسته منتشر نمی‌شود و باید از قبل روی runner مقصد نصب باشد. اینجا runtime .NET 10 لازم است. بسته apphost، یعنی فایل اجرایی بومیِ راه‌انداز برنامه، هم ندارد؛ gate برنامه را با `dotnet` و مسیر DLL اجرا می‌کند.
 
 ## ۵. همان gate را محلی اجرا کن
 
-Python 3 و SDK 10 لازم‌اند. یک مسیر **جدید و ناموجود** انتخاب کن؛ اسکریپت بستهٔ موجود را overwrite نمی‌کند.
+ابزار Python 3 و SDK 10 لازم‌اند. یک مسیر **جدید و ناموجود** انتخاب کن؛ اسکریپت بستهٔ موجود را overwrite نمی‌کند.
 
 ```powershell
 python scripts/production_smoke.py --artifact-dir artifacts/lesson81-local
@@ -100,7 +102,7 @@ python scripts/release_gate.py artifacts/lesson81-local local
 
 ## ۶. CI با CD چه تفاوتی دارد؟
 
-CI یعنی تغییرها روی محیط تمیز build و test و با هم بررسی شوند.
+فرایند CI یعنی تغییرها روی محیط تمیز build و test و با هم بررسی شوند.
 Continuous delivery بستهٔ تأییدشده را برای انتشار آماده می‌کند؛ continuous deployment می‌تواند انتشار در مقصد را هم خودکار کند.
 artifact-gate این درس یک مرحلهٔ محلی از آمادگی تحویل است؛ به سرور یا حساب کاربری تو deploy نمی‌کند و نام job هم همین مرز را می‌گوید.
 

@@ -9,6 +9,10 @@ the new concept. Explain specialist terms on first use, connect cause and result
 and trace a concrete example. Do not shorten explanations into technical notes.
 Keep identifiers, commands and actual output exact. Preserve technical limits
 and validate explanations against the sample belonging to that lesson.
+Keep established programming terms in English (constructor, property, interface,
+middleware, dependency injection, Task, thread, transaction, etc.). Explain their
+behavior in Persian on first use; do not replace the term with a forced Persian
+translation. The user's terminology preference also applies to earlier rewrites.
 Run automated text cleanup on temporary copies, protect Markdown link targets,
 and verify code blocks and targets remain unchanged before accepting its output.
 

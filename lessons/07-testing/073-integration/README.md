@@ -2,16 +2,16 @@
 
 ## خروجی قابل مشاهده
 
-با HttpClient در test host، routing، JSON binding، DI، authorization، use case و response را با هم بررسی می‌کنی.
+در `integration test` چند جزء را کنار هم اجرا می‌کنیم تا ارتباطشان هم آزموده شود. اینجا از `HttpClient` به test host درخواست می‌فرستی و مسیر routing، binding، DI، authorization و use case تا پاسخ طی می‌شود؛ تست فقط یک متد جداگانه را صدا نمی‌زند.
 تست هشت درخواست resolve، دقیقاً یک موفقیت و هفت conflict می‌گیرد و تیکت بسته‌شده را دوباره می‌خواند.
 پیش‌نیاز: [درس ۷۲](../072-test-design/README.md)، HTTP و تست‌های مالکیت بخش امنیت.
 
 ## چه چیزی زیر تست است؟
 
-samples/72-http-testing یک API کوچک تست‌پذیر است؛ Domain و Application از HTTP جدا هستند و endpoint فقط DTO و status را نگاشت می‌کند.
+مسیر samples/72-http-testing یک API کوچک تست‌پذیر است؛ Domain و Application از HTTP جدا هستند و endpoint فقط DTO و status را نگاشت می‌کند.
 MemoryTicketStore یک adapter کاری با lock و version است؛ PostgreSQL را جعل نمی‌کند و durability ندارد.
 Microsoft.AspNetCore.Mvc.Testing نسخهٔ 10.0.13 در پروژهٔ tests/073-http-testing ثبت شده و WebApplicationFactory<Program> را فراهم می‌کند.
-public partial class Program نقطهٔ ورود app را برای test project قابل reference می‌کند.
+اعلان `public partial class Program` همان type نقطهٔ ورود برنامه را از پروژهٔ تست قابل استفاده می‌کند؛ در نتیجه `WebApplicationFactory<Program>` می‌داند کدام app را راه بیندازد. واژهٔ partial یعنی بخش‌های تعریف همان type می‌توانند جدا باشند، نه اینکه یک برنامهٔ دوم برای تست بسازیم.
 
 | فایل | مسئولیت |
 | --- | --- |
@@ -58,7 +58,7 @@ flowchart LR
 
 ## هویت ساختگی را کجا قرار می‌دهیم؟
 
-TestIdentity فقط در assembly تست compile می‌شود و فقط داخل TicketFactory در ConfigureTestServices ثبت می‌شود.
+کلاس TestIdentity فقط در assembly تست compile می‌شود و فقط داخل TicketFactory در ConfigureTestServices ثبت می‌شود.
 header با نام X-Test-Actor، در test host مقدار alice یا bob را به principal تبدیل می‌کند؛ این یک credential امن نیست.
 خود app، ClosedGate دارد و همین header را در هر environment رد می‌کند؛ flag یا مسیر public برای فعال کردن bypass وجود ندارد.
 اسکریپت، همان header را به host منتشرشدهٔ Production می‌فرستد و 401 می‌خواهد؛ همچنین نبود test DLL و runner در publish را بررسی می‌کند.
@@ -66,8 +66,7 @@ header با نام X-Test-Actor، در test host مقدار alice یا bob را 
 
 ## جایگزینی وابستگی در DI
 
-ConfigureTestServices پس از ثبت‌های app اجرا می‌شود؛ برای تعویض store از RemoveAll<ITicketStore> و ثبت adapter مشخص استفاده می‌کنیم.
-صرف اضافه کردن service دوم بدون فهم lifetime و ترتیب resolution می‌تواند تست را به implementation اشتباه وصل کند.
+در `ConfigureTestServices` می‌توانیم پس از registrationهای app، dependency را برای همان test host عوض کنیم. برای تعویض store ابتدا registrationهای `ITicketStore` را با `RemoveAll` کنار می‌گذاریم و سپس adapter موردنظر را ثبت می‌کنیم. فقط افزودن یک registration دیگر بدون بررسی انتخاب DI ممکن است تست را به store ناخواسته وصل کند.
 TicketFactory برای هر تست host و store تازه دارد. دو factory جدا نباید دادهٔ حافظهٔ هم را ببینند.
 content root با attribute تولیدشده از مسیر MSBuild پروژه تنظیم شده است؛ اجرای تست به working directory اتفاقی یا یک solution خاص وابسته نیست.
 
@@ -84,7 +83,7 @@ content root با attribute تولیدشده از مسیر MSBuild پروژه ت
 | Resolve نامعتبر در InProgress | 400 و حفظ state |
 | ذخیره‌سازی با IOException کنترل‌شده | 500 عمومی و بدون diagnostic خصوصی در body |
 
-RouteHandlerOptions.ThrowOnBadRequest صریح false است تا binding خراب در test environment هم 400 بماند.
+گزینهٔ RouteHandlerOptions.ThrowOnBadRequest صریح false است تا binding خراب در test environment هم 400 بماند.
 DTOهای write اعضای ناشناخته را Disallow می‌کنند؛ به entity ذخیره‌سازی bind نمی‌کنیم.
 Create با Location همان منبعی را معرفی می‌کند که GET آن را برمی‌گرداند، نه یک مسیر نمایشیِ تست‌نشده.
 
@@ -98,7 +97,7 @@ Create با Location همان منبعی را معرفی می‌کند که GET 
 
 ## خطا و محدودیت شواهد
 
-FailingFactory یک adapter خطادار در test assembly ثبت می‌کند تا pipeline خطای عمومی اجرا شود.
+کلاس FailingFactory یک adapter خطادار در test assembly ثبت می‌کند تا pipeline خطای عمومی اجرا شود.
 تست ثابت می‌کند body خطا متن خصوصی و نوع exception را نشان نمی‌دهد؛ policy logهای محصول را با این تست تأیید نکرده‌ایم.
 برنامهٔ سادهٔ این بخش جای host نهایی و امکانات کامل امنیتی قبلی نیست؛ فقط مرزهای تست و HTTP را جدا نشان می‌دهد.
 CORS، CSRF واقعی cookie، مرورگر و PostgreSQL در این suite پوشش داده نشده‌اند.
@@ -111,7 +110,7 @@ CORS، CSRF واقعی cookie، مرورگر و PostgreSQL در این suite پ�
 
 ### سرنخ
 
-Arrange از API عمومی یا adapter کنترل‌شده استفاده کند؛ برای گرفتن موفقیت، شرط authorize را از app حذف نکن.
+مرحلهٔ Arrange از API عمومی یا adapter کنترل‌شده استفاده کند؛ برای گرفتن موفقیت، شرط authorize را از app حذف نکن.
 
 ## معیار عبور
 

@@ -2,7 +2,7 @@
 
 ## خروجی قابل مشاهده
 
-preflight از origin مجاز header مناسب می‌گیرد و origin غیرمجاز آن را نمی‌گیرد.
+در مرحلهٔ preflight از origin مجاز header مناسب می‌گیرد و origin غیرمجاز آن را نمی‌گیرد.
 بدون bearer، origin مجاز هم به تیکت دسترسی ندارد؛ ورودی شبیه SQL به query تبدیل نمی‌شود.
 پیش‌نیاز: [درس ۶۶](../066-ownership/README.md)، HTTP، cookie و mapping.
 
@@ -14,7 +14,7 @@ preflight از origin مجاز header مناسب می‌گیرد و origin غی�
 | CSRF | آیا credential خودکار browser باعث عمل ناخواسته می‌شود؟ | antiforgery برای مسیر cookie و جداسازی scheme |
 | Injection | آیا داده به دستور یا markup اجرایی تبدیل می‌شود؟ | query پارامتری و پاسخ JSON و DTO محدود |
 
-CORS جای authentication یا ownership نیست. ابزار CLI و مهاجم سروری تابع همان محدودیت مرورگر نیستند.
+سیاست CORS جای authentication یا ownership نیست. ابزار CLI و مهاجم سروری تابع همان محدودیت مرورگر نیستند.
 حتی درخواست سادهٔ cross-origin ممکن است اجرا شود و فقط خواندن پاسخ در مرورگر محدود شود؛ بنابراین CSRF را با نبودن CORS header حل نکن.
 Origin هم credential قابل اعتمادِ یک ابزار دلخواه نیست.
 
@@ -25,14 +25,14 @@ scheme و host و port، origin را مشخص می‌کنند؛ پسوند شب�
 AllowAnyOrigin و AllowCredentials نداریم. portal در این lab با bearer صریح کار می‌کند؛ cross-origin cookie پشتیبانی نمی‌شود.
 آدرس example.test قرارداد آموزشی است، نه frontend آنلاین یا سرویس login خارجی.
 
-UseRouting پیش از UseCors و UseAuthentication و UseAuthorization قرار دارد.
-preflight لازم نیست خودش bearer داشته باشد؛ درخواست اصلی هنوز باید authenticate و authorize شود.
+فراخوانی UseRouting پیش از UseCors و UseAuthentication و UseAuthorization قرار دارد.
+درخواست `preflight` پرسش مقدماتی مرورگر با method برابر `OPTIONS` است: آیا این origin اجازهٔ فرستادن method و headerهای مشخص را دارد؟ این درخواست لازم نیست خودش bearer داشته باشد. مجازبودن این مرحله، جای authentication و authorization درخواست اصلی را نمی‌گیرد.
 پاسخ 204 برای OPTIONS به‌تنهایی نشانهٔ دسترسی مجاز نیست؛ Access-Control-Allow-Origin و method/headerهای پاسخ را بخوان.
 برای origin غیرمجاز ممکن است OPTIONS هم 204 باشد ولی header مجازکننده نداشته باشد.
 
 ## CSRF از login تا mutation
 
-/auth/login?mode=cookie قبل از ورود هم antiforgery می‌خواهد. token anonymous پس از login جای token وابسته به principal جدید را نمی‌گیرد.
+مسیر /auth/login?mode=cookie قبل از ورود هم antiforgery می‌خواهد. token anonymous پس از login جای token وابسته به principal جدید را نمی‌گیرد.
 /auth/csrf token جدید می‌دهد و cookie-action و logout آن را از X-CSRF-TOKEN اعتبارسنجی می‌کنند.
 /api/tickets فقط bearer را می‌پذیرد؛ cookie به‌تنهایی درخواست ساخت یا rename را مجاز نمی‌کند.
 body JSON، SameSite و HttpOnly به‌تنهایی قرارداد کامل CSRF نیستند.
@@ -41,10 +41,10 @@ XSS می‌تواند رفتار browser واردشده را سوءاستفاد�
 
 ## query ایمن
 
-GET /api/tickets/search?term=...، scope مالک و tenant درس قبل را حفظ می‌کند و بعد Title.Contains(term) را روی EF query اعمال می‌کند.
+درخواست GET /api/tickets/search?term=...، scope مالک و tenant درس قبل را حفظ می‌کند و بعد Title.Contains(term) را روی EF query اعمال می‌کند.
 term متغیرِ query است؛ رشتهٔ SQL با ورودی HTTP ساخته نمی‌شود.
 طول term حداکثر ۱۲۰ و خروجی حداکثر ۵۰ ردیف است؛ ورودی طولانی یا دارای NUL کد 400 می‌گیرد. عنوانِ ساخت و تغییر نیز NUL نمی‌پذیرد، چون PostgreSQL آن را در متن ذخیره نمی‌کند. این رد ورودی با جلوگیری از SQL injection دو بررسی متفاوت است.
-نمونه‌های ' OR 1=1 -- و % و _ داده‌اند؛ نباید شرط owner را حذف کنند یا wildcard آزاد شوند.
+ورودی‌هایی مثل `' OR 1=1 --`، `%` و `_` در این قرارداد دادهٔ جست‌وجو هستند. نباید بخش SQL تازه بسازند، شرط owner را بردارند یا ناخواسته معنای wildcard آزاد پیدا کنند. تست، محدودماندن نتیجه به همان مالک و سازمان را نیز بررسی می‌کند.
 تست وجود عنوان معمولی و نتیجهٔ خالی ورودی‌های مخرب را روی PostgreSQL واقعی می‌سنجد.
 
 اگر raw SQL لازم شد، SQL و مقدار را جدا کن؛ FromSql با interpolation پارامتری با الحاق رشته به FromSqlRaw یکسان نیست.
@@ -54,10 +54,10 @@ escape دستی و حذف چند کاراکتر خطرناک را جایگزین
 
 ## متن کاربر و XSS
 
-عنوانی با متن <script>alert(1)</script> عمداً به‌عنوان داده پذیرفته می‌شود.
+عنوانی با متن `<script>alert(1)</script>` عمداً به‌عنوان داده پذیرفته می‌شود؛ قرار نیست server آن را به کد قابل اجرا در صفحه تبدیل کند.
 پاسخ application/json و X-Content-Type-Options: nosniff دارد و DTO فقط داده را برمی‌گرداند.
 این تست، ایمنی هر frontend آینده را ثابت نمی‌کند؛ client باید متن را با textContent یا escaping معمول framework نمایش دهد و سراغ innerHTML برای متن کاربر نرود.
-اگر rich text واقعاً لازم شد، sanitizer معتبر و policy محدود محتوا و تست browser لازم است.
+اگر قابلیت `rich text` لازم باشد و بخواهیم بخشی از markup را واقعاً نمایش بدهیم، باید مجموعهٔ مجاز محتوا و `sanitizer` مناسب برای حذف بخش‌های نامجاز مشخص باشد. ایمنی این نمایش به تست مرورگر نیاز دارد؛ پاسخ JSON به‌تنهایی آن را ثابت نمی‌کند.
 این snapshot HTML UI ندارد؛ CSP و DOM-based XSS و اجرای مرورگر با این تست HTTP پوشش داده نمی‌شوند.
 
 ## راه‌اندازی آزمایشگاه

@@ -3,7 +3,7 @@
 ## خروجی قابل مشاهده
 
 قبل از افزودن حساب کاربری، دارایی‌ها، actorها و مرزهای اعتماد TeamDesk را مشخص می‌کنی.
-نمونهٔ HTTP در حالت پیش‌فرض بسته است: header جعلی یا متن دلخواه bearer آن را باز نمی‌کند.
+نمونهٔ HTTP در حالت پیش‌فرض دسترسی به تیکت‌ها نمی‌دهد؛ تا زمانی که روش معتبر authentication نداریم، فرستادن header جعلی یا متن دلخواه به‌عنوان bearer داده‌ای برنمی‌گرداند. این رفتار `fail closed` است.
 هر تهدید یک کنترل، یک شاهد و یک محدودیت معلوم دارد.
 
 پیش‌نیاز: [تحویل معماری درس 060](../../05-architecture/060-teamdesk/README.md)، HTTP و DI.
@@ -24,7 +24,7 @@
 | Asset | اطلاعات تیکت، حساب، hash رمز، token و key ring |
 | Actor | کاربر ناشناس، عضو، مدیر، پشتیبان و سرویس |
 | Trust boundary | جایی که دادهٔ کم‌اعتماد وارد بخش معتبر می‌شود |
-| Authentication | اثبات هویت با credential معتبر |
+| Authentication | تعیین هویت درخواست از روی credential معتبر؛ credential مدرکی مثل رمز ورود یا cookie/token صادرشده با قرارداد مشخص است. |
 | Authorization | تصمیم دربارهٔ اجازهٔ یک عملیات روی یک منبع |
 | Abuse case | استفادهٔ عمدی خلاف انتظار، مانند دیدن تیکت تیم دیگر |
 
@@ -41,7 +41,7 @@
 | سرویس به ایمیل | لینک recovery و مقصد | مقصد تأییدشده و عدم ثبت token در log |
 | host به key storage | کلیدهای Data Protection | دسترسی محدود، نگهداری و حفاظت کلید |
 
-X-User یا X-Role درخواستی از client مدرک هویت نیست.
+مقدار headerهای `X-User` و `X-Role` را خودِ client می‌تواند بنویسد. اگر فقط از روی متن آن‌ها هویت یا نقش تعیین کنیم، فرستنده می‌تواند خودش را جای فرد دیگری معرفی کند. پس این مقدارها مدرک authentication نیستند.
 اگر reverse proxy مورد اعتماد هویتی می‌فرستد، اعتبار proxy و حذف header ورودی و ارتباط بین سرویس‌ها هم بخشی از طراحی است.
 این نمونه چنین proxy قراردادی ندارد.
 
@@ -63,16 +63,14 @@ X-User یا X-Role درخواستی از client مدرک هویت نیست.
 
 ## نمونهٔ بسته پیش از انتخاب provider
 
-Security/ClosedGate.cs یک AuthenticationHandler دارد که همیشه NoResult می‌دهد.
-این handler آزمایش «وقتی provider نداریم، چه می‌شود؟» است؛ provider ساختگی login نیست.
-FallbackPolicy احراز هویت را برای endpointها لازم می‌کند و فقط /health صریحاً AllowAnonymous است.
+در فایل `Security/ClosedGate.cs`، متد authentication همیشه `NoResult` می‌دهد؛ یعنی هیچ هویتی از آن روش به دست نیامده است. سپس `FallbackPolicy` برای endpointها هویت معتبر لازم می‌کند. چون هویتی نداریم، مسیر تیکت پاسخ ۴۰۱ می‌دهد. فقط `/health` با `AllowAnonymous` از این الزام خارج شده است. این آزمایشِ حالتِ نبود provider است و هیچ ورود ساختگی تولید نمی‌کند.
 
 ```csharp
 options.FallbackPolicy = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser().Build();
 ```
 
-/api/tickets از هویت تأییدنشده داده برنمی‌گرداند.
+مسیر /api/tickets از هویت تأییدنشده داده برنمی‌گرداند.
 401 یعنی credential پذیرفته نشده؛ 403 بعداً برای هویت معتبر با اجازهٔ ناکافی مطرح می‌شود.
 در این مرحله هیچ username ویژه‌ای مانند admin راه میان‌بر ندارد.
 

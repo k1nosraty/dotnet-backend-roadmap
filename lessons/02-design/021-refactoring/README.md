@@ -4,13 +4,13 @@
 
 ## خروجی درس
 
-command handling را به parse، dispatch و render تقسیم می‌کنی.
+مسیر command handling را به parse، dispatch و render تقسیم می‌کنی.
 با جدول رفتار نشان می‌دهی بازآرایی contract را حفظ کرده است.
 برای helper و abstraction تازه معیار تصمیم می‌نویسی.
 
 ## پیش‌نیاز
 
-Outcome، constructor injection، record و مرز presentation/application.
+آشنایی با `Outcome`، constructor injection، record و مرز presentation/application.
 نمونهٔ این درس یک CLI حافظه‌ای کوچک است؛ persistence نهایی در درس ۰۲۲ یکپارچه می‌شود.
 
 ## مسئله
@@ -48,9 +48,7 @@ public sealed record AddTicket(string RawTitle) : TicketCommand;
 public sealed record FindTicket(int Id) : TicketCommand;
 ```
 
-recordهای فرمان مقدارهای parse شده را نگه می‌دارند.
-AddTicket هنوز RawTitle دارد و قانون عنوان در application/value object بررسی می‌شود.
-FindTicket در parser فقط با Id مثبت ساخته می‌شود.
+در مرحلهٔ `parse`، آرگومان‌های متنی به یک فرمان مشخص تبدیل می‌شوند؛ record فرمان همین ورودیِ آمادهٔ استفاده را نگه می‌دارد. مثلاً `AddTicket` هنوز `RawTitle` دارد، چون parser فقط شکل فرمان را می‌فهمد و بررسی قانون عنوان به application و value object تعلق دارد. در مقابل، `FindTicket` از مسیر parser فقط با شناسهٔ عددی مثبت ساخته می‌شود.
 caller مستقیم همچنان می‌تواند FindTicket نامعتبر بسازد؛ application باید guard خودش را حفظ کند.
 record declaration خودکار domain validation نیست.
 
@@ -69,7 +67,7 @@ public static Outcome<TicketCommand> Parse(string[] args)
 }
 ```
 
-parser Console و فایل را نمی‌خواند و service را اجرا نمی‌کند.
+کد parser Console و فایل را نمی‌خواند و service را اجرا نمی‌کند.
 می‌توان با آرایهٔ string رفتار آن را مستقل بررسی کرد.
 برای این نمونه syntax دقیق و case-sensitive است.
 پشتیبانی از flag پیچیده یا quote parser مستقل نداریم؛ shell آرگومان quote شده را به string واحد تبدیل می‌کند.
@@ -85,22 +83,17 @@ Outcome<TicketSummary> result = parsed.Value switch
 };
 ```
 
-pattern روی نوع command انتخاب می‌کند.
-نتیجهٔ همهٔ branchهای عادی Outcome<TicketSummary> است.
-نوع فرمان جدید باید handler صریح داشته باشد.
-branch پیش‌فرض برای bug پشتیبانی‌نشدن command است، نه عنوان نامعتبر کاربر.
+در مرحلهٔ `dispatch`، با `pattern matching` نوع فرمان بررسی می‌شود: فرمان ثبت به عملیات ثبت و فرمان جست‌وجو به عملیات جست‌وجو می‌رود. همهٔ شاخه‌های عادی `Outcome<TicketSummary>` می‌دهند، پس مرحلهٔ نمایش می‌تواند نتیجه را به روش مشترک بخواند. برای فرمان تازه باید مسیر رسیدگی یا `handler` مشخصی داشته باشیم. شاخهٔ پیش‌فرض یعنی فرمانی در کد ساخته شده که dispatcher از آن پشتیبانی نمی‌کند؛ این bug را با عنوان کوتاه کاربر یکی نمی‌گیریم.
 در این اندازه، switch روشن از ثبت خودکار handler با reflection ساده‌تر است.
 
 ## ۶. مرحلهٔ render
 
-در success، renderer summary را چاپ و صفر برمی‌گرداند.
-در failure، code و message را چاپ و code CLI تعیین می‌کند.
-renderer برای تصمیم‌گیری دوباره reader را صدا نمی‌زند.
+در مرحلهٔ `render`، نتیجهٔ آماده به پیام و exit code تبدیل می‌شود. در موفقیت، summary چاپ و صفر برگردانده می‌شود؛ در شکست، code و message مشخص می‌کنند چه پیامی چاپ شود و نتیجهٔ فرمان چه باشد. این بخش دوباره داده را نمی‌خواند یا عملیات ثبت را تکرار نمی‌کند، چون آن کار در مرحلهٔ قبل انجام شده است.
 اگر render خودش side effect business داشته باشد، جدا شدن ظاهری متدها کافی نیست.
 
 ## ۷. parser کجا قرار گرفت؟
 
-CommandParser در پوشه و namespace Presentation است.
+کلاس CommandParser در پوشه و namespace Presentation است.
 TicketCommandها در این نمونه همراه parser قرار دارند، چون syntax CLI را نمایندگی می‌کنند.
 use caseهای application از آن‌ها خبر ندارند.
 اگر command معنای application مستقل از CLI پیدا کرد، محل قرارداد را با همان نیاز بازبینی می‌کنیم.
@@ -127,8 +120,7 @@ use caseهای application از آن‌ها خبر ندارند.
 
 ## ۱۰. duplication یا abstraction؟
 
-دو شرط یکسان نحوی ممکن است دو سیاست متفاوت باشند.
-مثلاً حد طول عنوان و حد طول یادداشت هر دو عدد دارند اما یک مفهوم نیستند.
+دو قطعه‌کد شبیه الزاماً یک قانون مشترک ندارند. برای مثال، طول عنوان و طول یادداشت هر دو با حداقل و حداکثر سنجیده می‌شوند، اما ممکن است نیازهای متفاوتی داشته باشند و جدا تغییر کنند. پیش از ساخت `abstraction`، یعنی پنهان‌کردن جزئیات پشت یک مفهوم یا قرارداد مشترک، مشخص کن کدام قانون واقعاً بین مصرف‌کننده‌ها مشترک است.
 TicketTitle ارزش مشترک را متمرکز می‌کند.
 ساخت GenericValidator برای هر primitive فقط برای حذف چند خط می‌تواند semantics را پنهان کند.
 قانون مشترک و business meaning را قبل از حذف تکرار شناسایی کن.
@@ -201,7 +193,7 @@ new[] { "add", "Printer issue" }
 Array.Empty<string>()
 ```
 
-parser نباید برای هیچ‌کدام فایل ایجاد کند یا Ticket ثبت کند.
+کد parser نباید برای هیچ‌کدام فایل ایجاد کند یا Ticket ثبت کند.
 این بررسی کوچک با اجرای end-to-end جایگزین نمی‌شود؛ هر دو سطح فایده دارند.
 
 ## تمرین مستقل

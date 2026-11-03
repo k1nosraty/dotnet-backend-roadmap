@@ -11,8 +11,7 @@ HTTP برای ورودی خراب، errors فیلدمحور می‌دهد و ا�
 
 ## قبل از نصب: آیا مسئله داریم؟
 
-ResolveTicket دو خطای مستقل Id و Resolution دارد.
-می‌خواهیم هر دو را در یک نتیجه ببینیم و همین قانون ورودی بیرون از endpoint هم قابل اجرا باشد.
+ممکن است یک ورودی ResolveTicket هم شناسهٔ غیرمثبت داشته باشد و هم توضیح کوتاه. می‌خواهیم به‌جای توقف روی اولین خطا، هر دو را به client بدهیم و همین قواعد در فراخوانی مستقیم handler نیز اجرا شوند. برای این کار یک `validator` می‌نویسیم؛ کلاسی که ورودی را با مجموعه‌ای از ruleهای مشخص بررسی و فهرست خطاها را تولید می‌کند.
 guard دستی برای همین اندازه هنوز انتخاب معتبری است.
 کتابخانه را برای یادگیری این tradeoff وارد می‌کنیم؛ الزام استفاده در همهٔ کلاس‌ها نداریم.
 
@@ -29,7 +28,7 @@ guard دستی برای همین اندازه هنوز انتخاب معتبری
 | license اعلام‌شدهٔ package | Apache-2.0 |
 | وابستگی package اضافی | برای این استفاده لازم نیست |
 
-package اصلی در Application نصب شده و Domain وابستگی به آن ندارد.
+در این نمونه، package اصلی در Application نصب شده و Domain وابستگی به آن ندارد.
 NuGet سازگاری package با net10.0 را نشان می‌دهد؛ build و اجرای تست‌ها شاهد سازگاری همین نمونه‌اند.
 سازگاری target به معنی صحت تمام ruleها نیست.
 
@@ -56,16 +55,14 @@ public sealed class ResolveTicketValidator : AbstractValidator<ResolveTicketComm
 }
 ```
 
-RuleFor مشخص می‌کند کدام property بررسی می‌شود.
-Must برای طول پس از Trim است؛ Transform که در بعضی مثال‌های قدیمی می‌بینی در خانوادهٔ ۱۲ حذف شده است.
-validator state را تغییر نمی‌دهد و I/O انجام نمی‌دهد.
+متد `RuleFor` property هدف را انتخاب می‌کند و شرط‌های بعدی روی همان مقدار اعمال می‌شوند. با `Must` شرط سفارشیِ طول پس از Trim را می‌نویسیم. این بررسی مقدار ذخیره‌شده یا خود command را تغییر نمی‌دهد؛ فقط پاسخ معتبر/نامعتبر می‌سازد و I/O ندارد. متد `Transform` که در بعضی مثال‌های قدیمی دیده می‌شود در خانوادهٔ ۱۲ در دسترس نیست.
 در فراخوانی تست، `new ResolveTicketCommand(...)` را صریح بنویس؛ `new(...)` کنار overloadهای ValidateAsync ممکن است خطای ابهام CS0121 بدهد.
 خروجی normalization همچنان در command handler برای رفتار Domain مصرف می‌شود.
 مدل null به‌عنوان root validator قرارداد دیگری دارد؛ endpoint یک request لازم دارد و use case هم ArgumentNullException guard دارد.
 
 ## اجرای صریح
 
-endpoint به‌صورت scoped یک ResolveTicketValidator می‌گیرد:
+کد endpoint به‌صورت scoped یک ResolveTicketValidator می‌گیرد:
 
 ```csharp
 var validation = await validator.ValidateAsync(command, ct);
@@ -89,10 +86,9 @@ ValidateAsync برای ruleهای sync فعلی هم درست است.
 
 ## اجرای خارج از HTTP
 
-ResolveTicket درون Application از همان ResolveTicketValidator استفاده می‌کند.
+کلاس ResolveTicket درون Application از همان ResolveTicketValidator استفاده می‌کند.
 بنابراین CLI یا test که handler را مستقیم صدا بزند، به guard HTTP وابسته نیست.
-در این نمونه validator pure دوبار در مسیر HTTP اجرا می‌شود: یک بار برای errors و یک بار برای محافظت use case.
-قانون تعریف‌شده تکراری نیست، ولی کار اجرا تکرار می‌شود؛ این هزینه در ADR پذیرفته و نوشته شده است.
+در مسیر HTTP، endpoint یک بار validator را اجرا می‌کند تا errors فیلدمحور بسازد؛ handler نیز برای حفظ قراردادِ فراخوانی مستقیم دوباره همان validator را اجرا می‌کند. تعریف قانون فقط یک جاست، اما بررسی دو بار انجام می‌شود. چون ruleهای فعلی pure و محلی‌اند، این هزینه در ADR همین نمونه پذیرفته شده است؛ اگر بررسی به دیتابیس یا سرویس بیرونی وصل شود، باید این تصمیم را بازنگری کرد.
 validator وابستگی خارجی ندارد و با new ساخته می‌شود؛ اگر dependency تازه بخواهد، constructor handler و composition را بازنگری کن.
 
 اجرای rule متصل به دیتابیس را با همین تصمیم دوبار اجرا نکن.
@@ -120,14 +116,14 @@ dotnet run --project samples/57-fluent-validation/SupportDesk.csproj -- --urls h
 Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:5058/api/tickets/0/resolve' -ContentType 'application/json' -Body '{"resolution":"ab"}'
 ```
 
-PowerShell برای پاسخ 400 خطا نمایش می‌دهد؛ body پاسخ را برای errors بررسی کن.
+ابزار PowerShell برای پاسخ 400 خطا نمایش می‌دهد؛ body پاسخ را برای errors بررسی کن.
 درست بودن این پاسخ با اسکریپت هم بررسی می‌شود:
 
 ```powershell
 python scripts/architecture_final_smoke.py
 ```
 
-ValidationChecks شامل null، فاصله، طول ۲، مرز معتبر ۳ و ۵۰۰، طول ۵۰۱ و قواعد تیکت بسته است.
+مجموعهٔ ValidationChecks شامل null، فاصله، طول ۲، مرز معتبر ۳ و ۵۰۰، طول ۵۰۱ و قواعد تیکت بسته است.
 ساخت و audit dependency در CI اجرا می‌شود؛ گزارش نبود vulnerability فقط مربوط به زمان همان اجراست.
 
 ## هزینه و روش حذف

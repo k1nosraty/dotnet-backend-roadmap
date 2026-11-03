@@ -2,7 +2,7 @@
 
 ## خروجی قابل مشاهده
 
-ResolveTicket را بدون دیتابیس واقعی آزمایش می‌کنی و فرق invalid، missing، conflict و موفقیت commit را می‌بینی.
+کلاس ResolveTicket را بدون دیتابیس واقعی آزمایش می‌کنی و فرق invalid، missing، conflict و موفقیت commit را می‌بینی.
 وقتی ورودی خراب است ذخیره‌سازی صدا زده نمی‌شود؛ وقتی commit خطا می‌دهد موفقیت برنمی‌گردد.
 پیش‌نیاز: [درس ۷۱](../071-unit/README.md)، port/adapter و async و CancellationToken.
 
@@ -10,7 +10,7 @@ ResolveTicket را بدون دیتابیس واقعی آزمایش می‌کنی
 
 نمونهٔ samples/71-test-design همان Domain مستقل را نگه می‌دارد و Application/ResolveTicket.cs را اضافه می‌کند.
 ITicketStore قرارداد Load و Save با version را تعریف می‌کند؛ Application، Npgsql یا HTTP را نمی‌شناسد.
-ResolveOutcome یک قرارداد کاربردی است، نه status code HTTP. نگاشت 400/404/409 در درس بعد در endpoint انجام می‌شود.
+نتیجهٔ `ResolveOutcome` می‌گوید از دید عملیات برنامه چه اتفاقی افتاده است؛ مثلاً ورودی نامعتبر، منبع ناموجود یا تعارض. هنوز پاسخ HTTP نیست. در درس بعد، endpoint همین حالت‌ها را به ۴۰۰، ۴۰۴ یا ۴۰۹ تبدیل می‌کند. بنابراین تست این درس باید نتیجهٔ application را بسنجد، نه عدد status وب را.
 فایل tests/072-test-design/ResolveTests.cs وابستگی را با RecordingStore کنترل می‌کند.
 
 ```powershell
@@ -47,15 +47,15 @@ RecordingStore هم پاسخ را کنترل می‌کند و هم اطلاعا�
 ## assertion روی تعامل را هدفمند انتخاب کن
 
 برای ورودی نامعتبر، صفر بودن Load یک قرارداد مفید است: درخواست خراب نباید I/O انجام دهد.
-برای Save، انتقال همان CancellationToken و version مورد انتظار مهم است چون حذفشان cancellation یا کنترل رقابت را می‌شکند.
+در آزمایش Save، بررسی می‌کنیم همان `CancellationToken` و نسخهٔ خوانده‌شده به store برسد. این‌ها جزئیات تصادفی پیاده‌سازی نیستند: حذف token مسیر لغو را قطع می‌کند و فرستادن نسخهٔ نادرست می‌تواند کنترل تعارض را بی‌اثر کند.
 برای objectهای immutable، نوع و state خروجی و حفظ state ورودی را بسنج.
 روی نام متد private، ترتیب تصادفی helperها یا هر خط داخلی assert نگذار؛ refactor صحیح نباید بی‌دلیل ده‌ها تست را بشکند.
 
 ## شکست commit و snapshot قبلی
 
-use case ابتدا از snapshot یک Ticket بسته‌شدهٔ تازه می‌سازد و سپس commit را درخواست می‌کند.
+این use case ابتدا از snapshot یک Ticket بسته‌شدهٔ تازه می‌سازد و سپس commit را درخواست می‌کند.
 ساخت object تازه به معنی ثبت موفق نیست؛ نتیجهٔ واقعی port مشخص می‌کند که use case موفق است یا conflict.
-تستِ FailSave عمداً IOException می‌دهد و ثابت می‌کند caller هنوز خطا می‌بیند و snapshot اصلی InProgress است.
+در حالت `FailSave`، double عمداً `IOException` می‌دهد. تست دو انتظار مستقل دارد: خطا به caller برسد و مدل اصلی هنوز InProgress باشد. مدل بسته‌شدهٔ موقت، موفقیت ذخیره نیست؛ فقط نتیجهٔ موفق port اجازهٔ اعلام Resolved می‌دهد.
 این تست، rollback فیزیکی database را شبیه‌سازی نمی‌کند؛ فقط قرارداد لایهٔ Application و immutable بودن مدل را بررسی می‌کند.
 اگر adapter در دنیای واقعی نیمه‌کاره بنویسد، تست double آن را پیدا نخواهد کرد.
 
@@ -91,7 +91,7 @@ runner با TRX نبود شکست و skip و حداقل تعداد کشف‌شد
 
 ### سرنخ
 
-result و state و side effect را جدا بنویس؛ برای هر سناریو لازم نیست هر سه نوع assertion داشته باشی.
+سه بخش result و state و side effect را جدا بنویس؛ برای هر سناریو لازم نیست هر سه نوع assertion داشته باشی.
 
 ## معیار عبور
 

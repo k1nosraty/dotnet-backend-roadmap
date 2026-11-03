@@ -11,10 +11,7 @@
 
 ## ۱. middleware چه چیزی را احاطه می‌کند؟
 
-middleware قبل از ادامهٔ pipeline اجرا و پس از برگشت آن ادامه پیدا می‌کند.
-exception handler باید پیش از endpointهایی باشد که failure آن‌ها را می‌گیرد.
-مدیریت exception با تبدیل نتیجهٔ معتبر ۴۰۴ به ۵۰۰ تفاوت دارد.
-هر response ناموفق الزاماً exception ایجاد نمی‌کند.
+وقتی یک middleware اجرای `next` را با `await` دنبال می‌کند، مراحل بعدی در محدودهٔ اجرای آن قرار می‌گیرند. می‌تواند پیش از next کاری انجام بدهد و پس از برگشت آن ادامه بدهد؛ اگر exception از مراحل بعد منتشر شود، handlerِ بالادست امکان رسیدگی دارد. به همین دلیل exception handler باید پیش از endpointهایی قرار بگیرد که قرار است خطایشان را بگیرد. پاسخ معمول ۴۰۴ لزوماً exception ندارد و نباید صرفاً به‌خاطر ناموفق‌بودن پاسخ به ۵۰۰ تبدیل شود.
 
 ## یک نگاه: خطا در کدام محدوده گرفته می‌شود؟
 
@@ -52,7 +49,7 @@ app.UseStatusCodePages();
 app.MapControllers();
 ```
 
-callback شناسه پیش از endpoint ثبت می‌شود تا پاسخ خطا هم header را داشته باشد.
+کد callback شناسه پیش از endpoint ثبت می‌شود تا پاسخ خطا هم header را داشته باشد.
 exception handler اجرای پایین‌دست را احاطه می‌کند.
 status code pages برای body خطاهای بدون body به کار می‌رود.
 خطای داخل RequestIdMiddleware که پیش از handler قرار دارد، تحت پوشش همین handler نیست؛ ترتیب را با محدودهٔ مسئولیت بخوان.
@@ -72,10 +69,9 @@ public async Task InvokeAsync(HttpContext context)
 }
 ```
 
-RequestDelegate next در constructor دریافت می‌شود.
-InvokeAsync برای هر درخواست context تازه می‌گیرد.
-callback با OnStarting درست پیش از ارسال headerها اجرا می‌شود.
-ثبت سادهٔ header قبل از next کافی نیست: exception handler می‌تواند هنگام آماده کردن پاسخ خطا headerهای قبلی را پاک کند.
+پارامتر `RequestDelegate next` راه فراخوانی ادامهٔ pipeline است و از constructor می‌آید. متد `InvokeAsync` برای هر درخواست context همان درخواست را می‌گیرد. با `OnStarting` تابعی ثبت می‌کنیم که بعداً، درست پیش از ارسال headerها، اجرا شود؛ چنین تابعی `callback` نام دارد.
+
+علت این زمان‌بندی مسیر خطاست: exception handler ممکن است برای ساخت پاسخ ۵۰۰، headerهای قبلی را پاک کند. اگر فقط پیش از next شناسه را در header نوشته باشیم، ممکن است از پاسخ خطا حذف شود. callback ثبت‌شده آن را در زمان شروع ارسال پاسخ قرار می‌دهد.
 به همین دلیل برابری requestId در body و header روی مسیر ۵۰۰ هم تست می‌شود.
 در conventional middleware نباید scoped dependency را در constructor بلندعمر اسیر کنی؛ درس scope این نکته را باز می‌کند.
 
@@ -94,7 +90,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 ```
 
-ApiExceptionHandler قرارداد IExceptionHandler را پیاده می‌کند.
+کلاس ApiExceptionHandler قرارداد IExceptionHandler را پیاده می‌کند.
 ValueTask<bool> خروجی asynchronous همین قرارداد framework است؛ [مرجع syntax](../../../handbook/csharp-syntax.md) فرق کاربرد آن و Task و callback را توضیح می‌دهد.
 این handler می‌تواند با true اعلام کند exception را پاسخ داده است.
 اگر false برگرداند، handlerهای بعدی یا رفتار middleware تصمیم می‌گیرند.
@@ -116,7 +112,7 @@ await problems.WriteAsync(new ProblemDetailsContext
 });
 ```
 
-client پیام عمومی می‌گیرد و requestId را برای پیگیری نگه می‌دارد.
+کد client پیام عمومی می‌گیرد و requestId را برای پیگیری نگه می‌دارد.
 exception.Message در body عمومی قرار نگرفته است.
 این کد برای مسیر معمول JSON همین دوره است و writer باید Accept درخواست را پشتیبانی کند.
 پاسخی که قبلاً شروع شده را نمی‌توان همیشه با یک JSON تازه جایگزین کرد.
@@ -128,7 +124,7 @@ streaming و response شروع‌شده به طراحی خطای متناسب ن
 logger.LogError(exception, "Unhandled failure for request {RequestId}", context.TraceIdentifier);
 ```
 
-placeholder نام‌دار امکان جست‌وجوی structured را فراهم می‌کند.
+نام داخل آکولاد یک `placeholder` است و مقدار شناسه با همان نام در log ثبت می‌شود. در `structured logging` مقدارها جدا از متن پیام هم قابل جست‌وجو هستند؛ بنابراین می‌توان رویدادهای همان `RequestId` را پیدا کرد.
 exception کامل در log سرور است و body کامل request یا secret را log نمی‌کنیم.
 handler با ILogger کار می‌کند؛ افزودن Serilog برای این مسیر الزامی نیست.
 در .NET 10 سیاست diagnostics برای exceptionهای handled تغییر کرده است؛ sample لاگ صریح خودش را ثبت می‌کند.
@@ -137,7 +133,7 @@ handler با ILogger کار می‌کند؛ افزودن Serilog برای این
 ## ۸. endpoint خطای عمدی
 
 در Development مسیر /diagnostics/failure یک InvalidOperationException ایجاد می‌کند.
-متن sentinel داخلی عمداً در exception قرار گرفته تا تست نشت اطلاعات را تشخیص دهد.
+یک متن آزمایشی مشخص یا `sentinel` داخل exception گذاشته شده است. تست می‌داند دنبال چه متنی بگردد و بررسی می‌کند همین جزئیات داخلی وارد پاسخ عمومی نشده باشد.
 پاسخ باید ۵۰۰، application/problem+json و requestId داشته باشد.
 همان رشتهٔ داخلی نباید در body دیده شود.
 در Production این مسیر اصلاً map نمی‌شود و ۴۰۴ می‌گیرد.
@@ -151,7 +147,7 @@ DeveloperExceptionPage ابزار debugging محلی است و تصمیم نما
 
 ## ۱۰. خطاهای مورد انتظار را throw نکن
 
-Ticket ناموجود همان ۴۰۴ معمول controller باقی می‌ماند.
+برای Ticket ناموجود، پاسخ همان ۴۰۴ معمول controller باقی می‌ماند.
 عنوان خراب همان ۴۰۰ validation است.
 وجود این handler مجوز تبدیل تمام نتیجه‌های business به exception عمومی نیست.
 در پایان بخش conflict تغییر وضعیت با ۴۰۹ برمی‌گردد و از مسیر ۵۰۰ عبور نمی‌کند.
@@ -191,7 +187,7 @@ curl.exe -i http://127.0.0.1:5290/api/tickets/1
 
 ## تمرین مستقل
 
-middleware دوم برای مدت درخواست با Stopwatch بساز.
+یک middleware دیگر بساز که مدت درخواست را با `Stopwatch` اندازه بگیرد.
 مقدار زمان را پس از await next محاسبه و با placeholder مناسب log کن.
 اگر header مدت لازم داری، OnStarting و محدودیت شروع response را بررسی کن؛ پس از نوشتن body header را بی‌قید تغییر نده.
 برای درخواست موفق، validation و exception رفتار middleware را مقایسه کن.

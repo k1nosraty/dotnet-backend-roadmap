@@ -35,7 +35,7 @@ dotnet test tests/077-logging/SupportDesk.Tests.csproj
 | `JsonLineSink` | نوشتن هر event با JsonFormatter روی یک خط |
 
 کلاس JobLog نیازی ندارد logger استاتیک Serilog را صدا بزند.
-Program تصمیم می‌گیرد خروجی کجا و با چه فرمتی نوشته شود. در این lab، مقصد stdout است؛ فایل یا سرور log خارجی تنظیم نشده است.
+در `Program` مشخص می‌کنیم event کجا و با چه قالبی نوشته شود. مقصد دریافت event در Serilog، `sink` نام دارد. sink این lab روی `stdout`، یعنی خروجی استاندارد process، می‌نویسد؛ فایل یا سرور خارجی log تنظیم نشده است.
 ClearProviders جلوی خروجی تکراری providerهای پیش‌فرض را می‌گیرد.
 
 ## ۳. template را ثابت نگه دار
@@ -54,16 +54,16 @@ EventId شمارهٔ نوع رخداد است، JobId شناسهٔ یک کار �
 
 ## ۴. scope یعنی اطلاعات مشترکِ یک محدوده
 
-Finished با BeginScope یک JobId ثبت می‌کند. Enrich.FromLogContext در تنظیم Serilog، اطلاعات scope را به event می‌رساند.
+متد `BeginScope` برای مدت اجرای یک محدوده، اطلاعات مشترک مثل `JobId` را به logها اضافه می‌کند. این `logging scope` دربارهٔ دادهٔ همراه eventهاست و با DI scopeِ عمر serviceها یک مفهوم نیست. تنظیم `Enrich.FromLogContext` اطلاعات همین scope را به خروجی Serilog می‌رساند.
 پس از خروج از using، JobId نباید به رخداد بعدی نشت کند.
 تست `Scope_does_not_leak_into_later_events` دقیقاً رخداد دوم خارج از scope را بررسی می‌کند.
 
-scope برای ارتباط چند event مفید است؛ شناسهٔ job به‌خودی‌خود هویت کاربر یا مجوز دسترسی نیست.
+محدودهٔ scope برای ارتباط چند event مفید است؛ شناسهٔ job به‌خودی‌خود هویت کاربر یا مجوز دسترسی نیست.
 شناسه‌ها را به برچسب metric با تعداد نامحدود تبدیل نکن؛ کاربرد log با metric فرق دارد.
 
 ## ۵. چه چیزی را ننویسیم؟
 
-Notification برای انجام کار، Email و Body دارد، اما JobLog فقط Id و یک outcome ثابت را می‌فرستد.
+شیء Notification برای انجام کار، Email و Body دارد، اما JobLog فقط Id و یک outcome ثابت را می‌فرستد.
 
 | داده | تصمیم نمونه |
 | --- | --- |
@@ -73,7 +73,7 @@ Notification برای انجام کار، Email و Body دارد، اما JobLog
 | token، header، connection string | اصلاً وارد logger نمی‌شوند |
 | متن خام exception یا request | ثبت نمی‌شود |
 
-JSON formatter رشته‌ها را encode می‌کند، ولی **secret را حذف نمی‌کند**. اگر کل notification را با destructuring مثل `{@Notification}` بفرستی، اطلاعات حساس همچنان ذخیره می‌شوند.
+قالب‌ساز JSON شکل نوشتن رشته‌ها را درست می‌کند، اما نمی‌داند کدام property حساس است. در `destructuring` با نوشتاری مثل `{@Notification}`، اجزای شیء هم وارد event می‌شوند؛ پس فرستادن کل notification می‌تواند Email و Body را نیز ثبت کند. محدودکردن داده باید پیش از فراخوانی logger انجام شود.
 تست، ایمیل و body شامل password و newline می‌دهد و عدم وجود آن‌ها و تک‌خط بودن خروجی را بررسی می‌کند.
 این شاهدِ همین مسیر JobLog است؛ تضمین پاک‌سازی خودکار همهٔ logهای برنامه یا providerهای دیگر نیست.
 

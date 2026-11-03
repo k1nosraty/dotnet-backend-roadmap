@@ -2,7 +2,7 @@
 
 ## خروجی قابل مشاهده
 
-GETهای جزئیات و فهرست را از مسیر تغییر Ticket جدا می‌کنی.
+درخواست‌های GET مربوط به جزئیات و فهرست را از مسیر تغییر Ticket جدا می‌کنی.
 query پاسخ خلاصه و صفحهٔ مرتب می‌دهد و نه state و نه Version را تغییر می‌دهد.
 هیچ mediator، صف یا دیتابیس جداگانه‌ای برای این تفکیک لازم نیست.
 
@@ -14,7 +14,7 @@ SDK 10 لازم است؛ این snapshot package خارجی تازه ندارد.
 برای rename و resolve باید aggregate را بخوانیم تا رفتار Domain اجرا شود.
 برای یک فهرست خلاصه، چنین تعهدی لازم نیست: caller فقط Id، عنوان، وضعیت و تعداد noteها را می‌خواهد.
 اگر همهٔ خواندن‌ها از متد ویرایش عبور کنند، نیازهای report و mutation در یک قرارداد بزرگ مخلوط می‌شوند.
-هدف این درس جداسازی مسئولیتِ خواندن و نوشتن است؛ پیچیده کردن topology هدف نیست.
+برای مثال، تغییر وضعیت باید قواعد و نسخهٔ Ticket را بررسی کند، اما گزارش خلاصه فقط شناسه، عنوان، وضعیت و تعداد noteها را می‌خواهد. از همین تفاوت، دو قرارداد می‌سازیم. این تصمیم دربارهٔ مسئولیت کد است و فعلاً نحوهٔ استقرار یا `topology` را عوض نمی‌کند.
 
 ## واژگان
 
@@ -24,11 +24,10 @@ SDK 10 لازم است؛ این snapshot package خارجی تازه ندارد.
 | Query | درخواست مشاهده مانند TicketListQuery |
 | Read model | TicketResponse و TicketPage |
 | Write model | Ticket با قواعد و snapshot نسخه‌دار |
-| CQRS | جداسازی مسئولیت خواندن و نوشتن |
+| CQRS: Command Query Responsibility Segregation | جداکردن قرارداد و مسیر انجام تغییر از قرارداد و مسیر خواندن |
 
 این پیاده‌سازی شکل سادهٔ تفکیک در یک سرویس و یک storage است.
-CQRS الزام به Event Sourcing، event bus یا consistency نهایی ندارد.
-اگر read database جدا بسازی، مسئلهٔ هماهنگی و lag اضافه می‌شود؛ این درس آن topology را ندارد.
+در این سطحِ CQRS، دادهٔ خواندن و نوشتن در همان storage است. اگر در طرح دیگری دیتابیس خواندن جدا باشد، باید تغییرها به آن منتقل شوند و ممکن است مدتی از نوشتن عقب بماند؛ این فاصلهٔ زمانی `lag` است. این نمونه چنین هماهنگی‌ای ندارد و برای آن Event Sourcing یا event bus اضافه نمی‌کند.
 استفاده از نام Handler هم به‌تنهایی CQRS را ایجاد نمی‌کند.
 
 ## یک نگاه: خواندن و تغییر، دو مسیر در یک سرویس
@@ -77,9 +76,7 @@ ITicketStore همچنان load نسخه‌دار و save aggregate را برای
 | src/Application/Shared/ITicketQueries.cs | query و DTO صفحه |
 | src/Infrastructure/QueryProjection.cs | فیلتر، ترتیب و انتخاب صفحهٔ adapter محلی |
 
-StoreFactory یک StoreServices می‌دهد که دو interface را به همان instance وصل می‌کند.
-host به cast پنهان از هر implementation دلخواه وابسته نیست.
-use case خواندن فقط ITicketQueries را می‌گیرد و save در اختیارش نیست.
+خروجی `StoreFactory` دو راه استفاده از همان instance را فراهم می‌کند: یکی از نوع `ITicketStore` برای command و دیگری از نوع `ITicketQueries` برای query. پس storage دوباره ساخته نمی‌شود و host لازم نیست یک implementation نامعلوم را با cast به قرارداد دیگری تبدیل کند. use case خواندن فقط قرارداد query را می‌گیرد و متد save در اختیار ندارد.
 
 ## قرارداد فهرست
 
@@ -92,7 +89,7 @@ use case خواندن فقط ITicketQueries را می‌گیرد و save در ا
 | ترتیب | Id صعودی |
 | total | تعداد matching قبل از صفحه‌بندی |
 
-adapter محلی برای search از OrdinalIgnoreCase استفاده می‌کند.
+کد adapter محلی برای search از OrdinalIgnoreCase استفاده می‌کند.
 نتیجهٔ آن را با collation دلخواه PostgreSQL یکی فرض نکن.
 برای provider آینده، semantics فیلتر و ترتیب باید در قرارداد و integration test ثبت شوند.
 count و items در این adapter از یک تصویرِ زیر lock محاسبه می‌شوند؛ دو query مجزای دیتابیس ممکن است consistency متفاوتی داشته باشند.
@@ -129,7 +126,7 @@ Invoke-RestMethod 'http://127.0.0.1:5057/api/tickets?page=1&pageSize=10&status=I
 Invoke-RestMethod 'http://127.0.0.1:5057/api/tickets/1'
 ```
 
-host با Ctrl+C متوقف می‌شود؛ پیش‌فرض حافظه‌ای و seed تازه است.
+برنامهٔ host با `Ctrl+C` متوقف می‌شود؛ پیش‌فرض حافظه‌ای و seed تازه است.
 --check عبارت `PASS: command/query separation, stable pagination and pure reads` می‌دهد.
 QueryChecks یک فهرست پنج‌تیکتی مستقل می‌سازد تا ترتیب صفحهٔ دوم واقعاً بررسی شود.
 
@@ -143,7 +140,7 @@ python scripts/architecture_final_smoke.py
 
 ## تصمیم طراحی
 
-QueryProjection داخل Infrastructure است چون semantics adapter محلی را اجرا می‌کند.
+کلاس QueryProjection داخل Infrastructure است چون semantics adapter محلی را اجرا می‌کند.
 وقتی PostgreSQL پیاده شد، فیلتر و pagination باید پیش از materialization سمت server بروند.
 آوردن کل جدول به حافظه و سپس Skip، راه‌حل مقیاس‌پذیر عمومی نیست.
 اینجا سقف دادهٔ آزمایش کوچک است و محدودیت صریح است.
@@ -151,7 +148,7 @@ QueryProjection داخل Infrastructure است چون semantics adapter محلی
 
 ## تمرین مستقل
 
-query گزارش شمارش تیکت‌ها به تفکیک وضعیت بساز.
+یک query گزارش شمارش تیکت‌ها به تفکیک وضعیت بساز.
 DTO گزارش مستقل باشد و noteها را برنگرداند.
 وضعیت بدون تیکت را با صفر نشان بده؛ ترتیب statusها در قرارداد معلوم باشد.
 با دادهٔ خالی و پس از تغییر یک command، نتیجه را بررسی کن.

@@ -16,8 +16,7 @@ SDK 10 شامل ابزار ساخت است و نمونه از Web SDK استفا
 
 ## مسئله
 
-یک endpoint تنها یک متد نیست؛ host باید پورت را باز کند، dependencyها را بسازد و requestها را از pipeline عبور دهد.
-می‌خواهیم بدانیم تنظیمات کجا خوانده می‌شوند و کدام کد هنگام startup یا برای هر request اجرا می‌شود.
+برای دریافت درخواست شبکه، فقط نوشتن متد کافی نیست. برنامه به `host` نیاز دارد تا شروع و پایان اجرا را مدیریت کند، serviceها را فراهم کند و server را راه بیندازد. سپس هر درخواست از زنجیرهٔ پردازش یا `pipeline` می‌گذرد تا به endpoint برسد؛ endpoint همان مقصدی است که برای یک method و مسیر ثبت کرده‌ایم. در این درس، کد یک‌بارهٔ شروع برنامه یا `startup` را از کدی که برای هر درخواست اجرا می‌شود جدا می‌کنیم.
 
 ## ۱. Web SDK
 
@@ -31,7 +30,7 @@ SDK 10 شامل ابزار ساخت است و نمونه از Web SDK استفا
 </Project>
 ```
 
-Web SDK پیش‌فرض‌ها و referenceهای لازم برای برنامهٔ ASP.NET Core را فراهم می‌کند.
+ابزار Web SDK پیش‌فرض‌ها و referenceهای لازم برای برنامهٔ ASP.NET Core را فراهم می‌کند.
 نمونهٔ واقعی TreatWarningsAsErrors هم فعال دارد.
 این با اضافه کردن دستی هر DLL وب به project کنسولی فرق دارد.
 server وب پیش‌فرض این مسیر معمولاً Kestrel است.
@@ -43,7 +42,7 @@ server وب پیش‌فرض این مسیر معمولاً Kestrel است.
 var builder = WebApplication.CreateBuilder(args);
 ```
 
-builder نقطهٔ ثبت serviceها و استفاده از configuration و environment است.
+شیء `builder` نقطهٔ ثبت serviceها و استفاده از configuration و environment است.
 CreateBuilder پیش‌فرض‌های host و تنظیمات متداول را آماده می‌کند.
 args می‌تواند configuration خط فرمان مانند --urls را وارد کند.
 این مرحله برای هر request دوباره اجرا نمی‌شود.
@@ -55,7 +54,7 @@ builder.Services.AddSingleton<StartupStamp>();
 var app = builder.Build();
 ```
 
-StartupStamp یک Guid برای هویت instance دارد.
+کلاس StartupStamp یک Guid برای هویت instance دارد.
 singleton در یک provider به callerهای بعدی همان نمونه را می‌دهد.
 با گرفتن /info دو بار، instanceId باید در همان اجرای process یکسان باشد.
 با restart معمولاً instanceId تازه می‌شود.
@@ -63,9 +62,7 @@ singleton در یک provider به callerهای بعدی همان نمونه را
 
 ## ۴. Build و Run
 
-Build گراف host و برنامه را آماده می‌کند.
-بعد middleware و endpointها روی app تعریف می‌شوند.
-Run host را اجرا و تا shutdown منتظر می‌ماند.
+متد `Build` با registrationهای موجود، شیء برنامه و اجزای host را آماده می‌کند. سپس روی `app` مشخص می‌کنیم چه middlewareها و endpointهایی در پردازش درخواست شرکت کنند. متد `Run` اجرای host را شروع می‌کند و برنامه تا درخواست توقف یا `shutdown` باز می‌ماند. پس رسیدن به Run به معنی تمام‌شدن برنامه پس از اولین پاسخ نیست.
 ثبت سرویس‌های مورد نیاز را پس از Build انجام نده؛ برنامه باید با registrations مشخص ساخته شود.
 در ASP.NET Core provider دوم برای گرفتن زودهنگام serviceها نساز.
 
@@ -79,15 +76,11 @@ app.Use(async (context, next) =>
 });
 ```
 
-context نمای درخواست و پاسخ جاری است.
-next ادامهٔ pipeline را صدا می‌زند.
-Header قبل از شروع نوشتن response تنظیم می‌شود.
-اگر next را صدا نزنی و پاسخ خودت را کامل کنی، مسیر کوتاه می‌شود؛ این می‌تواند عمدی باشد.
-حذف تصادفی next ممکن است endpointها را از دسترس خارج کند.
+یک `middleware` مرحله‌ای در pipeline است که به درخواست و پاسخ جاری، یعنی `context`، دسترسی دارد. در این قطعه ابتدا header را تنظیم می‌کند و سپس با `next` ادامهٔ پردازش را فراخوانی می‌کند. اگر عمداً پاسخ را همین‌جا کامل کند و `next` را صدا نزند، مراحل بعد و endpoint اجرا نمی‌شوند؛ به این کار `short-circuit` می‌گویند. حذف تصادفی next می‌تواند همین اثر را برای مسیرهایی ایجاد کند که نباید متوقف شوند.
 
 ## ۶. ترتیب pipeline
 
-middleware می‌تواند قبل و بعد از ادامهٔ مسیر کد اجرا کند.
+کد middleware می‌تواند قبل و بعد از ادامهٔ مسیر کد اجرا کند.
 کد قبل از await next در جهت ورود و کد بعد از آن در جهت برگشت اجرا می‌شود.
 اما header یا status را بعد از شروع response نمی‌توان آزادانه تغییر داد.
 نمونه برای جلوگیری از این ابهام header را قبل از next می‌گذارد.
@@ -101,7 +94,7 @@ middleware می‌تواند قبل و بعد از ادامهٔ مسیر کد ا
 | /info | environment و instanceId |
 | /greeting | مقدار configuration |
 
-/health این درس فقط زنده بودن مسیر demo را نشان می‌دهد.
+مسیر /health این درس فقط زنده بودن مسیر demo را نشان می‌دهد.
 این endpoint اتصال دیتابیس یا readiness کامل محصول را بررسی نمی‌کند.
 اطلاعات /info برای آموزش محلی است؛ افشای جزئیات environment در محصول باید آگاهانه باشد.
 
@@ -127,10 +120,9 @@ app.MapGet("/greeting", (IConfiguration configuration) => Results.Ok(new
 }));
 ```
 
-IConfiguration از DI دریافت می‌شود.
+رابط IConfiguration از DI دریافت می‌شود.
 اگر کلید نباشد fallback این نمونه Hello است.
-برای تنظیم ضروری، fallback خاموش همیشه انتخاب مناسبی نیست؛ options و validation درس جدا دارند.
-اینجا از یک greeting غیرحیاتی برای مشاهدهٔ precedence استفاده می‌کنیم.
+اگر مقدار کلید پیدا نشود، مقدار جایگزین یا `fallback` این نمونه `Hello` است. اینجا پیام غیرحیاتی است و می‌خواهیم اولویت منبع‌های تنظیمات یا `precedence` را مشاهده کنیم. برای تنظیم ضروری مثل اتصال دیتابیس، جایگزین‌کردن بی‌صدای مقدار ممکن است اشتباه باشد؛ بررسی آن را در درس options انجام می‌دهیم.
 
 ## ۱۰. environment variable
 
@@ -176,7 +168,7 @@ Development، Staging و Production نام‌های رایج‌اند، اما �
 
 ## ۱۳. launchSettings
 
-launchSettings.json برای تجربهٔ اجرای محلی IDE و dotnet run کاربرد دارد.
+فایل launchSettings.json برای تجربهٔ اجرای محلی IDE و dotnet run کاربرد دارد.
 نباید آن را configuration قابل اتکای production فرض کنی.
 در نمونهٔ فعلی چنین فایل اضافه‌ای نداریم.
 --no-launch-profile از دخالت profile محلی جلوگیری می‌کند.
@@ -188,7 +180,7 @@ launchSettings.json برای تجربهٔ اجرای محلی IDE و dotnet run 
 dotnet run --project samples/23-web-host/SupportDesk.csproj --no-launch-profile -- --urls http://127.0.0.1:5240
 ```
 
---urls این نمونه آدرس listener را تعیین می‌کند.
+گزینهٔ --urls این نمونه آدرس listener را تعیین می‌کند.
 اگر پورت اشغال باشد startup ممکن است شکست بخورد؛ با خواندن خطای bind علت را پیدا کن.
 127.0.0.1 فقط loopback IPv4 همان دستگاه است.
 استفاده از 0.0.0.0 دامنهٔ دسترسی متفاوتی دارد و برای این تمرین لازم نیست.
@@ -207,7 +199,7 @@ HTTP header nameها case-insensitive هستند؛ تست را به بزرگی �
 
 ## ۱۶. shutdown
 
-Ctrl+C در ترمینال host درخواست shutdown می‌دهد.
+فشردن Ctrl+C در ترمینال host درخواست shutdown می‌دهد.
 host مدیریت بستن listener و disposal سرویس‌های متعلق به خود را انجام می‌دهد.
 کار پس‌زمینه یا resource سفارشی باید قرارداد توقف خودش را رعایت کند.
 Run منتظر درخواست بعدی است و مصرف CPU بالا نباید لازمهٔ «باز بودن برنامه» باشد.
@@ -222,7 +214,7 @@ endpoint /team آن را از IConfiguration بخواند.
 
 ## تمرین تکمیلی
 
-middleware دوم با یک header متفاوت اضافه کن.
+یک middleware دیگر با header متفاوت اضافه کن.
 هر دو header باید در یک endpoint عادی دیده شوند.
 سپس یک middleware کوتاه‌کننده فقط برای یک مسیر آزمایشی بساز و اثر صدا نزدن next را مشاهده کن.
 این مسیر نباید همهٔ درخواست‌ها را تصادفی مسدود کند.

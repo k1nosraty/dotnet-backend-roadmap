@@ -13,7 +13,7 @@ Service دربارهٔ SQL یا DbSet تصمیم نمی‌گیرد؛ implementat
 | --- | --- | --- |
 | Application/TicketReport.cs | use case و query port و DTO | انواع خود Application |
 | Persistence/EfTicketQueries.cs | query قابل ترجمه و materialization | EF Core و قرارداد Application |
-| Persistence/DeskContext.cs | mapping و واحد کار | EF Core و entityهای Persistence |
+| Persistence/DeskContext.cs | mapping و unit of work | EF Core و entityهای Persistence |
 | Program.cs | اتصال قطعه‌ها و آزمایش | تمام اجزا در composition root |
 
 برای کوچکی مثال، interface و DTO و use case در یک فایل کوتاه‌اند.
@@ -30,8 +30,7 @@ public interface ITicketQueries
 }
 ```
 
-خروجی materialize شده است؛ IQueryable از مرز بیرون نمی‌رود.
-اگر caller خودش Where و Include اضافه کند، جزئیات provider و خطای ترجمه و زمان اجرای query به لایهٔ بالاتر نشت می‌کنند.
+متد در پایان خواندن، نتیجهٔ آماده را برمی‌گرداند؛ یعنی materialization داخل implementation انجام می‌شود. نوع `IQueryable` به caller داده نمی‌شود تا خودش `Where` یا `Include` دلخواه اضافه کند. وگرنه caller باید بداند کدام عبارت برای provider قابل ترجمه است و query چه زمانی واقعاً اجرا می‌شود؛ جزئیات data access به لایهٔ بالاتر منتقل می‌شوند.
 CancellationToken جزئی از قرارداد است، چون latency و لغو به use case مربوط‌اند.
 projection به DTO داخل implementation و پیش از ToArrayAsync انجام می‌شود.
 سقف بیست ردیف در این آزمایش صریح است؛ برای محصول، قرارداد page/filter/result مناسب تعریف کن.
@@ -39,7 +38,7 @@ projection به DTO داخل implementation و پیش از ToArrayAsync انجا
 
 ## آیا همه‌جا Repository لازم است؟
 
-DbContext خودش بسیاری از رفتارهای Unit of Work و DbSet بسیاری از رفتارهای Repository را دارد.
+کلاس DbContext خودش بسیاری از رفتارهای Unit of Work و DbSet بسیاری از رفتارهای Repository را دارد.
 یک GenericRepository<T> که همان Add/Update/GetAll را با نام دیگری تکرار کند الزاماً ارزش ایجاد نمی‌کند.
 اگر تمام queryها به Includeهای دلخواه و expression provider وابسته باشند، wrapper فقط پیچیدگی اضافه می‌کند.
 استفادهٔ مستقیم از context در handlerهای کوچک با مرز روشن هم انتخاب قابل دفاعی است.
@@ -50,21 +49,20 @@ DbContext خودش بسیاری از رفتارهای Unit of Work و DbSet بس
 وقتی یک use case قرارداد مشخصی مانند «صفحهٔ خلاصهٔ تیکت‌ها» می‌خواهد، interface کوچک هدف روشنی دارد.
 می‌توان query را بدون تغییر use case از EF به SQL هدفمند منتقل کرد.
 این به معنی یکسان بودن همهٔ semantics دو implementation نیست؛ ترتیب، null، collation و consistency باید قرارداد مشترک داشته باشند.
-fake برای بررسی orchestration مفید است؛ query translation و FK را اثبات نمی‌کند.
+برای بررسی ترتیب کار use case یا `orchestration` می‌توان implementation آزمایشیِ قابل کنترل، یعنی `fake`، داد. اما پاسخ درست fake ثابت نمی‌کند query واقعی به SQL ترجمه می‌شود یا FK دیتابیس درست کار می‌کند؛ آن‌ها آزمون implementation واقعی می‌خواهند.
 آزمایش فعلی همین implementation واقعی را به PostgreSQL وصل می‌کند.
 
 ## مالک SaveChanges کیست؟
 
 برای خواندن نیازی به SaveChanges نیست.
 برای نوشتن، مرز commit باید با use case هماهنگ باشد.
-Repository که در هر Add فوراً Save می‌کند، ساخت چند تغییر اتمی را دشوار می‌کند.
-از طرف دیگر، سرویس عمومی Commit بدون قرارداد طول عمر می‌تواند state چند قابلیت را ناخواسته ذخیره کند.
+اگر هر `Add` فوراً `SaveChanges` اجرا کند، ثبت درخواست و رویداد مرتبط ممکن است در دو commit جدا قرار بگیرند و شکست دومی، اولی را برنگرداند. در مقابل، متد عمومی Commit با context مشترک و عمر نامشخص ممکن است تغییرهای نامرتبط را هم ذخیره کند. پس انتخاب مالک SaveChanges باید از مرز موفقیت همان use case بیاید.
 در نمونهٔ نهایی port مربوط به Ticket یک aggregate را load و همان تغییر را اتمی commit می‌کند.
 اگر دو aggregate باید با هم commit شوند، قرارداد واحد کار یا transaction صریح متناسب با آن use case لازم است.
 
 ## دامنه از persistence جداست
 
-Domain نباید DbContext یا Controller یا HttpContext را بشناسد.
+لایهٔ Domain نباید DbContext یا Controller یا HttpContext را بشناسد.
 entityهای persistence برای materialization و FK و token طراحی شده‌اند.
 DTO برای پاسخ مشتری طراحی شده و نباید graph tracked را با چرخهٔ navigation serialize کند.
 Mapper محل تبدیل این شکل‌هاست؛ انتقال قواعد کسب‌وکار به mapper درست نیست.
@@ -72,7 +70,7 @@ Mapper محل تبدیل این شکل‌هاست؛ انتقال قواعد کس
 
 ## از نام پوشه دفاع کن
 
-Services برای همهٔ کلاس‌ها معنا ندارد؛ TicketReport use case است و EfTicketQueries یک adapter دیتابیس.
+نام Services برای همهٔ کلاس‌ها معنا ندارد؛ TicketReport use case است و EfTicketQueries یک adapter دیتابیس.
 Helperهای عمومی که context و request و domain را با هم می‌گیرند معمولاً مرزها را خراب می‌کنند.
 ابتدا نقش را پیدا کن، سپس فایل را نام‌گذاری کن.
 نام Repository به‌تنهایی وابستگی معکوس یا قابلیت تست ایجاد نمی‌کند.
@@ -85,7 +83,7 @@ Helperهای عمومی که context و request و domain را با هم می‌
 dotnet run --project samples/45-data-access/SupportDesk.csproj
 ```
 
-Lab یک schema تصادفی تازه می‌سازد و در پایان همان schema را پاک می‌کند.
+کلاس آزمایشگاهی Lab یک schema تصادفی تازه می‌سازد و در پایان همان schema را پاک می‌کند.
 با --keep در انتهای فرمان می‌توانی آن را برای بازرسی نگه داری؛ نام schema در خروجی چاپ می‌شود.
 این گزینه ابزار مشاهده است، نه ذخیره‌سازی پایدار برنامه.
 کد خروج صفر و PASS: lesson scenario یعنی assertionهای همین سناریو عبور کرده‌اند.

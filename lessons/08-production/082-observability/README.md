@@ -1,7 +1,7 @@
 # درس ۰۸۲ — برنامه زنده است، اما آمادهٔ کار هم هست؟
 
 ممکن است process بالا باشد ولی هنوز آمادهٔ پذیرفتن job نباشد.
-در این درس اول این دو وضعیت را از هم جدا می‌کنیم؛ بعد یک عملیات را با trace و counter می‌بینیم.
+در این درس اول این دو وضعیت را از هم جدا می‌کنیم؛ بعد یک عملیات را با trace و counter می‌بینیم. log یک رویداد را ثبت می‌کند، trace مسیر و زمان اجرای یک عملیات را نشان می‌دهد و metric یک اندازه‌گیری عددی است. مثلاً برای یک job، log می‌تواند علت شکست را بنویسد، trace مرحلهٔ کند را مشخص کند و یک counter تعداد jobهای پذیرفته‌شده را بشمارد. هر بخش از trace را span می‌نامیم.
 
 ## ۱. اجرای کوچک و قابل مشاهده
 
@@ -65,7 +65,7 @@ flowchart LR
 | /health/live | آیا برنامه پاسخ می‌دهد؟ | بررسی process یا restart با سیاست مناسب |
 | /health/ready | آیا initialization محلی تمام شده و این نمونه کار می‌پذیرد؟ | خارج کردن از ترافیک تا رفع مشکل |
 
-Predicate در liveness هیچ dependency check را اجرا نمی‌کند. readiness فقط check دارای tag برابر ready را می‌گیرد.
+واژهٔ Predicate در اینجا به شرط انتخاب health checkها اشاره دارد. شرط liveness این نمونه همهٔ checkهای ثبت‌شده را کنار می‌گذارد، بنابراین هیچ dependency check اجرا نمی‌شود. readiness فقط check دارای tag برابر `ready` را انتخاب می‌کند.
 اگر StartupState آماده نباشد، readiness کد 503 می‌دهد، liveness همچنان 200 است و /work هم 503 می‌دهد.
 تست این حالت state را از DI تغییر می‌دهد؛ endpoint عمومی برای دست‌کاری state اضافه نکرده‌ایم.
 
@@ -86,14 +86,14 @@ Predicate در liveness هیچ dependency check را اجرا نمی‌کند. r
 | exporter | خروجی دادن دادهٔ جمع‌آوری‌شده |
 | Resource | هویت ثابت سرویس، worker-lab و نسخهٔ 1.0.0 |
 
-AddSource و AddMeter باید دقیقاً نام SupportDesk.WorkerLab را بگیرند؛ صرف ساختن ActivitySource بدون provider متصل، خروجی را تضمین نمی‌کند.
+دو متد `AddSource` و `AddMeter` باید دقیقاً نام SupportDesk.WorkerLab را بگیرند؛ صرف ساختن ActivitySource بدون provider متصل، خروجی را تضمین نمی‌کند.
 این lab برای نتیجهٔ قابل مشاهده AlwaysOnSampler دارد. در محصول باید sampling و حجم و هزینه را طراحی کنی؛ درخواست‌های واقعی را صرفاً با همین تنظیم آموزشی جمع‌آوری نکن.
 
 ## ۵. یک tag کم‌خطر، دو مقدار محدود
 
-span فقط job.outcome دارد و metric فقط outcome دارد؛ مقدار هر دو accepted یا rejected است.
+بازهٔ span فقط job.outcome دارد و metric فقط outcome دارد؛ مقدار هر دو accepted یا rejected است.
 ورودی دیگری مانند /work/alice رد می‌شود و metric تازه تولید نمی‌کند.
-اگر JobId یا email را label metric کنی، برای تعداد زیادی مقدار یکتا، سری‌های فراوان و هزینهٔ بالا می‌سازی؛ به این مشکل cardinality می‌گوییم.
+cardinality تعداد ترکیب‌های متمایز مقدار labelهاست. با label به نام `outcome` و دو مقدار `accepted` و `rejected`، تعداد سری‌های این counter محدود می‌ماند. اگر JobId یا email را label کنی، ممکن است برای هر job یا کاربر سری جداگانه بسازی؛ این cardinality بالا، حافظه و فضای ذخیره‌سازی بیشتری مصرف می‌کند.
 
 نام و نتیجهٔ عملیات کافی است؛ body، query string، header و اطلاعات شخصی را tag نمی‌کنیم.
 اینجا auto-instrumentation درخواست HTTP نصب نشده است؛ صرفاً span و meter خودمان را وصل کرده‌ایم. logging پیش‌فرض درخواست ASP.NET در سطح Warning فیلتر شده تا برای دیدن این lab نیازی به ثبت URLهای ورودی نباشد.
@@ -107,13 +107,13 @@ python scripts/production_smoke.py
 ```
 
 تست‌ها exporter حافظه‌ای کوچک به همان SDK ثبت می‌کنند؛ صرفاً متد Record را mock نمی‌کنند.
-پس از درخواست واقعی WAF، ForceFlush صریح اجرا می‌شود؛ سپس نام span، outcome، وضعیت Error برای rejected و counter با مقدار یک بررسی می‌شود.
+پس از ارسال درخواست با `WebApplicationFactory` یا WAF، تست `ForceFlush` را فراخوانی می‌کند تا SDK داده‌های جمع‌شده را به exporter تحویل دهد. سپس نام span، مقدار outcome، وضعیت Error برای rejected و counter با مقدار یک بررسی می‌شود. منظور از درخواست واقعی، عبور از pipeline برنامه در test host است؛ در این تست اتصال شبکه به سرور بیرونی نداریم.
 تست با email مصنوعی در query و body محرمانه نشان می‌دهد این اطلاعات وارد tagهای span نمی‌شوند؛ این ضمانتِ همهٔ agentها و ابزارهای آینده نیست.
 یک تست جدا نشان می‌دهد مقدار دلخواه label تازه نمی‌سازد و readiness خراب، liveness را خراب نمی‌کند.
 
 ## ۷. چه چیزی هنوز به محیط واقعی نرفته است؟
 
-Console exporter برای یادگیری و عیب‌یابی محلی است؛ خروجی‌اش قرارداد پایدار یا ذخیره‌سازی قابل اتکا نیست.
+ابزار Console exporter برای یادگیری و عیب‌یابی محلی است؛ خروجی‌اش قرارداد پایدار یا ذخیره‌سازی قابل اتکا نیست.
 OTLP exporter، collector و backend مانند سامانهٔ trace در این درس راه‌اندازی نشده‌اند. برای مقصد واقعی باید endpoint، TLS، credential، retry/buffering و سیاست نگه‌داری داده مشخص شوند.
 از زیاد شدن dependencyها شروع نکن؛ اول بگو کدام سؤال عملیاتی باید پاسخ بگیرد.
 

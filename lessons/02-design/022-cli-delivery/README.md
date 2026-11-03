@@ -55,7 +55,7 @@ Delete در سرویس واقعی ممکن است مجوز، تأیید، soft d
 
 ## ۳. direction و responsibility
 
-Domain از Console، File یا DTO خروجی خبر ندارد.
+لایهٔ Domain از Console، File یا DTO خروجی خبر ندارد.
 Application به port ITicketStore وابسته است.
 Infrastructure port را با JSON پیاده می‌کند.
 Presentation service را صدا می‌زند و result را به پیام تبدیل می‌کند.
@@ -64,16 +64,13 @@ Program concreteها را می‌سازد.
 
 ## ۴. state هر عملیات
 
-TicketService برای هر عملیات state را از store Load می‌کند.
-تغییر را روی همان state متعلق به عملیات انجام می‌دهد.
-در success، Save awaited می‌شود و بعد نتیجه برمی‌گردد.
-در expected failure، Save اجرا نمی‌شود.
-در failure storage، success چاپ نمی‌شود و منو متوقف می‌شود.
-این قرارداد تک‌نویسنده است؛ دو process هم‌زمان می‌توانند lost update ایجاد کنند.
+برای هر فرمان، `TicketService` دادهٔ فعلی را از فایل می‌خواند و تغییر را روی همان دادهٔ متعلق به آن عملیات انجام می‌دهد. اگر ورودی یا وضعیت پذیرفته نشود، ذخیره‌ای انجام نمی‌شود. در حالت موفق، برنامه با `await` پایان `Save` را دنبال می‌کند و سپس نتیجهٔ موفق می‌دهد. اگر خودِ ذخیره شکست بخورد، پیام موفقیت چاپ نمی‌شود و منو متوقف می‌شود تا دادهٔ فقط‌درحافظه، ذخیره‌شده تصور نشود.
+
+این قرارداد یک نویسنده دارد. اگر دو process هم‌زمان فایل را بخوانند و سپس جدا ذخیره کنند، ذخیرهٔ آخر می‌تواند تغییر دیگری را از بین ببرد؛ به این مشکل `lost update` می‌گویند.
 
 ## ۵. helper مشترک محدود
 
-ChangeAsync مراحل Id، Load، Find، callback و Save را برای چند تغییر هماهنگ می‌کند.
+متد ChangeAsync مراحل Id، Load، Find، callback و Save را برای چند تغییر هماهنگ می‌کند.
 callback باید قبل از mutation قانون را بررسی کند.
 Outcome failure به معنی عدم ذخیره است.
 Add و Delete helper جدا دارند، چون generator یا حذف collection قواعد متفاوت دارند.
@@ -81,7 +78,7 @@ Add و Delete helper جدا دارند، چون generator یا حذف collection
 
 ## ۶. domain همچنان guard دارد
 
-application expected invalid state را به Outcome تبدیل می‌کند.
+لایهٔ application برای وضعیت نامعتبرِ قابل انتظار، مانند تلاش برای تغییر تیکت بسته، نتیجهٔ مناسب از نوع `Outcome` برمی‌گرداند.
 Ticket.Start و Close نیز invariant خودشان را enforce می‌کنند.
 اگر application guard اشتباه داشته باشد، مدل بی‌صدا نامعتبر نمی‌شود.
 exception غیرمنتظرهٔ مدل را با catch عمومی «همه چیز InvalidState است» پنهان نمی‌کنیم.
@@ -89,7 +86,7 @@ exception غیرمنتظرهٔ مدل را با catch عمومی «همه چیز
 
 ## ۷. DTO و reference
 
-TicketMapping از Notes آرایهٔ جدا می‌سازد.
+کلاس TicketMapping از Notes آرایهٔ جدا می‌سازد.
 تغییر ساختار آن آرایه توسط caller نباید collection داخلی Ticket را تغییر دهد.
 این DTO هنوز یک مجموعهٔ immutable عمیقِ عمومی نیست؛ آرایهٔ خودش می‌تواند mutable باشد.
 چون عنصرها string هستند، مدل با reference به شیء note mutable لو نمی‌رود.
@@ -97,16 +94,16 @@ TicketMapping از Notes آرایهٔ جدا می‌سازد.
 
 ## ۸. schema فایل
 
-Schema برابر supportdesk-v1 است.
+مقدار Schema برابر supportdesk-v1 است.
 NextId از نوع long و مستقل از تعداد Ticketها ذخیره می‌شود.
 Tickets شامل Id، Title، Priority، Status و Notes است.
-propertyهای لازم با JsonRequired حضورشان را الزام می‌کنند؛ null و invariantها جدا در Load بررسی می‌شوند.
+علامت `JsonRequired` می‌گوید property لازم باید در JSON حاضر باشد؛ اما حضور یک property با معتبر بودن مقدارش فرق دارد. پس `Load` همچنان مقدار `null` و قواعد مدل را جدا بررسی می‌کند.
 این schema با فایل درس ۰۱۱ و registration-v1 درس ۰۱۹ یکسان نیست.
 فایل قدیمی بدون migration رد می‌شود و overwrite نمی‌شود.
 
 ## ۹. بازسازی مدل
 
-Load دادهٔ خارجی را به TicketTitle معتبر تبدیل می‌کند.
+متد Load دادهٔ خارجی را به TicketTitle معتبر تبدیل می‌کند.
 Ticket.Restore یادداشت‌ها را اضافه و مسیر Start/Close را طی می‌کند.
 Status یا Priority ناشناخته، یادداشت تکراری، Closed بدون note و Id تکراری رد می‌شوند.
 مدل فعلی side effect بیرونی در این متدها ندارد.
@@ -114,7 +111,7 @@ Status یا Priority ناشناخته، یادداشت تکراری، Closed ب�
 
 ## ۱۰. شناسه پس از حذف
 
-NextId باید از هر Id موجود بزرگ‌تر باشد.
+مقدار NextId باید از هر Id موجود بزرگ‌تر باشد.
 Delete آن را کاهش نمی‌دهد.
 پس حذف آخرین Ticket و restart باعث reuse آن شناسه نمی‌شود.
 ظرفیت تا int.MaxValue برای Id و int.MaxValue + 1 برای حالت ظرفیت تمام‌شدهٔ NextId است.
@@ -182,10 +179,10 @@ storage failure منو را متوقف می‌کند؛ expected input failure ب
 
 ## ۱۶. cancellation
 
-Ctrl+C در Program source لغو را فعال می‌کند.
+ترکیب کلیدهای `Ctrl+C` در Program، source لغو را فعال می‌کند.
 Load و Save token می‌گیرند و پیش از جایگزینی فایل لغو بررسی می‌شود.
 ReadLine در منو synchronous است؛ هنگام prompt ممکن است لازم باشد Enter بزنی تا check بعدی لغو را ببیند.
-لغو بعد از مرز commit تضمین rollback نیست.
+اگر لغو پس از جایگزینی فایل مقصد برسد، ذخیره از مرز `commit` گذشته است؛ درخواست لغو خودبه‌خود فایل قبلی را بازنمی‌گرداند.
 
 برای pre-cancel تکرارپذیر:
 
@@ -204,9 +201,7 @@ dotnet publish samples/21-supportdesk-cli/SupportDesk.csproj -c Release -p:UseAp
 dotnet exercises/published-supportdesk/SupportDesk.dll exercises/published-data.json report
 ```
 
-این خروجی framework-dependent است و runtime .NET 10 روی مقصد لازم دارد.
-کد publish شده نباید برای اجرا به پوشهٔ source وابسته باشد.
-مسیر داده را جدا از پوشهٔ خروجی انتخاب کن تا build جدید داده را overwrite نکند.
+خروجی `framework-dependent` خودِ runtime را همراه ندارد؛ دستگاه مقصد باید runtime .NET 10 داشته باشد. پوشهٔ publish را جدا از سورس اجرا کن تا مطمئن شوی فایل لازم جا نمانده است. مسیر فایل داده را هم بیرون از پوشهٔ خروجی بگذار تا انتشار نسخهٔ تازه، درخواست‌های ذخیره‌شده را بازنویسی نکند.
 خروجی self-contained برای هر RID بحث جداگانهٔ انتشار است؛ این درس آن را ادعا نمی‌کند.
 
 ## ۱۸. بررسی‌های خودکار تحویل

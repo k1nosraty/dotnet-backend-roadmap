@@ -14,7 +14,7 @@ Application بر اساس قابلیت چیده می‌شود و هر endpoint �
 ## vertical slice چه مسئله‌ای را حل می‌کند؟
 
 در سازمان‌دهی صرفاً لایه‌ای، برای تغییر یک رفتار باید میان endpointها، serviceها و قراردادهای عمومی جابه‌جا شوی.
-نگاه slice مسیر یک قابلیت را برجسته می‌کند: ورودی، handler و خروجی آن.
+در `vertical slice`، مسیر کامل یک قابلیت را کنار هم دنبال می‌کنیم؛ مثلاً از body مربوط به Resolve تا handler و پاسخ همان عملیات. اینجا `handler` کلاسی است که مراحل use case را هماهنگ می‌کند، نه خود endpoint HTTP.
 این نگاه الزام نمی‌کند Domain مشترک را در هر قابلیت کپی کنی یا همهٔ SQL را داخل endpoint بنویسی.
 تعداد packageها و وجود mediator هم تعریف آن نیست.
 
@@ -32,13 +32,13 @@ Application بر اساس قابلیت چیده می‌شود و هر endpoint �
 | RenameTicket | Features/RenameTicket/Endpoint.cs | src/Application/Features/RenameTicket/RenameTicket.cs |
 | CloseTicket | Features/CloseTicket/Endpoint.cs | src/Application/Features/CloseTicket/CloseTicket.cs |
 
-Shared در Application فقط شامل port، نتیجه و projection مشترک فعلی است.
+بخش Shared در Application فقط شامل port، نتیجه و projection مشترک فعلی است.
 Domain و Infrastructure به endpointهای feature وابسته نمی‌شوند.
 namespaceهای Application در این مقایسه ثابت مانده‌اند؛ محل فایل با namespace الزاماً یکسان نیست.
 
 ## چه چیزی واقعاً تغییر کرده است؟
 
-handlerها و Domain و mapping ذخیره با درس ۵۵ یکسان‌اند؛ فقط مسیر handlerها و قراردادهای مشترک عوض شده است.
+کد handlerها و Domain و mapping ذخیره با درس ۵۵ یکسان‌اند؛ فقط مسیر handlerها و قراردادهای مشترک عوض شده است.
 اسکریپت این برابری سورس را برای همین refactor کنترل می‌کند.
 در کنار آن یک host واقعی با سه endpoint افزوده شده است.
 پس این درس هم مقایسهٔ چیدمان دارد و هم نشان می‌دهد slice تا مرز HTTP چگونه دنبال می‌شود.
@@ -55,14 +55,14 @@ app.MapPost("/api/tickets/{id:int}/resolve",
             RequestMapping.ToCommand(id, request), ct)));
 ```
 
-routeId از مسیر می‌آید، body شکل محدود دارد و handler از DI گرفته می‌شود.
+پارامتر routeId از مسیر می‌آید، body شکل محدود دارد و handler از DI گرفته می‌شود.
 CancellationToken درخواست تا store منتقل می‌شود.
 کد endpoint قانون تعداد noteها یا state transition را تکرار نمی‌کند.
-OutcomeHttp تنها ترجمهٔ نتیجهٔ مشترک به HTTP است؛ اگر یک قابلیت قرارداد متفاوت داشت، مجبور نیست از همین ترجمه استفاده کند.
+کلاس `OutcomeHttp` کد نتیجهٔ application، مثل Missing یا Conflict، را به پاسخ HTTP مربوط تبدیل می‌کند. این اشتراک برای قرارداد فعلی سه قابلیت است؛ اگر قابلیت تازه status یا body متفاوتی بخواهد، باید آن تفاوت را صریح پیاده کنیم، نه اینکه به‌اجبار نتیجه را در همان قالب جا بدهیم.
 
 ## lifetime و composition
 
-Store حافظه‌ای singleton است تا درخواست‌های مختلف یک state مشترک ببینند.
+کلاس Store حافظه‌ای singleton است تا درخواست‌های مختلف یک state مشترک ببینند.
 handlerها scoped ثبت شده‌اند و state ذخیره‌شدهٔ مشترک داخل خودشان ندارند.
 اتصال implementation به port در Program انجام می‌شود.
 DI container جای تعیین مسئولیت یا ذخیره‌سازی اتمی را نمی‌گیرد.
@@ -76,7 +76,7 @@ DI container جای تعیین مسئولیت یا ذخیره‌سازی اتم�
 | POST /api/tickets/{id}/resolve | resolution | 200 و خلاصه | 400، 404، 409 |
 | POST /api/tickets/{id}/close | ندارد | 200 و خلاصه | 404، 409 |
 
-close با شناسهٔ عددی غیرمثبت به 400 هم می‌رسد.
+عملیات close با شناسهٔ عددی غیرمثبت به 400 هم می‌رسد.
 route constraint عدد نامعتبر را match نمی‌کند و 404 می‌دهد.
 ورودی JSON نامعتبر یا body لازمِ مفقود ممکن است پیش از handler به 400 برسد.
 این نمونه برای نمایش سه قابلیت است؛ API کامل CRUD بخش چهارم را جایگزین نمی‌کند.
@@ -89,7 +89,7 @@ dotnet run --project samples/55-vertical-slices/SupportDesk.csproj -- --check
 dotnet run --project samples/55-vertical-slices/SupportDesk.csproj -- --urls http://127.0.0.1:5056
 ```
 
-host تا Ctrl+C روشن می‌ماند و یک تیکت Id=1 با وضعیت InProgress و بدون note دارد.
+برنامهٔ host تا فشردن `Ctrl+C` روشن می‌ماند و یک تیکت Id=1 با وضعیت InProgress و بدون note دارد.
 هر restart همان seed تازه را می‌سازد؛ حافظهٔ این host دوام ندارد.
 در PowerShell جداگانه:
 
@@ -108,7 +108,7 @@ Close تکراری موفق است چون state جدیدی ایجاد نمی‌�
 اسکریپت هشت درخواست Resolve هم‌زمان می‌فرستد.
 دقیقاً یکی باید موفق و هفت مورد Conflict شوند؛ noteCount نهایی باید یک باشد.
 این مشاهده فقط وضعیت نهایی نیست: اجازه نمی‌دهد عملیات ناموفق note اضافه جا بگذارد.
-تضمین رقابت در این host از CAS adapter و قواعد Domain می‌آید، نه از پوشهٔ Features.
+موفقیت فقط یک Resolve از قواعد Domain و روش `CAS` یا `compare-and-swap` در adapter می‌آید: نسخه هنگام جایگزینی بررسی می‌شود. گروه‌بندی فایل‌ها در Features این کنترل را ایجاد نمی‌کند.
 قرار دادن همان handler در پوشهٔ دیگر، هیچ قفل تازه‌ای ایجاد نمی‌کند.
 
 ```powershell

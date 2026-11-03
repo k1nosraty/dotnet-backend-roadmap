@@ -14,7 +14,7 @@
 | 004 | [حلقه‌ها و منوی کنسول](lessons/01-foundations/004-loops/README.md) | نوشته‌شده |
 | 005 | [متدها و جداسازی محاسبه از ورودی](lessons/01-foundations/005-methods/README.md) | نوشته‌شده |
 | 006 | [List و Dictionary و جست‌وجو](lessons/01-foundations/006-collections/README.md) | نوشته‌شده |
-| 007 | [کلاس، سازنده و property](lessons/01-foundations/007-classes/README.md) | نوشته‌شده |
+| 007 | [کلاس، constructor و property](lessons/01-foundations/007-classes/README.md) | نوشته‌شده |
 | 008 | [nullability و قرارداد داده](lessons/01-foundations/008-nullability/README.md) | نوشته‌شده |
 | 009 | [exception و مدیریت منابع](lessons/01-foundations/009-exceptions/README.md) | نوشته‌شده |
 | 010 | [LINQ و اجرای deferred](lessons/01-foundations/010-linq/README.md) | نوشته‌شده |
@@ -28,7 +28,7 @@
 | 013 | [encapsulation و invariant](lessons/02-design/013-encapsulation/README.md) | نوشته‌شده |
 | 014 | [composition و inheritance](lessons/02-design/014-composition/README.md) | نوشته‌شده |
 | 015 | [interface و قرارداد](lessons/02-design/015-interfaces/README.md) | نوشته‌شده |
-| 016 | [تزریق وابستگی و طول عمر](lessons/02-design/016-dependency-injection/README.md) | نوشته‌شده |
+| 016 | [Dependency Injection و lifetime](lessons/02-design/016-dependency-injection/README.md) | نوشته‌شده |
 | 017 | [SOLID با بازآرایی یک قابلیت](lessons/02-design/017-solid/README.md) | نوشته‌شده |
 | 018 | [record و value object](lessons/02-design/018-value-objects/README.md) | نوشته‌شده |
 | 019 | [جداسازی presentation و application و persistence](lessons/02-design/019-separation/README.md) | نوشته‌شده |

@@ -4,8 +4,7 @@
 
 ## مسئله و خروجی
 
-عددهای تنظیمی را در actionها پخش نمی‌کنیم و برای مقدار نامعتبر تا اولین request صبر نمی‌کنیم.
-در این درس تنظیمات typed با Options، validation هنگام startup و مرز secrets را می‌سازیم.
+فرض کن اندازهٔ پیش‌فرض صفحه باید مثبت و از سقف صفحه کوچک‌تر باشد. به‌جای خواندن رشته و تبدیل آن در هر action، تنظیمات را در یک کلاس با propertyهای مشخص یا `typed options` می‌گیریم. هنگام startup، مقدارها و رابطه‌شان را بررسی می‌کنیم تا تنظیم اشتباه پیش از دریافت درخواست کاربر آشکار شود. محل نگه‌داری secretها را هم از فایل تنظیمات عمومی جدا می‌کنیم.
 نمونه برای مشاهدهٔ مقدار تنظیمات یک endpoint موقت settings دارد.
 در درس pagination همین options رفتار واقعی فهرست را کنترل می‌کند.
 
@@ -28,8 +27,7 @@ public sealed class TicketOptions
 ```
 
 این کلاس در Configuration است و DTO ورودی کاربر نیست.
-setter برای binder تنظیمات کاربرد دارد؛ آن را entity mutable برنامه فرض نکن.
-defaultها به نبود کلید پاسخ می‌دهند، اما مقدار صریح نامعتبر را معتبر نمی‌کنند.
+بخشی که تنظیمات را می‌خواند، یعنی `configuration binder`، با setterها مقدار کلیدها را در این کلاس قرار می‌دهد. مقدار پیش‌فرض برای زمانی است که کلید ارسال نشده باشد؛ اگر صریحاً صفر تنظیم شود، همان صفر باید بررسی و در صورت نامعتبر بودن رد شود. این کلاس تنظیمات، entity داده‌های درخواست نیست.
 نام section را متمرکز نگه می‌داریم تا typo در چند فایل تکرار نشود.
 
 ## ۳. فایل تنظیمات
@@ -40,7 +38,7 @@ defaultها به نبود کلید پاسخ می‌دهند، اما مقدار 
 }
 ```
 
-appsettings.json نمونه شامل بخش Logging نیز هست.
+فایل appsettings.json نمونه شامل بخش Logging نیز هست.
 فایل JSON باید syntax درست داشته باشد.
 در مسیر اجرای مستقیم DLL، content root و محل فایل مهم‌اند.
 تست publish برنامه را از پوشهٔ خروجی اجرا می‌کند تا خواندن فایل به source وابسته نماند.
@@ -57,17 +55,13 @@ builder.Services.AddOptions<TicketOptions>()
     .ValidateOnStart();
 ```
 
-Bind configuration را به propertyها متصل می‌کند.
-Validate رابطهٔ بین دو مقدار را هم بررسی می‌کند.
-ValidateOnStart باعث می‌شود این validation هنگام شروع host انجام شود.
+متد `Bind` کلیدهای بخش تنظیمات را به propertyهای این کلاس وصل می‌کند. سپس `Validate` علاوه بر مقدار هر property، رابطهٔ آن‌ها را بررسی می‌کند؛ مثلاً مقدار پیش‌فرض نباید از سقف بزرگ‌تر باشد. متد `ValidateOnStart` این بررسی را هنگام شروع host اجرا می‌کند، به‌جای اینکه اولین درخواست کاربر خطای تنظیمات را آشکار کند.
 برای مقدار خطای syntax یا تبدیل مثل abc به int ممکن است binding زودتر شکست بخورد.
 این failureها خطای تنظیمات operator هستند و نباید با request ۴۰۰ client اشتباه شوند.
 
 ## ۵. fail fast
 
-DefaultPageSize=0 نباید تا ساعت‌ها برنامه را با رفتار مبهم نگه دارد.
-در نمونه host با OptionsValidationException متوقف می‌شود.
-این توقف برای تنظیمات ضروری انتخاب آگاهانه است.
+در این نمونه با تنظیم `DefaultPageSize=0`، شروع host با `OptionsValidationException` شکست می‌خورد. به توقف زودهنگام پس از کشف مشکل، `fail fast` می‌گویند. به این ترتیب برنامه با تنظیمی که از همان ابتدا نامعتبر است ساعت‌ها باز نمی‌ماند تا خطا در مسیر یک کاربر دیده شود.
 در CI هم این رفتار با process جدا و timeout بررسی می‌شود.
 تست باید پایان ناموفق process را تأیید کند، نه فقط وجود یک رشته در log موفق.
 
@@ -104,7 +98,7 @@ $env:Tickets__DefaultPageSize = "3"
 $env:Tickets__MaxPageSize = "8"
 ```
 
-server را با همین session اجرا کن و settings را بخوان.
+برنامهٔ server را با همین session اجرا کن و settings را بخوان.
 انتظار defaultPageSize=3 و maxPageSize=8 داریم.
 برای آزمایش failure برنامه را متوقف و DefaultPageSize را ۹ بگذار؛ رابطهٔ دو عدد نقض می‌شود.
 پس از آزمایش process را متوقف و متغیرهای تمرین را پاک کن.
@@ -116,8 +110,7 @@ Remove-Item Env:Tickets__MaxPageSize
 
 ## ۹. precedence
 
-در پیش‌فرض CreateBuilder، appsettings و فایل environment و user secrets در Development و environment variables و command line به ترتیب providerهای متداول وارد می‌شوند.
-برای یک کلید تکراری provider دارای اولویت بالاتر مقدار قبلی را override می‌کند.
+هر `configuration provider` از یک منبع، مثل فایل یا environment variable، مقدار می‌خواند. در تنظیمات پیش‌فرض `CreateBuilder`، فایل appsettings، فایل مخصوص environment، user secrets در Development، environment variables و command line به‌ترتیب اضافه می‌شوند. برای یک کلید مشترک، منبعی که دیرتر اضافه شده مقدار قبلی را override می‌کند؛ پس command line نسبت به مقدار فایل اولویت بالاتری دارد.
 درس ۰۲۴ این رفتار را با greeting آزمایش کرد.
 اگر providerها را جابه‌جا کنی، باید precedence پروژهٔ واقعی را دوباره مستند کنی.
 IOptions خودش منبع secret یا لایهٔ رمزنگاری نیست.

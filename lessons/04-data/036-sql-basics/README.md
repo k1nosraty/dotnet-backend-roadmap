@@ -11,7 +11,7 @@ NpgsqlDataSource، command، reader، cancellation و مالکیت اتصال ر
 
 ## ۱. کتابخانه و مسئولیت آن
 
-Npgsql driver ارتباط .NET با PostgreSQL است؛ ORM یا EF Core نیست.
+کتابخانهٔ Npgsql یک `driver` است؛ فرمان و مقدارهای پارامترها را از برنامهٔ .NET به PostgreSQL می‌فرستد و نتیجه را برمی‌گرداند. نوشتن SQL و تبدیل row به دادهٔ برنامه هنوز در اختیار خودمان است. ابزار ORM مثل EF Core، که نگاشت نوع‌های برنامه و کار با داده را در سطح دیگری ارائه می‌کند، موضوع درس‌های بعد است.
 نمونه نسخهٔ ثابت 10.0.3 دارد و target آن net10.0 است.
 نسخه و سازگاری از [NuGet رسمی](https://www.nuget.org/packages/Npgsql/10.0.3) بررسی شده‌اند.
 PackageReference در csproj آماده وجود دارد؛ اجرای نخست restore می‌خواهد.
@@ -23,9 +23,7 @@ PackageReference در csproj آماده وجود دارد؛ اجرای نخست 
 await using NpgsqlDataSource db = NpgsqlDataSource.Create(connectionString);
 ```
 
-DataSource معمولاً برای پیکربندی و pooling با عمر بلند ساخته می‌شود.
-در وب آینده آن را برای هر request دوباره نمی‌سازیم.
-اتصال یک session با server است و نباید آن را هم‌زمان بین چند عملیات مستقل به اشتراک گذاشت.
+شیء `DataSource` تنظیمات و مجموعهٔ اتصال‌های قابل استفادهٔ مجدد را نگه می‌دارد. این استفادهٔ مجدد `connection pooling` نام دارد و هزینهٔ بازکردن اتصال تازه برای هر کار را کم می‌کند؛ به همین دلیل DataSource معمولاً عمر بلند دارد و برای هر request از نو ساخته نمی‌شود. خودِ یک connection، session مشخصی با server دارد و نباید هم‌زمان بین عملیات‌های مستقل به اشتراک گذاشته شود.
 وقتی transaction لازم باشد connection مشخص می‌گیریم؛ درس ۳۹ این موضوع را عملی می‌کند.
 connection string از SUPPORTDESK_PG session می‌آید و در source یا log چاپ نمی‌شود.
 
@@ -39,15 +37,12 @@ command.Parameters.Add(new NpgsqlParameter {
 });
 ```
 
-$1 placeholder پارامتر اول است و مقدار از SQL جدا ارسال می‌شود.
-RETURNING دادهٔ ساخته‌شده از جمله Id تولیدشده را در همان statement برمی‌گرداند.
-برای گرفتن Id از MAX(id) بعد از INSERT استفاده نمی‌کنیم؛ writer دیگری می‌تواند بین دو عملیات داده بسازد.
+عبارت `$1` یک `placeholder` برای مقدار پارامتر اول است؛ عنوان کاربر جدا از متن SQL ارسال می‌شود و بخشی از دستور نمی‌شود. بخش `RETURNING` شناسه و دادهٔ همان درج را در همان statement برمی‌گرداند. اگر به‌جای آن پس از درج `MAX(id)` بگیریم، نویسندهٔ دیگری ممکن است در فاصلهٔ بین دو فرمان رکورد تازه‌ای ساخته باشد و شناسهٔ اشتباهی دریافت کنیم.
 نوع Text صریح است و به inference مقدار null وابسته نیستیم.
 
 ## ۴. parameter برای value است
 
-نام table، column یا جهت ORDER BY را معمولاً با parameter مقدار نمی‌توان جایگزین کرد.
-اگر sort دلخواه لازم است، mapping ثابت از نام‌های مجاز به SQL ثابت بساز.
+پارامتر برای مقدار است، مثل عنوان یا شناسه، نه برای انتخاب ساختار دستور. نمی‌توان انتظار داشت یک پارامتر معمولی نام table، column یا جهت `ORDER BY` را عوض کند. برای sort انتخابی، نام‌های قابل قبول را در یک `allowlist` مشخص کن و هر نام را به بخش ثابت و ازپیش‌نوشته‌شدهٔ SQL نگاشت کن.
 SQL را با عنوان یا شناسهٔ متنی کاربر concatenate نکن.
 حذف quote از ورودی راه‌حل injection نیست و می‌تواند متن درست را خراب کند.
 درج متن دارای کوتیشن باید بدون تغییر معنی یا حذف جدول انجام شود.
@@ -61,7 +56,7 @@ if (!await reader.ReadAsync(token))
 return new TicketRow(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
 ```
 
-reader ابتدا پیش از اولین row قرار دارد و ReadAsync به row بعدی می‌رود.
+شیء `reader` نتیجه را rowبه‌row در اختیار می‌گذارد. ابتدا هنوز روی هیچ row نیست؛ اولین `ReadAsync` باید موفق شود تا بتوان columnهای اولین row را خواند. فراخوانی‌های بعدی به rowهای بعد می‌روند و پایان نتیجه را با `false` اعلام می‌کنند.
 ستون‌های ۰، ۱ و ۲ مطابق SELECT یا RETURNING صریح ما هستند.
 GetString روی NULL مجاز نیست؛ برای column اختیاری ابتدا IsDBNull را بررسی کن.
 TicketRow قرارداد خروجی این adapter است و خود Ticket domain با تمام رفتارهایش نیست.
@@ -72,14 +67,14 @@ TicketRow قرارداد خروجی این adapter است و خود Ticket domai
 SELECT id, title, status FROM tickets WHERE id=$1;
 ```
 
-WHERE ردیف‌ها را محدود می‌کند و parameter اول Integer است.
+بخش WHERE ردیف‌ها را محدود می‌کند و parameter اول Integer است.
 Id ناموجود نتیجهٔ صفر row می‌دهد و repository null برمی‌گرداند.
 خطای قطع اتصال null نیست و نباید با catch عمومی به Ticket ناموجود تبدیل شود.
 کلید یکتا انتظار حداکثر یک row را توجیه می‌کند.
 
 ## شرط‌های ترکیبی و محدود کردن خروجی
 
-WHERE می‌تواند شرط‌های AND و OR داشته باشد؛ برای معنی روشن از پرانتز استفاده کن.
+بخش WHERE می‌تواند شرط‌های AND و OR داشته باشد؛ برای معنی روشن از پرانتز استفاده کن.
 query فهرست می‌تواند status، حداقل Id، ترتیب صعودی و limit داشته باشد:
 
 ```sql
@@ -100,7 +95,7 @@ LIKE و ILIKE برای الگوی متن‌اند؛ parameter شدن مقدار 
 UPDATE tickets SET title=$1 WHERE id=$2;
 ```
 
-ExecuteNonQueryAsync تعداد rowهای متاثر را می‌دهد.
+متد ExecuteNonQueryAsync تعداد rowهای متاثر را می‌دهد.
 برای Id موجود یک و برای ناموجود صفر انتظار داریم.
 حذف WHERE می‌تواند همهٔ ردیف‌ها را تغییر دهد؛ query را قبل از اجرا با همان شرط مرور کن.
 این adapter فقط SQL را نشان می‌دهد؛ بررسی Closed و مجوز ویرایش باید در use case نهایی حفظ شود.
@@ -131,7 +126,7 @@ Id تولیدشده را بعد از DELETE به Count+1 برنمی‌گردان
 
 ## ۱۰. await using و token
 
-command و reader با await using تا پایان scope dispose می‌شوند.
+دو شیء command و reader با await using تا پایان scope dispose می‌شوند.
 connection قرض‌گرفته‌شده از DataSource به شکل مناسب آزاد یا به pool برمی‌گردد.
 CancellationToken به اجرا و ReadAsync منتقل شده است.
 pre-cancel این درس تکرارپذیر است؛ لغو وسط نوشتن الزاماً ثابت نمی‌کند server هیچ تغییری نداده است.
@@ -185,14 +180,14 @@ dotnet run --project samples/35-sql-crud/SupportDesk.csproj -- --keep
 
 ## تمرین مستقل
 
-ListAsync را با limit مثبت و مرتب‌سازی Id اضافه کن.
+متد ListAsync را با limit مثبت و مرتب‌سازی Id اضافه کن.
 limit را محدود کن و query پارامتری بنویس.
 فهرست خالی باید collection خالی بدهد، نه null برای خطای اتصال.
 حداقل عنوان دارای کوتیشن، متن فارسی و Id ناموجود را بررسی کن.
 
 ## تمرین تکمیلی
 
-description اختیاری را در SQL و قرارداد query اضافه کن.
+مقدار description اختیاری را در SQL و قرارداد query اضافه کن.
 برای ارسال NULL از parameter دارای نوع مشخص و DBNull.Value استفاده کن.
 در خواندن، null را به رشتهٔ ساختگی تبدیل نکن؛ قرارداد nullable را حفظ کن.
 قبل از افزودن dependency جدید، نشان بده driver فعلی دقیقاً کدام نیاز را حل نکرده است.

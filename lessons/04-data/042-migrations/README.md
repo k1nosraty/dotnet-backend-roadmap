@@ -15,7 +15,7 @@
 
 ## یک نگاه: ارتقا بدون پاک‌کردن تیکت قبلی
 
-migration دوم، ستون را به جدول موجود اضافه می‌کند. در این سناریو تیکت قدیمی باقی می‌ماند و Priority آن Normal می‌شود.
+در migration دوم، ستون تازه به جدول موجود اضافه می‌شود. در این سناریو تیکت قدیمی باقی می‌ماند و Priority آن Normal می‌شود.
 
 ```mermaid
 flowchart LR
@@ -41,14 +41,13 @@ flowchart LR
 | DeskContextModelSnapshot | مدل مبنای ساخت migration بعدی |
 | __EFMigrationsHistory | شناسهٔ migrationهایی که روی همین دیتابیس اعمال شده‌اند |
 
-snapshot را به جای migration اجرا نمی‌کنیم.
-EF معمولاً اختلاف مدل امروز و snapshot را scaffold می‌کند؛ کشف همهٔ تفاوت‌های schema زنده کار آن نیست.
-HasPendingModelChanges نبود drift بین کد و snapshot را بررسی می‌کند، نه سلامت کامل دیتابیس را.
+فایل snapshot را به جای migration اجرا نمی‌کنیم.
+ابزار EF معمولاً مدل فعلی کد را با snapshot قبلی مقایسه و فایل تغییر را تولید می‌کند؛ این تولید اولیهٔ کد `scaffolding` نام دارد. ابزار در این مرحله تمام تغییرهای دستی روی دیتابیس زنده را کشف نمی‌کند. متد `HasPendingModelChanges` نیز اختلاف یا `drift` بین مدل کد و snapshot را می‌سنجد، نه اینکه ثابت کند دیتابیس زنده دقیقاً همان شکل را دارد.
 migration و designer و snapshot را با هم commit کن؛ ویرایش تاریخچهٔ اعمال‌شده روش upgrade نیست.
 
 ## دو نسخهٔ مرجع
 
-InitialCreate جدول tickets با Id و Title و Status را می‌سازد.
+عملیات migration با نام InitialCreate جدول tickets با Id و Title و Status را می‌سازد.
 AddPriority ستون Priority با default برابر Normal اضافه می‌کند.
 دادهٔ قبلی حذف نمی‌شود و مقدار آن ستون برای تیکت قدیمی Normal می‌شود.
 در Program ابتدا فقط migration اول اجرا می‌شود، یک تیکت با SQL ثابت آموزشی درج می‌شود، سپس migration دوم اجرا می‌شود.
@@ -69,7 +68,7 @@ dotnet ef migrations has-pending-model-changes --project samples/41-migrations/S
 dotnet ef migrations script --idempotent --project samples/41-migrations/SupportDesk.csproj --output upgrade.sql
 ```
 
-script را پیش از اجرا بخوان: جدول هدف، نوع ستون، default، lock و احتمال از دست رفتن داده مهم‌اند.
+فایل script را پیش از اجرا بخوان: جدول هدف، نوع ستون، default، lock و احتمال از دست رفتن داده مهم‌اند.
 دیتابیس این نمونه موقتی است؛ برای مشاهدهٔ history، اجرای درس را با --keep انجام بده.
 SUPPORTDESK_PG را به همان schema نگه‌داشته‌شده وصل کن تا CLI تاریخچهٔ همان آزمایش را ببیند.
 بدون Search Path، ابزار ممکن است schema پیش‌فرض دیگری را هدف بگیرد.
@@ -83,7 +82,7 @@ mapping آن را IsRequired و HasMaxLength(40) و HasDefaultValue("General") �
 dotnet ef migrations add AddCategory --project samples/41-migrations/SupportDesk.csproj
 ```
 
-Up باید AddColumn باشد، نه DropTable/CreateTable.
+در متد `Up` باید عملیات `AddColumn` را ببینی؛ حذف و ساخت دوبارهٔ جدول با `DropTable/CreateTable` دادهٔ قبلی را از بین می‌برد.
 Down معمولاً ستون را حذف می‌کند؛ دادهٔ آن ستون برنمی‌گردد.
 این تمرین را در کپی انجام بده: سناریوی مرجع عمداً تعداد دو migration را بررسی می‌کند.
 remove فقط برای آخرین migration اعمال‌نشده در روند توسعه است؛ migration مشترک اعمال‌شده را بازنویسی نکن.
@@ -91,16 +90,14 @@ remove فقط برای آخرین migration اعمال‌نشده در روند 
 ## rollout بدون شعار
 
 برای rename، generated code را بخوان؛ drop/add ممکن است داده را نابود کند.
-برای ستون اجباری روی جدول بزرگ، الگوی expand → backfill → enforce را ارزیابی کن.
-ابتدا سازگاری کد قدیم و جدید را برقرار کن، backfill را قابل کنترل انجام بده، سپس constraint را سخت کن.
+برای افزودن column اجباری روی جدول بزرگ، سه مرحله را جدا ارزیابی کن: ابتدا در `expand` ساختار را به‌شکلی گسترش بده که کد قدیم و جدید بتوانند کار کنند. سپس در `backfill` مقدار رکوردهای قبلی را با سرعت و محدودهٔ قابل کنترل پر کن. در پایانِ `enforce`، پس از معتبرشدن داده‌ها constraint نهایی را اعمال کن. این الگو نیازمند طراحی متناسب با تغییر واقعی است.
 یک default آموزشی برای جدول کوچک، تضمین deployment بدون lock روی جدول بزرگ نیست.
 اجرای migration در همهٔ instanceهای وب، اختیار و زمان تغییر schema را به startup گره می‌زند.
 درس ۴۸ فرمان maintenance جدا دارد؛ production به review script، backup و برنامهٔ بازیابی نیاز دارد.
 
 ## مرز rollback
 
-Down معکوس نحوی بعضی DDLهاست؛ تضمین بازیابی کسب‌وکار نیست.
-اگر ستون را حذف کنی و داده از دست برود، دوباره Up کردن دادهٔ قبلی را بازسازی نمی‌کند.
+متد `Down` دستور بازگشت ساختار را می‌نویسد، اما لزوماً دادهٔ از‌دست‌رفته را بازیابی نمی‌کند. اگر Down یک column را حذف کند، اجرای دوبارهٔ Up ممکن است همان column را بسازد، ولی مقدارهای قبلی آن را برنمی‌گرداند. برای همین rollback schema را با بازیابی داده از backup یکی نمی‌گیریم.
 برنامهٔ قدیمی ممکن است schema جدید را نفهمد؛ rollback برنامه و rollback دیتابیس یک تصمیم واحد نیستند.
 در خرابی، پیش از اجرای دستور اصلاح، migration history و نسخهٔ binary را ثبت کن.
 
@@ -112,7 +109,7 @@ Down معکوس نحوی بعضی DDLهاست؛ تضمین بازیابی کسب
 dotnet run --project samples/41-migrations/SupportDesk.csproj
 ```
 
-Lab یک schema تصادفی تازه می‌سازد و در پایان همان schema را پاک می‌کند.
+کلاس آزمایشگاهی Lab یک schema تصادفی تازه می‌سازد و در پایان همان schema را پاک می‌کند.
 با --keep در انتهای فرمان می‌توانی آن را برای بازرسی نگه داری؛ نام schema در خروجی چاپ می‌شود.
 این گزینه ابزار مشاهده است، نه ذخیره‌سازی پایدار برنامه.
 کد خروج صفر و PASS: lesson scenario یعنی assertionهای همین سناریو عبور کرده‌اند.

@@ -4,10 +4,7 @@
 
 ## مسئله و خروجی
 
-DI فقط ساختن کلاس بدون new نیست؛ طول عمر وابستگی باید با مصرف‌کننده سازگار باشد.
-در این درس با شناسهٔ instance رفتار scoped را بین دو dependency در یک request اندازه می‌گیریم.
-هم‌زمان ثابت می‌کنیم دادهٔ singleton store بین requestها باقی می‌ماند.
-به جای حفظ کردن تعریف‌ها، شواهد واقعی از HTTP می‌گیریم.
+در یک درخواست HTTP، هم controller و هم service به شیئی از نوع `RequestStamp` نیاز دارند. آن‌ها را از دو مسیر دریافت می‌کنیم و شناسه‌هایشان را مقایسه می‌کنیم: اگر registration از نوع Scoped باشد، داخل همان request به یک instance می‌رسند. با درخواست بعدی این آزمایش را تکرار می‌کنی تا تفاوت عمر request با عمر singleton store را ببینی.
 
 ## ۱. سه طول عمر
 
@@ -31,7 +28,7 @@ public sealed class RequestStamp
 }
 ```
 
-RequestStamp در Application ثبت scoped دارد.
+کلاس RequestStamp در Application ثبت scoped دارد.
 Guid اینجا ابزار مشاهدهٔ instance است و هیچ مجوزی ایجاد نمی‌کند.
 در constructor TicketService هم همین type تزریق شده است.
 service یک property خواندنی RequestId برای آزمایش دارد.
@@ -44,7 +41,7 @@ app.MapGet("/diagnostics/scope", (RequestStamp stamp, TicketService service) =>
     Results.Ok(new { direct = stamp.Id, viaService = service.RequestId }));
 ```
 
-framework هر دو dependency را از scope همین request resolve می‌کند.
+کد framework هر دو dependency را از scope همین request resolve می‌کند.
 stamp مستقیم و stamp داخل service باید Id یکسان داشته باشند.
 این نشان می‌دهد scoped در همان scope به یک instance برمی‌گردد.
 endpoint فقط داخل شرط Development map می‌شود و در مستندات OpenAPI پنهان خواهد بود.
@@ -73,7 +70,7 @@ builder.Services.AddScoped<RequestStamp>();
 
 ## ۶. captive dependency
 
-اگر singleton سازنده‌اش TicketService scoped بخواهد، وابستگی کوتاه‌عمر در شیء بلندعمر گیر می‌کند.
+اگر constructor یک singleton، نوع Scoped به نام `TicketService` را بگیرد و نگه دارد، آن service از عمر scope مورد انتظارش طولانی‌تر استفاده می‌شود. این همان `captive dependency` است: dependency کوتاه‌عمر داخل مصرف‌کنندهٔ بلندعمر باقی می‌ماند.
 تزریق موفق ظاهری با خاموش بودن validation طراحی را درست نمی‌کند.
 این نمونه validation را برای همهٔ environmentها روشن کرده است.
 عوض کردن همهٔ serviceها به singleton راه‌حل عمومی خطای DI نیست.
@@ -88,7 +85,7 @@ builder.Host.UseDefaultServiceProvider(options =>
 });
 ```
 
-ValidateScopes به تشخیص مصرف scope نامناسب کمک می‌کند.
+گزینهٔ `ValidateScopes` به تشخیص مصرف scope نامناسب کمک می‌کند.
 ValidateOnBuild بخشی از گراف قابل ساخت serviceها را هنگام Build بررسی می‌کند.
 این‌ها اثبات thread safety یا درستی همهٔ factoryهای پویا نیستند.
 open genericها و رفتارهایی که فقط هنگام اجرا رخ می‌دهند ممکن است به تست جدا نیاز داشته باشند.
@@ -99,12 +96,11 @@ open genericها و رفتارهایی که فقط هنگام اجرا رخ می
 دو request متفاوت می‌توانند هم‌زمان به singleton store برسند.
 بنابراین lock یا طراحی concurrency مناسب برای state مشترک لازم است.
 scoped بودن TicketService به dictionary singleton قفل خودکار اضافه نمی‌کند.
-همچنین در یک request با Task.WhenAll هم می‌توان چند کار concurrent روی dependency یک scope اجرا کرد.
-یک instance مشترک الزاماً مجوز مصرف parallel نیست؛ این نکته برای DbContext مهم خواهد بود.
+حتی داخل یک request هم می‌توان با `Task.WhenAll` چند عملیات هم‌زمان شروع کرد. این عملیات ممکن است از همان instance موجود در scope استفاده کنند. پس Scoped فقط اشتراک instance در محدوده را تعیین می‌کند و تضمین نمی‌کند استفادهٔ هم‌زمان از آن بی‌خطر باشد؛ این نکته در مورد `DbContext` اهمیت پیدا می‌کند.
 
 ## ۹. مالکیت disposal
 
-serviceهایی که container می‌سازد، طبق قرارداد lifetime توسط آن dispose می‌شوند.
+کد serviceهایی که container می‌سازد، طبق قرارداد lifetime توسط آن dispose می‌شوند.
 وابستگی‌ای که با new بیرون از container ساخته و instance آن را ثبت کرده‌ای می‌تواند مالکیت متفاوتی داشته باشد.
 dependency تزریق‌شده را در پایان action دستی Dispose نکن.
 برای resource کوتاه‌عمر خودت، مالکیت و using را صریح نگه دار.
@@ -112,8 +108,7 @@ dependency تزریق‌شده را در پایان action دستی Dispose نک
 
 ## ۱۰. middleware و scoped dependency
 
-conventional middleware معمولاً instance بلندعمر دارد.
-dependency scoped را می‌توان در InvokeAsync دریافت کرد تا از request scope resolve شود.
+در سبک `conventional middleware`، خودِ middleware معمولاً یک بار ساخته می‌شود و عمر بلند دارد. برای گرفتن dependency از scope درخواست جاری، می‌توان آن را پارامتر `InvokeAsync` قرار داد تا هنگام اجرای همان درخواست resolve شود، نه اینکه در constructor بلندعمر نگه داشته شود.
 نباید TicketService scoped را در constructor RequestIdMiddleware فعلی تزریق کنیم.
 راه دیگر IMiddleware با registration مناسب است که در این درس لازم نشده است.
 این دو سبک را بدون توجه به activation یکسان فرض نکن.
@@ -128,7 +123,7 @@ HttpContext را بعد از پایان request در یک Task رهاشده ذخ
 
 ## بررسی عملی
 
-Development: برابری داخل پاسخ و تفاوت بین دو پاسخ probe را تأیید کن.
+حالت Development: برابری داخل پاسخ و تفاوت بین دو پاسخ probe را تأیید کن.
 Production: مسیر diagnostics باید ۴۰۴ بدهد.
 یک Ticket بساز و از request تازه بخوان.
 برنامه را restart کن؛ store process تازه خالی است.

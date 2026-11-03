@@ -20,14 +20,14 @@
 | staff با هر دو grant | 200 |
 | owner با X-Role و X-Permission جعلی | 403 |
 
-401 یعنی authentication کافی نداریم. 403 یعنی principal شناخته شده، policy برقرار نیست.
+پاسخ ۴۰۱ می‌گوید credential قابل پذیرش برای این مسیر نداریم. پاسخ ۴۰۳ در این آزمایش یعنی هویت درخواست شناخته شده، اما شرط مجوز گزارش برقرار نیست. پس تغییر از ۴۰۱ به ۴۰۳ با افزودن credential معتبر، به‌تنهایی مجوز دسترسی ایجاد نکرده است.
 برای منبع حساس در درس بعد، 404 را برای پنهان کردن وجود منبع انتخاب می‌کنیم؛ پاسخ‌ها در همهٔ endpointها الزاماً یکسان نیستند.
 
 ## اصطلاح‌ها را به همین گزارش وصل کن
 
-principal نمایش هویتِ پذیرفته‌شده در برنامه است؛ در این نمونه از آن می‌فهمیم درخواست مربوط به کدام حساب است. role یا نقش، عضویت در گروهی مانند SupportAgent است. permission مجوز مشخصی مانند tickets.manage است. واژهٔ grant در ادامه یعنی دسترسی اعطاشده، مثل همین نقش یا مجوز.
+شیء principal نمایش هویتِ پذیرفته‌شده در برنامه است؛ در این نمونه از آن می‌فهمیم درخواست مربوط به کدام حساب است. role یا نقش، عضویت در گروهی مانند SupportAgent است. permission مجوز مشخصی مانند tickets.manage است. واژهٔ grant در ادامه یعنی دسترسی اعطاشده، مثل همین نقش یا مجوز.
 
-policy مجموعهٔ شرط‌های لازم برای گزارش است. requirement یک شرطِ قابل بررسی در آن و handler کدی است که آن شرط را ارزیابی می‌کند. مثلاً roleonly شناخته شده و عضو SupportAgent است، اما permission لازم را ندارد؛ پس handler موفقیت اعلام نمی‌کند و گزارش 403 می‌دهد.
+مفهوم policy مجموعهٔ شرط‌های لازم برای گزارش است. requirement یک شرطِ قابل بررسی در آن و handler کدی است که آن شرط را ارزیابی می‌کند. مثلاً roleonly شناخته شده و عضو SupportAgent است، اما permission لازم را ندارد؛ پس handler موفقیت اعلام نمی‌کند و گزارش 403 می‌دهد.
 
 ## یک نگاه: سه شرط، با هم
 
@@ -61,27 +61,27 @@ flowchart TB
 | Hosting/LabProvisioning.cs | ساخت نقش و grant آزمایش در CLI مورد اعتماد |
 | Program.cs | اعمال policy روی route و fallback برای route فراموش‌شده |
 
-ManageTicketsRequirement قرارداد تصمیم است و ManageTicketsHandler آن را اجرا می‌کند.
+کلاس ManageTicketsRequirement قرارداد تصمیم است و ManageTicketsHandler آن را اجرا می‌کند.
 handler از UserManager حساب، role membership و permission فعلی را می‌خواند و فقط در صورت موفقیت context.Succeed را صدا می‌زند.
 عدم Succeed مجوز ایجاد نمی‌کند. handler به‌صورت Scoped ثبت می‌شود چون UserManager و DbContext scoped هستند.
 ثبت singleton برای چنین handlerی، lifetime نامعتبر و state ناخواسته ایجاد می‌کند.
 
 ## policy چه چیزی را جمع می‌کند؟
 
-RequireAuthenticatedUser و requirement سفارشی در یک policy، هر دو باید برقرار باشند.
+در یک policy، هم شرط ثبت‌شده با `RequireAuthenticatedUser` و هم requirement سفارشی باید برقرار باشند.
 در این lab نقش و permission داخل یک handler با شرط AND بررسی می‌شوند.
-در طراحی چند handler برای یک requirement مراقب OR ناخواسته باش؛ موفقیت یک handler می‌تواند برای آن requirement کافی باشد.
+چند requirement داخل یک policy معمولاً همگی لازم‌اند. اما اگر برای همان یک requirement چند handler بنویسی، موفقیت یکی از handlerها می‌تواند آن requirement را برآورده کند. بنابراین نباید نقش را در یک handler و permission را در handler دیگری بگذاری و بی‌بررسی انتظار AND داشته باشی؛ نمونه هر دو شرط را با هم در تصمیم مشخص بررسی می‌کند.
 نام policy باید intent را نشان بدهد؛ endpoint نباید منطق خام role و claim را چند بار تکرار کند.
 
-DefaultPolicy برای RequireAuthorization بدون نام است. FallbackPolicy برای endpoint بدون metadata صریح authorization کاربرد دارد.
+وقتی endpoint صریحاً `RequireAuthorization` بدون نام policy دارد، از `DefaultPolicy` استفاده می‌شود. وقتی metadata صریح authorization ندارد، `FallbackPolicy` می‌تواند الزام پیش‌فرض را اعمال کند. وجود این دو را با هم یکی نگیر؛ route آزمایشی بعدی عمداً حالت دوم را بررسی می‌کند.
 /api/private-default عمداً RequireAuthorization ندارد تا فعال بودن fallback با HTTP بررسی شود.
 /health و /auth/login عمداً AllowAnonymous دارند؛ fallback مانع AllowAnonymous صریح نمی‌شود.
 این انتخاب‌ها را با فهرست routeها مرور کن، صرف ثبت fallback پوشش همهٔ رفتارها را ثابت نمی‌کند.
 
 ## grant قدیمی در cookie یا token
 
-role/claim داخل credential ممکن است تا refresh یا صدور دوباره قدیمی بماند.
-این نمونه برای گزارش حساس به آن snapshot تکیه نمی‌کند و grant فعلی دیتابیس را می‌خواند.
+مجوز role/claim داخل credential ممکن است تا refresh یا صدور دوباره قدیمی بماند.
+برای گزارش حساس، handler به role و permission ثبت‌شده در credential قدیمی اکتفا نمی‌کند؛ از روی حساب معتبر، grant فعلی را از دیتابیس می‌خواند. بنابراین حذف permission می‌تواند با همان token قبلی هم روی درخواست بعدی اثر بگذارد، بدون اینکه token دوباره صادر شده باشد.
 تست، permission را در DB حذف می‌کند و همان token قبلی را دوباره می‌فرستد؛ پاسخ باید 403 شود.
 این کار هزینهٔ query دارد؛ cache بعدی باید قرارداد ابطال و آزمون revocation داشته باشد.
 این خواندن‌ها یک transaction سراسری برای تغییر grant هم‌زمان نیستند؛ تصمیم در لحظهٔ بررسی گرفته می‌شود.
@@ -156,13 +156,13 @@ password و token در خروجی تست چاپ نمی‌شوند.
 
 ## تمرین مستقل
 
-policy دوم با نام ViewAudit طراحی کن که permission جدا بخواهد و با ManageTickets یکی نباشد.
+مفهوم policy دوم با نام ViewAudit طراحی کن که permission جدا بخواهد و با ManageTickets یکی نباشد.
 پیش از کدنویسی جدول چهار حالتِ بدون grant، فقط نقش، فقط permission و هر دو را بنویس.
 route اعطای role عمومی اضافه نکن؛ چرخهٔ مدیریت مجوز خودش authorization، audit و کنترل ارتقای سطح دسترسی می‌خواهد.
 
 ### سرنخ
 
-requirement را از endpoint مستقل نگه دار و تغییر grant را با token موجود آزمایش کن.
+مفهوم requirement را از endpoint مستقل نگه دار و تغییر grant را با token موجود آزمایش کن.
 تست UI برای پنهان بودن دکمه کافی نیست؛ درخواست مستقیم HTTP را بزن.
 
 ## معیار عبور

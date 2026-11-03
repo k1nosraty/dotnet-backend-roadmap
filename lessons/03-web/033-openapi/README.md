@@ -4,16 +4,14 @@
 
 ## مسئله و خروجی
 
-client نباید فقط با حدس زدن URL و نوع JSON با API کار کند.
+کد client نباید فقط با حدس زدن URL و نوع JSON با API کار کند.
 در این درس سند OpenAPI را از metadata endpointها تولید و محتوای آن را با رفتار واقعی مقایسه می‌کنیم.
 کتابخانهٔ Microsoft.AspNetCore.OpenApi به دو snapshot آخر اضافه می‌شود.
 ابزارهای UI و client generation را هم می‌شناسیم، اما برای این هدف dependency اضافی نصب نمی‌کنیم.
 
 ## ۱. OpenAPI چیست؟
 
-OpenAPI یک قرارداد ماشین‌خوان برای توصیف مسیرها، methodها، ورودی‌ها، schemaها و پاسخ‌هاست.
-این سند خودِ server یا ابزار اجرای request نیست.
-Swagger UI و Scalar نمایشگرها و ابزارهای تعاملی مصرف سند هستند.
+سند `OpenAPI` توضیحی ساختاریافته و قابل خواندن توسط ابزارهاست: هر مسیر چه methodهایی دارد، ورودی آن چیست و چه پاسخ‌هایی می‌دهد. بخش `schema` شکل داده را توصیف می‌کند، مثلاً نام و نوع propertyهای request یا response. ابزارهایی مثل Swagger UI و Scalar همین سند را می‌خوانند تا فرم ارسال درخواست نشان بدهند؛ خود سند، server یا آن رابط تعاملی نیست.
 داشتن سند تضمین نمی‌کند implementation دقیقاً مطابق آن است؛ به تست رفتار نیاز داریم.
 
 ## ۲. package نمونه
@@ -39,7 +37,7 @@ if (app.Environment.IsDevelopment())
 }
 ```
 
-AddOpenApi سرویس تولید سند را ثبت می‌کند.
+متد AddOpenApi سرویس تولید سند را ثبت می‌کند.
 MapOpenApi endpoint خواندن سند را اضافه می‌کند.
 نام سند پیش‌فرض v1 است و آدرس معمول این پروژه /openapi/v1.json خواهد بود.
 نام سند v1 خودکار versioning مسیر API را اجرا نمی‌کند.
@@ -76,11 +74,11 @@ $spec.paths.PSObject.Properties.Name
 خروجی موفق ساخته‌شده با CreatedAtAction باید با ۲۰۱ مستندشده منطبق باشد.
 برای GetById، ۲۰۰ و ۴۰۰ و ۴۰۴ ثبت شده‌اند.
 متد حذف ۲۰۴ بدون body دارد.
-attribute رفتار اجرایی را تحمیل نمی‌کند؛ اگر کد ۲۰۰ برگرداند، metadata ۲۰۱ آن را جادویی اصلاح نمی‌کند.
+اطلاعات توصیفی ثبت‌شده روی action، مثل `[ProducesResponseType]`، بخشی از `metadata` است. این اطلاعات به تولید سند کمک می‌کنند، اما نتیجهٔ کد را تغییر نمی‌دهند. اگر action پاسخ ۲۰۰ بسازد ولی metadata آن ۲۰۱ بگوید، سند و رفتار ناسازگارند و باید خودِ علت اختلاف را اصلاح کرد.
 
 ## ۶. ActionResult و schema
 
-ActionResult<T> به ابزار کمک می‌کند نوع payload موفق را بشناسد.
+نوع ActionResult<T> به ابزار کمک می‌کند نوع payload موفق را بشناسد.
 TicketResponse قرارداد خروجی است و entity داخلی نباید جای آن در schema عمومی ظاهر شود.
 DataAnnotations propertyهای DTO کلاسی می‌توانند برای schema نیز metadata بدهند.
 اما guard پس از Trim و قواعد domain همیشه از یک annotation ساده قابل استخراج نیستند.
@@ -103,14 +101,14 @@ Constraint را جزئی از رشتهٔ URL واقعی client نکن.
 
 ## ۸. exclusion مستندات
 
-endpointهای diagnostics با ExcludeFromDescription علامت‌گذاری شده‌اند.
+کد endpointهای diagnostics با ExcludeFromDescription علامت‌گذاری شده‌اند.
 این کار فقط آن‌ها را از سند حذف می‌کند و به تنهایی endpoint را غیرفعال نمی‌کند.
 غیرفعال بودن در Production نتیجهٔ شرط map محیط است.
 پنهان کردن مسیر از UI مستندات جای مجوز دسترسی را نمی‌گیرد.
 
 ## ۹. UI تعاملی
 
-AddOpenApi به تنهایی Swagger UI یا Scalar UI نصب نمی‌کند.
+متد AddOpenApi به تنهایی Swagger UI یا Scalar UI نصب نمی‌کند.
 در این درس سند JSON را مستقیم می‌خوانیم و request را با PowerShell یا curl می‌فرستیم.
 اگر UI اضافه می‌کنی، package و نسخهٔ سازگار و روش اتصال به همین سند را از مستندات رسمی همان ابزار بخوان.
 دو generator متفاوت را بدون نیاز کنار هم نصب نکن.
@@ -131,7 +129,7 @@ dotnet list samples/32-openapi/SupportDesk.csproj package --include-transitive
 dotnet list samples/32-openapi/SupportDesk.csproj package --vulnerable --include-transitive
 ```
 
-package مستقیم تنها dependency پروژه نیست؛ وابستگی غیرمستقیم هم باید بررسی شود.
+یک package ممکن است packageهای دیگری هم مصرف کند؛ این‌ها dependencyهای غیرمستقیم یا `transitive` هستند. پس فهرست dependencyهای امنیتی فقط نام‌هایی نیست که مستقیم در csproj نوشته‌ایم.
 برای عبور از هشدار شناخته‌شده audit را خاموش نکن.
 در اجرای اولیهٔ این نمونه نسخهٔ پایه وابستگی آسیب‌پذیر داشت و patch سازگار جایگزین شد.
 نسخهٔ نهایی کد و restore آن در CI بررسی می‌شود.
@@ -139,9 +137,7 @@ package مستقیم تنها dependency پروژه نیست؛ وابستگی غ
 
 ## ۱۲. contract و breaking change
 
-تغییر array به PageResponse، تغییر نام فیلد و حذف status پشتیبانی‌شده می‌توانند client را بشکنند.
-صرف کامپایل شدن server معیار سازگاری client نیست.
-تغییر additive هم باید با رفتار serializer و client واقعی ارزیابی شود.
+اگر client یک آرایه انتظار داشته باشد و server به‌جایش `PageResponse` بدهد، ممکن است دیگر نتواند پاسخ را بخواند. تغییر ناسازگار با مصرف‌کنندهٔ قبلی را `breaking change` می‌نامند؛ تغییر نام فیلد یا حذف یک status مستند هم می‌تواند همین اثر را داشته باشد. حتی افزودن فیلد، یعنی تغییر `additive`، باید با رفتار serializer و client واقعی سنجیده شود؛ کامپایل موفق server سازگاری آن‌ها را ثابت نمی‌کند.
 برای محصول منتشرشده diff سند و تست consumer می‌تواند بخشی از review باشد.
 در این دوره snapshotهای مستقل اجازه می‌دهند مراحل را بدون تغییر تاریخچه مقایسه کنی.
 

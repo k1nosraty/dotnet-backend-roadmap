@@ -39,7 +39,7 @@ failureها قرارداد دارند و ساختار فایل‌ها باید �
 }
 ```
 
-CreateTicketRequest همچنان فقط title را می‌پذیرد.
+نوع CreateTicketRequest همچنان فقط title را می‌پذیرد.
 اولویت و گزارش گروهی CLI هنوز به این API منتقل نشده‌اند؛ ماتریس قابلیت‌ها در [فهرست بخش](../README.md) محدوده را روشن می‌کند.
 status اولیه را server تعیین می‌کند.
 فیلد notes آرایهٔ متن است، نه جدول تاریخچه با نویسنده و زمان.
@@ -58,11 +58,11 @@ status اولیه را server تعیین می‌کند.
 | هر وضعیت | نام ناشناخته | ۴۰۰ |
 
 نام‌ها در این قرارداد به بزرگی و کوچکی حروف حساس‌اند.
-ورودی ناشناخته با transition شناخته‌شده ولی غیرمجاز فرق دارد.
+نامی مثل `Waiting` در این قرارداد اصلاً وضعیت شناخته‌شده نیست و ۴۰۰ می‌گیرد. اما `Closed` نام معتبر است؛ اگر درخواست هنوز `Open` باشد، رفتن به آن مجاز نیست و ۴۰۹ می‌گیرد. تغییر از یک وضعیت به وضعیت دیگر، `transition` نام دارد.
 همان قواعد بخش دوم حفظ شده‌اند: Ticket بسته دیگر rename یا note تازه نمی‌پذیرد و این تلاش‌ها ۴۰۹ می‌دهند.
 هر note پس از Trim بین ۳ و ۵۰۰ واحد UTF-16 است؛ حداکثر پنج note و بدون تکرار با Ordinal داریم.
 syntax نامعتبر note پاسخ ۴۰۰ و تعارض با وضعیت، ظرفیت یا تکرار پاسخ ۴۰۹ دارد.
-تکرار PUT همان وضعیت همچنان no-op موفق است؛ این انتخاب HTTP با فرمان start/close تکراری CLI تفاوت صریح دارد.
+تکرار PUT با همان وضعیت فعلی در این API موفق است، اما چیزی را تغییر نمی‌دهد؛ این رفتار `no-op` نام دارد. در مقابل، CLI تکرار فرمان start یا close را رد می‌کرد. پس این تفاوت، انتخاب صریح قرارداد HTTP است و نباید در پیاده‌سازی یکی از آن‌ها را تصادفی جای دیگری گذاشت.
 
 ## ۴. قانون در Domain
 
@@ -77,7 +77,7 @@ public Ticket? ChangeStatus(string next)
 }
 ```
 
-Domain نام HTTP و status code را نمی‌شناسد.
+لایهٔ Domain نام HTTP و status code را نمی‌شناسد.
 null این متد داخلی یعنی transition مجاز نیست و store آن را به MutationKind.Conflict تبدیل می‌کند.
 در API بزرگ‌تر می‌توان نتیجهٔ domain با علت دقیق‌تری ساخت؛ اینجا یک نیاز محدود داریم.
 constructor خصوصی و propertyهای get-only اجازهٔ setter مستقیم روی Status نمی‌دهند.
@@ -86,7 +86,7 @@ Create همچنین Id غیرمثبت و TicketTitle برابر null را رد �
 
 ## ۵. MutationResult و نتیجهٔ HTTP
 
-Application نتیجهٔ Success، Missing یا Conflict دارد.
+لایهٔ Application نتیجهٔ Success، Missing یا Conflict دارد.
 MutationResult یک کلاس با constructor خصوصی و factoryهای Success، Missing و Conflict است.
 Success(null) رد می‌شود و خواندن Value در failure خطای استفادهٔ caller است؛ مثل قرارداد Outcome درس ۰۲۰.
 record آزاد با Kind=Success و Value=null نمی‌سازیم و branch ناشناختهٔ enum را به موفقیت تبدیل نمی‌کنیم.
@@ -97,15 +97,13 @@ failure متداول برای تغییر وضعیت exception نیست و از h
 
 ## ۶. چرا mutation زیر یک lock است؟
 
-اگر Find خارج قفل و Save بعداً انجام شود، دو request می‌توانند بر اساس مدل قدیمی تغییر کنند و یکی تغییر دیگری را از بین ببرد.
-Mutate در این نمونه lookup، اجرای تابع کوتاه domain و جایگزینی را زیر همان lock انجام می‌دهد.
-AddNote روی وضعیت جاری اجرا می‌شود و noteهای parallel را گم نمی‌کند.
+فرض کن دو request هم‌زمان یک درخواست با صفر یادداشت را بخوانند و هرکدام یک یادداشت به نسخهٔ خود اضافه کنند. اگر جداگانه ذخیره کنند، جایگزینی آخر ممکن است فقط یک یادداشت را نگه دارد. متد `Mutate` خواندن، اجرای تابع کوتاه domain و جایگزینی را داخل یک `lock` انجام می‌دهد؛ عملیات دوم بعد از اول، وضعیت به‌روز را می‌بیند و یادداشت آن را از دست نمی‌دهد.
 این تابع نباید I/O طولانی یا await داشته باشد.
 قفل process جای transaction یا optimistic concurrency دیتابیس چندسرور نیست.
 
 ## ۷. collection بیرون از state مشترک
 
-Notes در Domain با ReadOnlyCollection و کپی داده ساخته می‌شود.
+عضو Notes در Domain با ReadOnlyCollection و کپی داده ساخته می‌شود.
 AddNote مدل تازه با collection تازه می‌سازد.
 mapping نیز برای response کپی آرایه می‌گیرد.
 این کار اجازه نمی‌دهد caller با cast کردن یک لیست مشترک، state store را بی‌قفل عوض کند.
@@ -114,12 +112,7 @@ mapping نیز برای response کپی آرایه می‌گیرد.
 
 ## ۸. مسیر کامل یک عملیات
 
-client یک JSON با text می‌فرستد.
-MVC آن را به AddNoteRequest تبدیل و annotation را بررسی می‌کند.
-controller Id مثبت و متن پس از Trim را بررسی می‌کند.
-TicketService عملیات AddNote را از طریق ITicketStore اجرا می‌کند.
-store در Mutate دادهٔ جاری را به قانون Domain می‌دهد و نسخهٔ تازه را نگه می‌دارد.
-controller نتیجه را map و serialize می‌کند.
+برای افزودن یادداشت، client متن را در JSON می‌فرستد. ابتدا MVC آن را به `AddNoteRequest` تبدیل و annotationها را بررسی می‌کند؛ سپس controller شناسه و طول متن پس از Trim را می‌سنجد. اگر ورودی پذیرفته شد، `TicketService` از طریق `ITicketStore` تغییر را درخواست می‌کند. متد `Mutate` با دادهٔ جاری، قانون domain را اجرا می‌کند و فقط در موفقیت نسخهٔ تازه را نگه می‌دارد. در پایان، controller نتیجه را به DTO پاسخ تبدیل می‌کند و framework آن را به JSON می‌نویسد.
 در هیچ مرحله‌ای Infrastructure به Controller وابسته نشده است.
 
 ## ۹. اجرای جریان کامل در PowerShell
@@ -193,7 +186,7 @@ python scripts/domain_smoke.py
 dotnet publish samples/33-supportdesk-api/SupportDesk.csproj -c Release -o exercises/published-api
 ```
 
-controller_smoke هر نه snapshot را build و قرارداد هر مرحله را بررسی می‌کند.
+ابزار بررسی controller_smoke هر نه snapshot را build و قرارداد هر مرحله را بررسی می‌کند.
 تست‌ها options خراب، scope درخواست، pagination، سند OpenAPI و failure ۵۰۰ را هم پوشش می‌دهند.
 یک consumer مستقل قواعد Domain را بدون controller بررسی می‌کند، از جمله Id غیرمثبت، null و ممنوعیت ویرایش پس از Closed.
 این جداسازی نشان می‌دهد محافظت مدل فقط ناشی از guard HTTP نیست.
@@ -214,7 +207,7 @@ try {
 }
 ```
 
-server قبلی روی همین پورت را پیش از این فرمان متوقف کن.
+برنامهٔ server قبلی روی همین پورت را پیش از این فرمان متوقف کن.
 از پوشهٔ خروجی اجرا می‌کنیم تا content root شامل appsettings کپی‌شده باشد.
 برای توقف Ctrl+C بزن.
 این فرمان listener محلی ایجاد می‌کند و راهنمای TLS و reverse proxy نیست.

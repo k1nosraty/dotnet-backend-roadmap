@@ -33,19 +33,19 @@ dotnet test tests/080-proxy-tls/SupportDesk.Tests.csproj
 | client به proxy | HTTPS | localhost:8443 روی میزبان |
 | proxy به app | HTTP | app:8080 در شبکهٔ داخلی Docker |
 
-پورت app روی میزبان publish نشده است. app فقط به شبکهٔ داخلی lab وصل است؛ proxy علاوه بر lab به شبکهٔ edge وصل است تا پورت میزبان واقعاً قابل دسترسی باشد. در این lab، TLS در proxy تمام می‌شود.
+پورت app روی میزبان publish نشده است. app فقط به شبکهٔ داخلی lab وصل است؛ proxy علاوه بر lab به شبکهٔ edge وصل است تا پورت میزبان واقعاً قابل دسترسی باشد. در این lab، اتصال TLS در proxy پایان می‌یابد؛ این کار `TLS termination` نام دارد. پس مرورگر یک اتصال HTTPS به Caddy دارد، اما درخواست تازهٔ Caddy به برنامهٔ داخلی HTTP است.
 برای شبکهٔ نامطمئن یا عبور بین hostها باید رمزنگاری اتصال داخلی را هم جدا بررسی کنی؛ این نمونه شبکهٔ محلی Docker دارد.
 
 ## ۳. اجرای TLS محلی
 
-Docker با Linux containers لازم است. همهٔ فرمان‌ها از ریشهٔ مخزن هستند:
+ابزار Docker با Linux containers لازم است. همهٔ فرمان‌ها از ریشهٔ مخزن هستند:
 
 ```powershell
 docker compose -p course80 -f samples/79-proxy-tls/compose.yaml up -d --build
 docker compose -p course80 -f samples/79-proxy-tls/compose.yaml logs proxy
 ```
 
-Caddy با `tls internal` گواهی localhost را از CA محلی خودش می‌سازد. این CA عمومی نیست و مرورگر تو از قبل به آن اعتماد ندارد.
+ابزار Caddy با `tls internal` از مرجع صدور گواهی محلی خودش، یعنی `CA` یا `Certificate Authority`، برای localhost گواهی می‌سازد. مرورگر از قبل به این CA آموزشی اعتماد ندارد. بنابراین موفقیت همین آزمایش باید با معرفی گواهی عمومی CA به client بررسی شود.
 برای آزمایش curl، **فقط گواهی عمومی root** را به پوشهٔ موقت ببر:
 
 ```powershell
@@ -61,7 +61,7 @@ curl.exe --noproxy '*' --cacert "$env:TEMP/course80-root.crt" https://localhost:
 {"scheme":"https","secure":true}
 ```
 
---cacert اعتماد را به همین درخواست و همان فایل محدود می‌کند. از -k یا خاموش کردن اعتبارسنجی certificate استفاده نکن؛ آن کار hostname و اعتماد به CA را آزمایش نمی‌کند.
+گزینهٔ --cacert اعتماد را به همین درخواست و همان فایل محدود می‌کند. از -k یا خاموش کردن اعتبارسنجی certificate استفاده نکن؛ آن کار hostname و اعتماد به CA را آزمایش نمی‌کند.
 کلید خصوصی CA را خارج نکن و CA آزمایش را در trust store سراسری نصب نکن.
 
 ## یک نگاه: دو اتصال، دو پروتکل
@@ -91,13 +91,13 @@ sequenceDiagram
 
 ## ۴. چرا برنامه https می‌بیند؟
 
-Caddy مقدار X-Forwarded-Proto را بر اساس اتصال واقعی client تنظیم می‌کند.
+سرویس Caddy مقدار X-Forwarded-Proto را بر اساس اتصال واقعی client تنظیم می‌کند.
 `UseForwardedHeaders` پیش از `UseHttpsRedirection` اجرا می‌شود؛ در نتیجه redirect تصمیم خود را با scheme اصلاح‌شده می‌گیرد.
 اگر این ترتیب برعکس باشد، امکان redirect loop وجود دارد.
 
 در Program.cs فقط یک peer با IP مشخص معتبر است؛ تنظیم Compose آن را 172.31.79.10 گذاشته است.
-KnownProxies شامل همین آدرس و شکل IPv4-mapped آن است و ForwardLimit برابر یک است.
-همهٔ شبکه‌ها را trusted نکرده‌ایم. Host forwarding فعال نیست و AllowedHosts فقط localhost را می‌پذیرد. در Caddy نیز strict_sni_host روشن است: نام Host باید با نام SNI اتصال TLS یکسان باشد؛ عدم تطابق پاسخ 421 می‌گیرد.
+فهرست `KnownProxies` مشخص می‌کند header اصلاح‌کنندهٔ scheme از کدام peer پذیرفته شود؛ peer همان طرف مستقیم اتصال به برنامه است. اینجا فقط آدرس Caddy و نمایش IPv4-mapped آن ثبت شده است. مقدار `ForwardLimit=1` نیز تعداد مقدارهای قابل مصرف از زنجیرهٔ forwarding را محدود می‌کند.
+همهٔ شبکه‌ها را trusted نکرده‌ایم. Host forwarding فعال نیست و AllowedHosts فقط localhost را می‌پذیرد. در Caddy نیز strict_sni_host روشن است: نام `Host` باید با نامی که client هنگام شروع TLS با `SNI` یا `Server Name Indication` اعلام کرده یکسان باشد. این دو در مرحله‌های متفاوت ارسال می‌شوند؛ عدم تطابق در قرارداد این lab پاسخ ۴۲۱ می‌گیرد.
 
 | درخواست | نتیجهٔ مورد انتظار |
 | --- | --- |
@@ -117,7 +117,7 @@ python scripts/production_docker_smoke.py
 
 این اسکریپت یک پروژهٔ Compose با نام تصادفی می‌سازد، root certificate عمومی را موقت می‌خواند و درخواست TLS واقعی می‌فرستد.
 هم موفقیت با CA درست و hostname localhost و هم شکست با trust پیش‌فرض را بررسی می‌کند؛ سپس جعل scheme، Host نامعتبر و منتشر نشدن پورت backend را می‌سنجد.
-WAF در tests/080-proxy-tls جای TLS نیست؛ آن تست جداگانه تصمیم middleware با peerهای مختلف را بررسی می‌کند.
+تست مبتنی بر `WebApplicationFactory` در `tests/080-proxy-tls` تصمیم middleware را با peerهای مختلف بررسی می‌کند. اما handshake، گواهی و اتصال TLS واقعی در اسکریپت Docker سنجیده می‌شوند؛ موفقیت این دو شاهد معنای یکسانی ندارد.
 
 ## ۶. پاک‌سازی و مرز استقرار
 
@@ -128,7 +128,7 @@ docker compose -p course80 -f samples/79-proxy-tls/compose.yaml down --volumes
 Remove-Item "$env:TEMP/course80-root.crt"
 ```
 
---volumes در این فرمان CA آزمایشی همین پروژه را حذف می‌کند. روی Compose دیتابیس واقعی بدون فهم پیامد آن اجرا نکن.
+گزینهٔ --volumes در این فرمان CA آزمایشی همین پروژه را حذف می‌کند. روی Compose دیتابیس واقعی بدون فهم پیامد آن اجرا نکن.
 برای دامنهٔ عمومی باید DNS، دسترسی پورت‌ها، صدور گواهی عمومی، نگه‌داری state گواهی و تنظیم proxy واقعی مشخص شوند؛ localhost و tls internal را مستقیم به production منتقل نکن.
 این درس روی سرویس عمومی چیزی deploy نمی‌کند.
 

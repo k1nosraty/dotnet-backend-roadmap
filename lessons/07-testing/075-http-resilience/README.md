@@ -20,7 +20,7 @@ dotnet test tests/075-http-resilience/SupportDesk.Tests.csproj
 status=200; attempts=2
 ```
 
-`DemoPartnerHandler` به‌جای شبکه جواب می‌دهد: بار اول 503، بار دوم 200.
+کلاس `DemoPartnerHandler` نقش `transport` آزمایشی را دارد؛ یعنی آخرین بخشی که درخواست HttpClient را می‌گیرد و پاسخ برمی‌گرداند. اینجا به‌جای ارسال روی شبکه، خودش بار اول ۵۰۳ و بار دوم ۲۰۰ می‌دهد.
 نام `partner.invalid` عمداً آدرس واقعی نیست. در Program این transport ساختگی صریحاً ثبت شده است؛ برنامه به اینترنت درخواست نمی‌فرستد.
 این، تست رفتار client و pipeline است؛ DNS و TLS و اتصال واقعی را اثبات نمی‌کند.
 
@@ -33,13 +33,13 @@ status=200; attempts=2
 | `DemoPartnerHandler` | پاسخ‌های قابل پیش‌بینی برای اجرا |
 | `PartnerTests.cs` در test project | بررسی پاسخ، شمار تلاش‌ها، لغو و timeout |
 
-`IHttpClientFactory` ساخت client و عمر handlerهای قابل استفادهٔ مجدد را مدیریت می‌کند.
+ابزار `IHttpClientFactory` ساخت client و عمر handlerهای قابل استفادهٔ مجدد را مدیریت می‌کند.
 نام `partner` باعث می‌شود فقط تنظیمات همین وابستگی را بگیریم. client کوتاه‌عمر را dispose می‌کنیم؛ factory مدیریت handler مشترک را بر عهده دارد.
 در یک singleton، client ساخته‌شده را برای همیشه نگه ندار؛ factory را بگیر و برای هر عملیات client بساز.
 
 ## یک نگاه: یک بار درخواست؛ دو تلاش
 
-PartnerClient یک درخواست به HttpClient می‌دهد و pipeline سیاست retry را اجرا می‌کند. transport ساختگی ابتدا 503 و بعد 200 می‌دهد؛ تصویر دو ورود به handler را نشان می‌دهد، نه تماس اینترنتی واقعی یا حلقهٔ دستی در PartnerClient.
+کلاس PartnerClient یک درخواست به HttpClient می‌دهد و pipeline سیاست retry را اجرا می‌کند. transport ساختگی ابتدا 503 و بعد 200 می‌دهد؛ تصویر دو ورود به handler را نشان می‌دهد، نه تماس اینترنتی واقعی یا حلقهٔ دستی در PartnerClient.
 
 ```mermaid
 sequenceDiagram
@@ -75,8 +75,8 @@ sequenceDiagram
 | لغو توسط caller | انتقال cancellation و توقف بدون retry آن لغو |
 | گیر کردن transport | timeout هر تلاش؛ پس از پایان فرصت، exception |
 
-`MaxRetryAttempts = 2` یعنی **دو تلاش مجدد بعد از تلاش اول**؛ جمعاً حداکثر سه.
-retry پاسخ ناموفق را موفق نمی‌کند. در پایان ممکن است همچنان 503 بگیری؛ CheckAsync عمداً status را برمی‌گرداند و EnsureSuccessStatusCode صدا نمی‌زند.
+تنظیم `MaxRetryAttempts = 2` یعنی **دو تلاش مجدد بعد از تلاش اول**؛ جمعاً حداکثر سه.
+با `retry` فقط یک تلاش دیگر می‌کنیم؛ موفقیت تضمین نمی‌شود. اگر پاسخ هر سه تلاش ۵۰۳ باشد، `CheckAsync` همان status نهایی را می‌دهد. در این متد `EnsureSuccessStatusCode` فراخوانی نشده است، پس خودِ دریافت status ناموفق به معنی exception این متد نیست.
 
 قسمت مهمِ فایل موجود:
 
@@ -85,7 +85,7 @@ options.Retry.MaxRetryAttempts = 2;
 options.Retry.DisableForUnsafeHttpMethods();
 ```
 
-POST ممکن است در سرویس مقابل انجام شده باشد ولی پاسخ آن گم شده باشد؛ ارسال دوباره می‌تواند اثر را تکرار کند.
+عملیات POST ممکن است در سرویس مقابل انجام شده باشد ولی پاسخ آن گم شده باشد؛ ارسال دوباره می‌تواند اثر را تکرار کند.
 حتی PUT و DELETE را در این آزمایش محافظه‌کارانه تکرار نمی‌کنیم.
 برای نوشتن واقعی باید قرارداد idempotency و رفتار سرویس مقابل را جدا طراحی کنی.
 
@@ -97,7 +97,7 @@ POST ممکن است در سرویس مقابل انجام شده باشد ول�
 | `TotalRequestTimeout` | مجموعهٔ تلاش‌ها و انتظار pipeline | پنج ثانیه |
 | token ورودی | تمایل caller به ادامهٔ کار | از بیرون می‌آید |
 
-`HttpClient.Timeout` را Infinite گذاشته‌ایم تا دو زمان‌سنج مستقل برای همین تماس رقابت نکنند.
+تنظیم `HttpClient.Timeout` را Infinite گذاشته‌ایم تا دو زمان‌سنج مستقل برای همین تماس رقابت نکنند.
 این به معنی انتظار نامحدود نیست؛ pipeline زمان را محدود می‌کند. لغو همچنان نیازمند همکاری handler است.
 اگر محدودیت pipeline تمام شود `TimeoutRejectedException` از Polly می‌گیری؛ لغو caller از خانوادهٔ `OperationCanceledException` است.
 
@@ -106,14 +106,14 @@ POST ممکن است در سرویس مقابل انجام شده باشد ول�
 
 ## ۵. تست چگونه قابل اعتماد می‌ماند؟
 
-`Caller_cancellation_reaches_the_transport_and_does_not_retry` با یک signal منتظر ورود handler می‌ماند، سپس token را لغو می‌کند؛ از Sleep برای حدس زدن زمان شروع استفاده نمی‌کند.
+تست `Caller_cancellation_reaches_the_transport_and_does_not_retry` با یک signal منتظر ورود handler می‌ماند، سپس token را لغو می‌کند؛ از Sleep برای حدس زدن زمان شروع استفاده نمی‌کند.
 تست hanging transport، تأخیر بی‌نهایتِ قابل لغو می‌سازد و انتظار exception واقعی pipeline دارد. این تست چند ثانیه زمان می‌برد؛ زمان دقیق میلی‌ثانیه را assert نمی‌کند.
 `WaitAsync(15s)` فقط محافظ گیر کردن خود تست است؛ سیاست برنامه پنج ثانیه است.
 
 ## ۶. بخش پیشرفته را فعلاً بشناس
 
-Standard handler علاوه بر retry و timeout، محدودیت concurrency و circuit breaker دارد.
-breaker بعد از تعداد کافی شکست، موقتاً تماس تازه را رد می‌کند؛ با retry یکی نیست.
+پیکربندی Standard handler علاوه بر retry و timeout، محدودیت concurrency و circuit breaker دارد.
+سازوکار `circuit breaker` پس از رسیدن شکست‌ها به شرط سیاست، برای مدتی جلوی تلاش تازه را می‌گیرد. تفاوتش با retry این است که retry همان عملیات را دوباره امتحان می‌کند، اما breakerِ باز می‌تواند پیش از رسیدن به transport آن را رد کند.
 تست‌های این درس باز شدن breaker یا نرخ واقعی شبکه را نمی‌سنجند.
 
 در نمونه برای دیدن سریع نتیجه، فاصلهٔ retry صفر و jitter خاموش است. برای سرویس واقعی، backoff و jitter و بودجهٔ متناسب لازم است؛ این تنظیم آزمایشگاهی را مستقیم منتقل نکن.

@@ -8,18 +8,18 @@
 
 ## secret با configuration معمولی فرق دارد
 
-port و نام policy معمولاً secret نیستند؛ password دیتابیس، private key و credential حساب باید چرخهٔ حفاظت و rotation داشته باشند.
+شمارهٔ port و نام policy معمولاً secret نیستند؛ password دیتابیس، private key و credential حساب باید چرخهٔ حفاظت و rotation داشته باشند.
 در این snapshot اتصال فقط از SUPPORTDESK_PG و پوشهٔ کلید فقط از TEAMDESK_KEYS خوانده می‌شوند؛ مقدار نمونهٔ واقعی در appsettings یا repo نداریم.
 LabSettings یک class معمولی است، نه record با ToString تولیدشده که ممکن است همهٔ propertyها را چاپ کند.
 این انتخاب مجوز serialize کردن configuration نیست؛ آن را به endpoint یا logger نفرست.
 پیام startup نامعتبر ثابت است و raw connection یا inner exception parser را نگه نمی‌دارد.
 
-env، secret manager رمزگذاری‌شده نیست؛ process و مدیر سیستم می‌توانند به آن دسترسی پیدا کنند.
+متغیر محیطی یا env به‌تنهایی secret manager رمزگذاری‌شده نیست؛ process و مدیر سیستم می‌توانند به آن دسترسی پیدا کنند.
 User Secrets برای توسعه می‌تواند secret را بیرون از repo نگه دارد، ولی خودش encryption یا خزانهٔ production نیست.
 این نمونه مستقیم env می‌خواند؛ اجرای user-secrets set به‌تنهایی منبع تنظیمات آن را عوض نمی‌کند.
 برای اتصال User Secrets یا vault باید IConfiguration/Options را صریح به LabSettings وصل و precedence را تست کنی.
 در production از secret provider کنترل‌شده، دسترسی حداقلی و روش rotation مناسب استفاده کن؛ انتخاب سرویس مشخص در این lab انجام نشده است.
-اگر secret وارد git شد، حذف فایل از commit بعدی کافی نیست؛ credential را revoke/rotate و تاریخچه و محل‌های انتشار را بررسی کن.
+اگر secret وارد Git شد، حذف فایل در commit بعدی نسخه‌های قبلی آن را حذف نمی‌کند. ابتدا credential منتشرشده را نامعتبر کن (`revoke`) یا با مقدار تازه جایگزین کن (`rotate`). سپس تاریخچه و جاهایی را که نسخهٔ قبلی منتشر شده بررسی کن؛ حذف ظاهری متن، اعتبار credential قبلی را از بین نمی‌برد.
 
 ## فایل‌های مهم
 
@@ -39,13 +39,13 @@ User Secrets برای توسعه می‌تواند secret را بیرون از r
 | structured security event در console | مشاهدهٔ موفقیت/رد/خطای عمومی | Code ثابت و در صورت نیاز ID داخلی actor و target |
 | AuditEntries در PostgreSQL | شاهد ماندگار تغییر موفق تیکت | Id، زمان UTC، ActorId، TenantId، Kind، TargetId |
 
-SecurityCode یک enum است؛ تابع logger پیام، body، header یا exception دلخواه نمی‌پذیرد.
+نوع SecurityCode یک enum است؛ تابع logger پیام، body، header یا exception دلخواه نمی‌پذیرد.
 رویدادهای LoginSucceeded و LoginRejected فقط نتیجه را می‌گویند و شناسهٔ ورود ادعاشده را ذخیره نمی‌کنند.
 رویداد AccessDenied وجود قطعی یک منبع را ادعا نمی‌کند؛ منبع غایب نیز می‌تواند به همان 404 برسد.
 رویداد ServerFailure جزئیات connection یا SQL را بیرون نمی‌دهد.
 همهٔ تلاش‌های امنیتی و تغییرات role در این نمونه audit کامل ندارند؛ scope آن را به‌عنوان audit محصول معرفی نکن.
 
-ILogger در transaction دیتابیس نیست. نوشتن console می‌تواند گم شود و حذف log هم ممکن است؛ شاهد durable این درس جدول auditِ همان transaction است.
+ابزار ILogger در transaction دیتابیس نیست. نوشتن console می‌تواند گم شود و حذف log هم ممکن است؛ شاهد durable این درس جدول auditِ همان transaction است.
 شناسه‌های داخلی همچنان دادهٔ قابل ارتباط با اشخاص‌اند؛ کم کردن فیلدها مساوی ناشناس‌سازی کامل نیست.
 خط‌مشی نگهداری، دسترسی، حذف/آرشیو و حفاظت از backup باید تعیین شود. این lab job retention ندارد.
 
@@ -72,27 +72,27 @@ flowchart LR
 
 ## چرا ثبت بعد از update به‌تنهایی کافی نیست؟
 
-Create، entity تیکت و AuditEntry را پیش از یک SaveChanges اضافه می‌کند؛ provider تراکنشی هر دو را با هم commit می‌کند.
+متد Create، entity تیکت و AuditEntry را پیش از یک SaveChanges اضافه می‌کند؛ provider دارای پشتیبانی از transaction، هر دو را با هم commit می‌کند.
 Rename ابتدا transaction صریح باز می‌کند، ExecuteUpdate محدود به مالک/سازمان را انجام می‌دهد و سپس audit را با SaveChanges ذخیره می‌کند.
 فقط بعد از CommitAsync رویداد TicketRenamed منتشر می‌شود.
 اگر audit fail شود، dispose شدن transaction تغییر قبلی را rollback می‌کند؛ موفقیت ظاهری بدون شاهد ذخیره‌شده نداریم.
-این قرارداد هزینه و availability دارد: در این نمونه خرابی audit یعنی شکست mutation.
+در این قرارداد، کامل‌بودن شاهد audit بخشی از موفقیت تغییر است. پیامدش برای `availability`، یعنی امکان انجام عملیات در زمان نیاز، روشن است: اگر audit قابل ذخیره نباشد، rename هم موفق نمی‌شود. این یک تصمیم همین نمونه است و باید همراه هزینه‌اش دیده شود.
 اگر audit را به سرویس خارجی بفرستی، transaction محلی آن را اتمیک نمی‌کند؛ outbox و تحویل دوباره و idempotency طراحی دیگری می‌خواهد.
 
 ## دسترسی به audit
 
-GET /api/staff/audit به ViewAudit و نقش SupportAgent و permission فعلی audit.read نیاز دارد.
+درخواست GET /api/staff/audit به ViewAudit و نقش SupportAgent و permission فعلی audit.read نیاز دارد.
 داشتن tickets.manage به‌تنهایی کافی نیست. حذف audit.read باید همان token فعلی را از audit محروم کند ولی گزارش معمول staff را باز نگه دارد.
 query فقط TenantId فعلی staff و حداکثر ۵۰ رکورد اخیر را برمی‌گرداند؛ دادهٔ tenant دیگر وارد response نمی‌شود.
 projection عمومی TenantId، عنوان، ایمیل و credential را بیرون نمی‌دهد.
-این API نوشتن، حذف یا ویرایش audit ندارد، ولی role دیتابیس آزمایش مجوز DDL دارد؛ جدول tamper-proof یا WORM نیست.
+در سطح این API، مسیر ویرایش یا حذف audit وجود ندارد. اما role دیتابیس آزمایش هنوز مجوز DDL دارد؛ پس نمی‌توان ادعا کرد جدول در برابر دستکاری یا `tampering` محافظت قطعی دارد. همچنین ذخیره‌سازی از نوع `WORM`، یعنی Write Once Read Many با ممنوعیت بازنویسی طبق قرارداد آن، پیاده نشده است.
 در محیط واقعی role مهاجرت و role runtime را جدا و دسترسی به audit و backup را محدود کن.
 
 ## logging و خطای قابل انتشار
 
-JSON console فعال است و request-start عمومی که URL/query را چاپ می‌کند در سطح Information فعال نیست.
+خروجی JSON console فعال است و request-start عمومی که URL/query را چاپ می‌کند در سطح Information فعال نیست.
 فقط دستهٔ SecurityEvents و اطلاعات ثابت lifecycle اجازهٔ Information دارند؛ EF و middleware خطای عمومی جزئیات exception را چاپ نمی‌کنند.
-این policy مخصوص lab برای جلوگیری از نشت در تست است؛ diagnostics خصوصیِ عملیاتی با redaction و دسترسی محدود، طراحی جدا می‌خواهد.
+این policy فقط logهای همین lab را محدود می‌کند. برای diagnostics عملیاتی باید مشخص کنی چه کسی به داده دسترسی دارد و کدام بخش حساس پیش از ثبت حذف یا پوشانده می‌شود؛ این حذف یا پوشاندن `redaction` نام دارد. تنظیم نمونه این طراحی عملیاتی را کامل نمی‌کند.
 پاسخ خطا 500 عمومی است و stack trace یا SQL ندارد؛ خطای binding همچنان 400 است.
 سقف body در Kestrel شانزده KiB است؛ payload بزرگِ آزمون login باید 413 بگیرد.
 JSON logger به ساختار کمک می‌کند، اما اگر دادهٔ حساس را به آن بدهی، خود JSON شدن آن را امن نمی‌کند.
@@ -118,7 +118,7 @@ Remove-Item Env:TEAMDESK_LAB_PASSWORD
 dotnet run --project samples/68-secrets-audit/SupportDesk.csproj -- --urls http://127.0.0.1:5079
 ```
 
-TEAMDESK_KEYS باید absolute و خصوصی باشد؛ اعتبارسنجی absolute بودن، ACL یا encryption واقعی را ثابت نمی‌کند.
+متغیر محیطی TEAMDESK_KEYS باید absolute و خصوصی باشد؛ اعتبارسنجی absolute بودن، ACL یا encryption واقعی را ثابت نمی‌کند.
 Include Error Detail و Log Parameters باید false باشند؛ فعال کردن آن‌ها باعث شکست startup می‌شود.
 schema باید auth69_ و ۳۲ رقم hex کوچک باشد؛ public یا schema نسخهٔ دیگر پذیرفته نمی‌شود.
 startup عادی جدول نمی‌سازد و init روی جدول موجود شکست می‌خورد، نه اینکه آن را جایگزین کند.
@@ -145,13 +145,13 @@ python scripts/security_final_smoke.py --build-only
 python scripts/security_final_smoke.py
 ```
 
---build-only هر دو snapshot را می‌سازد و startup نامعتبر، anonymous HTTP و بررسی CLI درس ۷۰ را اجرا می‌کند؛ audit واقعی DB را تأیید نمی‌کند.
+گزینهٔ --build-only هر دو snapshot را می‌سازد و startup نامعتبر، anonymous HTTP و بررسی CLI درس ۷۰ را اجرا می‌کند؛ audit واقعی DB را تأیید نمی‌کند.
 حالت کامل به SUPPORTDESK_PG و psql نیاز دارد. متغیرهای SUPPORTDESK_TEST_PGHOST، SUPPORTDESK_TEST_PGPORT، SUPPORTDESK_TEST_PGDATABASE، SUPPORTDESK_TEST_PGUSER و SUPPORTDESK_TEST_PGPASSWORD را مطابق همان اتصال تنظیم کن؛ [فهرست بخش](../README.md) راهنما دارد.
 اسکریپت schema و key ring موقت خودش را می‌سازد، خروجی publish را از پوشهٔ جدا اجرا می‌کند و فقط schema خودش را حذف می‌کند.
 برای بازبینی کامل بخش، security_smoke و security_next_smoke را نیز اجرا کن؛ این اسکریپت جایگزین سناریوهای درس‌های قبلی نیست.
 
 
-تست‌ها canary تصادفی در password، title، email، query و bearer نامعتبر می‌گذارند و app log و audit response و rowهای ذخیره‌شده را اسکن می‌کنند.
+تست‌ها یک مقدار آزمایشی تصادفی و قابل جست‌وجو، یعنی `canary`، در password، title، email، query و bearer نامعتبر می‌گذارند. سپس app log، پاسخ audit و rowهای audit را برای همان مقدار می‌گردند تا نشت احتمالی در مسیرهای اجراشده معلوم شود.
 همچنین وجود رویدادهای ثابت و نبود رویداد موفق برای write شکست‌خورده را می‌سنجند.
 این اسکن فقط مسیرهای اجراشده و app log این host را پوشش می‌دهد؛ نشت در proxy، driver tracing، DB logs یا ابزار مانیتورینگ آینده را ثابت نمی‌کند.
 

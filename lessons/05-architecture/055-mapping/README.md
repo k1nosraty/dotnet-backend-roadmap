@@ -2,9 +2,7 @@
 
 ## خروجی قابل مشاهده
 
-مدل ورودی مشتری، command برنامه، Domain، row ذخیره و پاسخ عمومی را جدا می‌کنی.
-فقط فیلدهای لازم از هر مرز عبور می‌کنند و mapping صریح قابل خواندن باقی می‌ماند.
-با ورودی دارای Status و Version اضافی بررسی می‌کنی که این فیلدها setter دامنه نمی‌شوند.
+برای تغییر عنوان، client فقط عنوان تازه را پیشنهاد می‌دهد؛ وضعیت و نسخهٔ ذخیره‌سازی در اختیار آن نیست. شکل ورودی، command برنامه، مدل domain، row ذخیره و پاسخ عمومی را کنار هم می‌خوانی تا ببینی کدام داده در هر مرز لازم است. سپس با body دارای Status و Version اضافی آزمایش می‌کنی که این مقدارها نتوانند state داخلی را تغییر بدهند.
 
 پیش‌نیاز: [درس 054](../054-ports/README.md)، DTO، nullable reference و JSON.
 نمونه یک اجرای کنسولی دارد؛ HTTP featureها در درس ۵۶ اضافه می‌شوند.
@@ -38,7 +36,7 @@ package mapper یا mediator تازه‌ای در این درس لازم نیس�
 }
 ```
 
-RenameRequest فقط Title دارد.
+نوع RenameRequest فقط Title دارد.
 شناسهٔ command از آرگومان route گرفته می‌شود و از body کپی نمی‌شود.
 Status و Version در این request عضو معتبری ندارند.
 در تنظیم پیش‌فرض System.Text.Json، فیلدهای ناشناخته نادیده گرفته می‌شوند.
@@ -55,20 +53,19 @@ public static RenameTicketCommand ToCommand(int routeId, RenameRequest request)
     => new(routeId, request.Title);
 ```
 
-کد بالا منطق وضعیت یا دسترسی به store ندارد.
-عنوان هنوز می‌تواند null یا نامعتبر باشد؛ command معتبرِ شکلی الزاماً مدل معتبر نیست.
+این mapping فقط عنوان دریافتی و شناسهٔ تعیین‌شده از مسیر را در command قرار می‌دهد. عنوان هنوز ممکن است null یا کوتاه باشد؛ ساخت command به معنی تأیید قانون عنوان نیست. در این مرحله نه وضعیت تیکت خوانده می‌شود و نه ذخیره‌ای انجام می‌شود.
 RenameTicket ورودی را بررسی می‌کند، TicketTitle می‌سازد و Ticket.Rename را اجرا می‌کند.
 اگر تیکت بسته باشد، mapping اجازهٔ دور زدن آن را نمی‌دهد.
 
 ## پاسخ خلاصه
 
-src/Application/TicketMapping.cs یک projection کوچک دارد:
+فایل src/Application/TicketMapping.cs یک projection کوچک دارد:
 
 ```csharp
 return new(ticket.Id, ticket.Title, ticket.Status, ticket.Notes.Count);
 ```
 
-TicketResponse نه Version دارد و نه مجموعهٔ noteها.
+نوع TicketResponse نه Version دارد و نه مجموعهٔ noteها.
 مقدار NoteCount از Domain محاسبه می‌شود؛ caller نمی‌تواند با آن مجموعه را تغییر دهد.
 CloseTicket، ResolveTicket و RenameTicket از این projection استفاده می‌کنند.
 این اشتراک کوچک ارزش دارد چون شکل پاسخ مشترک است، نه صرفاً چون هر سه کلاس متدی به نام Map می‌خواهند.
@@ -76,11 +73,11 @@ CloseTicket، ResolveTicket و RenameTicket از این projection استفاد�
 
 ## mapping ذخیره با mapping پاسخ فرق دارد
 
-StorageMapping باید noteهای کامل و نسخه را برای ذخیره حفظ کند.
+کلاس StorageMapping باید noteهای کامل و نسخه را برای ذخیره حفظ کند.
 جهت خواندن به Ticket.Restore می‌رود تا دادهٔ نامعتبر رد شود.
 جهت پاسخ عمومی فقط خلاصه می‌سازد.
 ساخت یک GenericMapper که هر دو را با reflection و setterها انجام دهد، این تفاوت‌ها را پنهان می‌کند.
-یک تبدیل دوطرفهٔ عمومی ممکن است ناخواسته مسیر bypass قانون بسازد.
+اگر همان mapper عمومی بتواند هر response یا دادهٔ خام را مستقیم به entity برگرداند، ممکن است setterهای داخلی را بدون اجرای قوانین پر کند. این راه دورزدن یا `bypass` قانون، دلیل بررسی جداگانهٔ جهت ورود، ذخیره و پاسخ است.
 
 ## چه چیزی در mapper قرار نمی‌گیرد؟
 
@@ -89,7 +86,7 @@ StorageMapping باید noteهای کامل و نسخه را برای ذخیره
 - تصمیم دربارهٔ 400 و 409: مسئولیت Presentation.
 - گرفتن dependency از service locator: نیازی در این mapping کوچک ندارد.
 
-Mapper باید معلوم کند داده از کجا به کجا می‌رود.
+نام Mapper باید معلوم کند داده از کجا به کجا می‌رود.
 اگر برای mapping به HttpContext و DbContext و سرویس مجوز نیاز پیدا کرده‌ای، احتمالاً چند مسئولیت را مخلوط کرده‌ای.
 
 ## آیا کتابخانهٔ mapping لازم است؟

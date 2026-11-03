@@ -8,13 +8,13 @@
 
 ## چرا double کافی نیست؟
 
-RecordingStore می‌تواند نتیجهٔ Conflict بدهد ولی ثابت نمی‌کند SQL adapter با UPDATE شرطی از lost update جلوگیری می‌کند.
+کلاس RecordingStore می‌تواند نتیجهٔ Conflict بدهد ولی ثابت نمی‌کند SQL adapter با UPDATE شرطی از lost update جلوگیری می‌کند.
 حافظه یا SQLite هم رفتار constraint، SQL، encoding و connectionهای PostgreSQL را کامل بازنمایی نمی‌کنند.
-در این درس provider واقعی و یک instance موقت PostgreSQL اجرا می‌شود؛ endpoint و Application از همان قرارداد ITicketStore استفاده می‌کنند.
+در این درس PostgreSQL واقعی داخل container موقت اجرا می‌شود. کتابخانهٔ `Testcontainers` ساختن، شروع‌کردن و پایان این محیط را از داخل تست هماهنگ می‌کند. endpoint و Application همچنان همان `ITicketStore` را می‌شناسند، اما این بار implementation آن واقعاً SQL می‌فرستد.
 
 ## پیش‌نیاز محیط
 
-Docker CLI و engine قابل دسترسی با Linux containers لازم است. روی Windows، Docker Desktop را با Linux containers اجرا کن.
+ابزار Docker CLI و engine قابل دسترسی با Linux containers لازم است. روی Windows، Docker Desktop را با Linux containers اجرا کن.
 نصب Docker در این درس خودکار انجام نمی‌شود؛ ابتدا docker info باید موفق باشد.
 تصویر postgres:18.6 بار اول دانلود می‌شود و دسترسی به registry لازم است؛ زمان download را با زمان اجرای assertionها یکی نگیر.
 Testcontainers.PostgreSql نسخهٔ ثابت 4.15.0 فقط در پروژهٔ تست است. driver Npgsql 10.0.3 در sample ثبت شده است.
@@ -33,8 +33,8 @@ python scripts/testing_smoke.py --with-docker
 
 ## مالکیت lifecycle و داده
 
-PostgresFixture با IAsyncLifetime مربوط به xUnit v2 container را StartAsync و در پایان DisposeAsync می‌کند.
-یک container در سطح کلاس fixture مشترک است، ولی هر تست شناسه‌های تازه و دادهٔ خودش را دارد؛ reset سراسری بین تست‌ها نداریم.
+کلاس PostgresFixture با IAsyncLifetime مربوط به xUnit v2 container را StartAsync و در پایان DisposeAsync می‌کند.
+نام `fixture` به محیط آماده‌سازی مشترک تست اشاره دارد. اینجا یک container برای تست‌های کلاس آماده می‌شود، اما هر تست شناسه و دادهٔ خودش را می‌سازد تا از دادهٔ تست قبلی نتیجه نگیرد. به همین دلیل نیازی به reset سراسری میان تست‌ها نیست.
 نام database داخل container course_testing است، password تصادفی و پورت host به‌صورت پویا انتخاب می‌شود.
 GetConnectionString آدرس mapped واقعی را می‌دهد؛ فرض localhost:5432 یا پورت ثابت نداریم.
 Search Path با prefix testing74_ و ۳۲ hex تازه تنظیم می‌شود. init فقط schema تازه را می‌سازد و DDL destructive ندارد.
@@ -67,15 +67,15 @@ EnsureDeleted و حذف database خارجی نداریم. تست‌ها SUPPORTD
 | عنوان یا resolution دارای NUL از HTTP | پاسخ 400؛ وضعیت ذخیره‌شده و resolution قبلی ثابت بمانند |
 | dispose و ساخت دوبارهٔ WebApplicationFactory | دادهٔ PostgreSQL باقی بماند و bob منبع alice را نبیند |
 
-PostgresTicketStore تمام مقدارها را parameter می‌کند. identifier schema فقط پس از regex محدود وارد DDL می‌شود؛ نام schema، input HTTP نیست.
+کلاس PostgresTicketStore تمام مقدارها را parameter می‌کند. identifier schema فقط پس از regex محدود وارد DDL می‌شود؛ نام schema، input HTTP نیست.
 UPDATE شرط Id و OwnerId و Version دارد و version را در همان statement افزایش می‌دهد.
-تعداد ردیف تغییرکرده شاهد commit است؛ Load قدیمی به‌تنهایی مجوز overwrite ایجاد نمی‌کند.
-اگر UPDATE هیچ ردیفی نداشت، lookup وضعیت Missing/Conflict را دسته‌بندی می‌کند؛ این lookup دوم یک snapshot تراکنشی واحد با UPDATE نیست.
+تعداد row تغییرکرده نشان می‌دهد UPDATE شرط نسخه را برقرار یافته است یا نه؛ خودِ این عدد را پیش از نهایی‌شدن transaction با commit یکی نگیر. نتیجهٔ Saved باید مطابق قرارداد adapter پس از موفقیت ذخیره برگردد. داشتن snapshot قدیمی در Load نیز اجازهٔ بازنویسی بی‌قید را نمی‌دهد.
+اگر UPDATE هیچ ردیفی نداشت، lookup وضعیت Missing/Conflict را دسته‌بندی می‌کند؛ این lookup دوم و `UPDATE` در یک snapshot مشترکِ transaction اجرا نمی‌شوند؛ بین این دو خواندن ممکن است وضعیت دوباره تغییر کند.
 در API این lab، حذف و انتقال مالکیت نداریم؛ اگر اضافه شوند قرارداد race آن‌ها را نیز تست کن.
 
 ## Unicode و constraint
 
-char_length در PostgreSQL و EnumerateRunes در Domain برای Unicode معتبر scalar را می‌شمارند.
+تابع char_length در PostgreSQL و EnumerateRunes در Domain برای Unicode معتبر scalar را می‌شمارند.
 Title بین ۳ و ۱۲۰ و Resolution بین ۳ و ۲۰۰ scalar است؛ Close بدون resolution معتبر در DB پذیرفته نمی‌شود.
 هم‌خوان بودن واحد طول از اختلاف emoji بین string.Length و SQL جلوگیری می‌کند.
 NUL با کد صفر، حتی با طول مجاز در ستون متنی PostgreSQL قابل ذخیره نیست. TextRules آن را پیش از I/O رد می‌کند. برای آزمایش، رشتهٔ `Bad\0title` در C# را از PostAsJsonAsync بفرست؛ درخواست باید 400 بگیرد، نه خطای 500 از دیتابیس.
@@ -84,22 +84,22 @@ NUL با کد صفر، حتی با طول مجاز در ستون متنی Postgr
 
 ## HTTP با دیتابیس واقعی و هویت تست
 
-DatabaseFactory در ConfigureTestServices، NpgsqlDataSource و ITicketStore را به connection کانتینر fixture وصل می‌کند.
+کلاس DatabaseFactory در ConfigureTestServices، NpgsqlDataSource و ITicketStore را به connection کانتینر fixture وصل می‌کند.
 data source ساخته‌شده توسط factory متعلق به DI است و با host dispose می‌شود؛ container تا پایان fixture باقی می‌ماند.
 بستن host و باز کردن host جدید، دوام داده را در همان database می‌سنجد؛ restart خود PostgreSQL یا crash-recovery تست نمی‌شود.
 HTTP هنوز TestServer است و actor در test assembly ساخته می‌شود؛ این suite ورود Identity یا TLS و proxy production را تأیید نمی‌کند.
 
 ## اجرای دستی خارج از تست
 
-host عادی ClosedGate دارد؛ به X-Test-Actor اعتماد نمی‌کند و provider ورود محصول در آن ثبت نشده است.
+برنامهٔ host عادی ClosedGate دارد؛ به X-Test-Actor اعتماد نمی‌کند و provider ورود محصول در آن ثبت نشده است.
 برای تمرین init روی database اختصاصی، SUPPORTDESK_PG با Search Path=testing74_<32 hex> بده و --init-lab را اجرا کن.
 این فرمان schema و جدول تازه می‌سازد و روی schema موجود fail می‌کند؛ reset نمی‌کند.
 برای یادگیری حساب و key و session از نمونه‌های امنیت استفاده کن؛ هویت تست را برای قابل استفاده کردن UI به app منتقل نکن.
 
 ## گزارش و CI
 
-runner، TRX را می‌خواند و تعداد executed و failed و skipped را کنترل می‌کند؛ فقط exit code صفر یا build کافی نیست.
-در CI، unit و WAF روی Windows/Linux و container suite در job مستقل Linux اجرا می‌شوند.
+اسکریپت runner، TRX را می‌خواند و تعداد executed و failed و skipped را کنترل می‌کند؛ فقط exit code صفر یا build کافی نیست.
+در CI، unit testها و تست‌های `WebApplicationFactory` روی Windows و Linux اجرا می‌شوند؛ suite کانتینری در job مستقل Linux است. منظور از WAF در این بحث همان WebApplicationFactory است، نه ابزار امنیت شبکهٔ هم‌نام.
 این تست به سرویس PostgreSQL مشترک jobهای قبلی متصل نمی‌شود؛ lifecycle و connection کانتینر خودش را دارد.
 backup/restore، چند replica، outage شبکه و تست load در این درس اجرا نمی‌شوند.
 

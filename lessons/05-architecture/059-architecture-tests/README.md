@@ -13,9 +13,7 @@
 ## مسئلهٔ convention شفاهی
 
 اگر فقط بگوییم «Domain نباید وب را بشناسد»، افزودن reference اشتباه ممکن است در review گم شود.
-تست معماری بخشی از قراردادهای تیم را executable می‌کند.
-اما قانون مبهم یا policy بیش از حد باز، فقط ظاهری از اطمینان می‌سازد.
-ابتدا ممنوعیت دقیق را بنویس، سپس شاهد مناسبش را انتخاب کن.
+تست معماری بخشی از قرارداد تیم را به بررسی قابل اجرا تبدیل می‌کند؛ مثلاً اگر Domain به EF reference داد، بررسی باید شکست بخورد. برای این کار ابتدا شرط دقیق را می‌نویسیم: reference اعلام‌شده ممنوع است، استفاده از یک type ممنوع است یا هر دو؟ شاهد لازم برای هرکدام متفاوت است. قانونی که همه‌چیز را مجاز بگذارد، چیزی را کنترل نمی‌کند.
 
 ## سه سطح بررسی
 
@@ -44,11 +42,11 @@ package مجاز هم باید همان نسخهٔ ثابت باشد؛ تغیی�
 
 ## بررسی assembly کامپایل‌شده
 
-ArchitectureChecks.cs از GetReferencedAssemblies استفاده می‌کند.
+فایل ArchitectureChecks.cs از GetReferencedAssemblies استفاده می‌کند.
 نام referenceهای SupportDesk.* را با مجموعهٔ مورد انتظار مقایسه می‌کند.
 همچنین نشت ASP.NET، EF و Npgsql به assemblyهای این نمونه را رد می‌کند.
 برای Domain وابستگی FluentValidation هم مجاز نیست؛ محل آن Application است.
-adapterهای InMemoryTicketStore و JsonTicketStore نباید exported type عمومی باشند.
+کلاس‌های `InMemoryTicketStore` و `JsonTicketStore` نباید در فهرست `exported types`، یعنی typeهای عمومی در دسترس از assembly دیگر، دیده شوند. caller باید از قرارداد و factory عمومی استفاده کند، نه نام کلاس داخلی adapter.
 این تست سورس را از محل اجرای برنامه نمی‌خواند؛ در خروجی publish هم قابل اجراست.
 
 ## آزمون منفی خود policy
@@ -62,11 +60,11 @@ adapterهای InMemoryTicketStore و JsonTicketStore نباید exported type ع
 
 ## ADR چیست؟
 
-Architecture Decision Record یک تصمیم مشخص با دلیل و پیامدش است.
+سند Architecture Decision Record یک تصمیم مشخص با دلیل و پیامدش است.
 فهرست buzzword یا توصیف پوشه‌ها کافی نیست.
 خواننده باید بفهمد چه مسئله‌ای داشتیم، چه انتخاب دیگری ممکن بود و چرا انتخاب فعلی انجام شد.
 تصمیم تغییرپذیر است؛ تاریخچه را با پاک کردن دلیل قبلی از بین نبر.
-اگر تصمیم جایگزین شد، وضعیت آن را superseded کن و به ADR تازه لینک بده.
+اگر تصمیم تازه جای قبلی را گرفت، وضعیت ADR قبلی را `superseded`، یعنی جایگزین‌شده، علامت بزن و به سند تازه لینک بده. به این ترتیب دلیل انتخاب قبلی و علت تغییر آن هر دو قابل پیگیری می‌مانند.
 
 ## ADRهای واقعی نمونه
 
@@ -79,7 +77,7 @@ Architecture Decision Record یک تصمیم مشخص با دلیل و پیام�
 | docs/adr/003-validation.md | validation صریح و هزینهٔ اجرای دوباره |
 | docs/adr/004-delivery-storage.md | محدودیت storage آزمایشی و تحویل بعدی |
 
-ADR چهارم تصمیم مسیر تحویل بعدی را ثبت می‌کند؛ این snapshot هنوز configuration فایل host درس ۶۰ را ندارد.
+سند ADR چهارم تصمیم مسیر تحویل بعدی را ثبت می‌کند؛ این snapshot هنوز configuration فایل host درس ۶۰ را ندارد.
 هر فایل وضعیت، زمینه، تصمیم، جایگزین‌ها، پیامد و شاهد یا شرط بازنگری دارد.
 اسکریپت فقط وجود بخش‌ها را کنترل می‌کند؛ کیفیت استدلال همچنان به review انسانی نیاز دارد.
 
@@ -90,7 +88,7 @@ dotnet run --project samples/58-architecture-tests/SupportDesk.csproj -- --check
 python scripts/architecture_final_smoke.py
 ```
 
---check عبارت `PASS: compiled assembly dependency boundaries` می‌دهد.
+گزینهٔ --check عبارت `PASS: compiled assembly dependency boundaries` می‌دهد.
 اسکریپت جملهٔ `PASS: declared project/package policy, ADR completeness and deliberate violation rejection` را چاپ می‌کند.
 SDK 10 و restore package ثابت لازم است.
 بدون SDK فقط بررسی metadata ممکن است؛ موفقیت آن را با موفقیت build یکی اعلام نکن.

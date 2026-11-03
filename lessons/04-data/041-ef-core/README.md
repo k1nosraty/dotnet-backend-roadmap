@@ -7,7 +7,7 @@
 EF Core داده را به object تبدیل می‌کند، تغییرها را دنبال می‌کند و SQL مناسب provider را می‌سازد.
 دانستن SQL همچنان لازم است: latency، constraint و transaction پشت abstraction ناپدید نمی‌شوند.
 
-EF Core یک ORM است: ابزاری برای نگاشت objectها به دادهٔ رابطه‌ای. در این نمونه، TicketRow شیء متناظر داده، DbSet نقطهٔ شروع خواندن/تغییر آن نوع، و DbContext محدودهٔ هماهنگی این کارهاست. provider هم قسمت مخصوص دیتابیس است؛ اینجا Npgsql ترجمه و اجرای متناسب با PostgreSQL را فراهم می‌کند.
+ابزار EF Core یک ORM است: ابزاری برای نگاشت objectها به دادهٔ رابطه‌ای. در این نمونه، TicketRow شیء متناظر داده، DbSet نقطهٔ شروع خواندن/تغییر آن نوع، و DbContext محدودهٔ هماهنگی این کارهاست. provider هم قسمت مخصوص دیتابیس است؛ اینجا Npgsql ترجمه و اجرای متناسب با PostgreSQL را فراهم می‌کند.
 
 تفاوت اصلی با SQL خام این است که بسیاری از فرمان‌ها را EF از روی مدل و تغییرهای objectها می‌سازد. این به معنی حذف دیتابیس، constraint یا هزینهٔ رفت‌وبرگشت شبکه نیست.
 
@@ -20,7 +20,7 @@ EF Core یک ORM است: ابزاری برای نگاشت objectها به داد
 | Npgsql provider | ترجمه و اجرای عملیات برای PostgreSQL | UseNpgsql در Program.cs |
 | Lab | مالک schema آزمایشی و پاک‌سازی | Infrastructure/Lab.cs |
 
-TicketRow عمداً setter دارد؛ آن را به‌جای مدل دامنهٔ محافظت‌شده به Controller نده.
+کلاس TicketRow عمداً setter دارد؛ آن را به‌جای مدل دامنهٔ محافظت‌شده به Controller نده.
 مدل قابل materialize شدن لزوماً مدل مناسب اجرای قواعد کسب‌وکار نیست.
 در درس تحویل، mapping بین این دو را می‌نویسیم.
 
@@ -40,9 +40,9 @@ public sealed class DeskContext(DbContextOptions<DeskContext> options) : DbConte
 }
 ```
 
-DbSet نمای یک query قابل ترکیب و ورودی عملیات تغییر است؛ همهٔ ردیف‌های جدول را در RAM نگه نمی‌دارد.
+نوع DbSet نمای یک query قابل ترکیب و ورودی عملیات تغییر است؛ همهٔ ردیف‌های جدول را در RAM نگه نمی‌دارد.
 DbContextOptions وابستگی provider و اتصال را بیرون کلاس نگه می‌دارد.
-Fluent API در OnModelCreating شکل schema را مشخص می‌کند؛ setter به‌خودی‌خود اعتبارسنجی دامنه نیست.
+روش `Fluent API` یعنی تنظیم مدل با زنجیرهٔ فراخوانی متدها، مانند `ToTable` و `HasMaxLength`، در `OnModelCreating`. این تنظیم‌ها نگاشت و schema را توصیف می‌کنند؛ setter عادی روی `TicketRow` هنوز نمی‌گوید عنوان از نظر domain معتبر است.
 HasMaxLength حداکثر ستون را می‌سازد و جای Trim یا حداقل طول را نمی‌گیرد.
 نام جدول صریح tickets است؛ نام ستون‌های این نمونه مانند Title به صورت quoted و با حرف بزرگ باقی می‌ماند.
 در SQL دستی باید همین نام‌ها را رعایت کنی؛ درس ۴۰ schema مستقلی با نام‌های کوچک داشت.
@@ -71,7 +71,7 @@ stateDiagram-v2
 <p>نه؛ Added وضعیت tracker است. درج در این نمونه با SaveChanges انجام می‌شود و نتیجه با context تازه بررسی می‌شود.</p>
 </details>
 
-## واحد کار و وضعیت entity
+## unit of work و وضعیت entity
 
 | مرحله | وضعیت | اثر روی دیتابیس |
 | --- | --- | --- |
@@ -86,9 +86,9 @@ DetectChanges صریح برای مشاهدهٔ آموزشی وضعیت است؛ 
 identity را از سرور بگیر؛ Max(Id)+1 زیر concurrency قرارداد امنی نیست.
 خروجی Id قبل از ذخیره تضمین شناسهٔ نهایی ندارد.
 
-tracker بخش DbContext است که شیءهای دنبال‌شده و تغییرشان را می‌شناسد. «واحد کار» در این درس یعنی چند تغییر مرتبط را در یک محدوده دنبال کنیم و با SaveChanges برای ذخیره به DB بفرستیم.
+بخش `change tracker` در `DbContext` شیءهای دنبال‌شده و تغییرشان را نگه می‌دارد. مفهوم `unit of work` در این درس یعنی چند تغییر مرتبط را در یک محدوده دنبال کنیم و با `SaveChanges` برای ذخیره به دیتابیس بفرستیم. تغییر یک property در حافظه، به‌تنهایی چنین ذخیره‌ای انجام نمی‌دهد.
 
-[Program مرجع](../../../samples/40-ef-core/Program.cs) را با این سؤال بخوان: «الان فقط شیء C# عوض شده یا SQL هم اجرا شده است؟»
+فایل [Program مرجع](../../../samples/40-ef-core/Program.cs) را با این سؤال بخوان: «الان فقط شیء C# عوض شده یا SQL هم اجرا شده است؟»
 
 1. new فقط شیء را می‌سازد؛ DB هنوز رکورد تازه ندارد.
 2. Add به tracker می‌گوید آن را برای درج در نظر بگیر؛ هنوز INSERT اجرا نشده است.
@@ -96,12 +96,12 @@ tracker بخش DbContext است که شیءهای دنبال‌شده و تغی�
 4. تغییر Title ابتدا روی همان شیء حافظه است؛ DetectChanges وضعیت تغییر را آشکار می‌کند.
 5. SaveChanges بعدی UPDATE را می‌فرستد؛ context تازه نتیجه را مستقل می‌خواند.
 
-materialize یعنی ساختن object از دادهٔ نتیجهٔ query. دیدن یک object با Title تازه در context اول، به‌تنهایی اثبات نمی‌کند که DB هم آن را ذخیره کرده است. برای همین بررسی context تازه مهم است.
+اصطلاح materialize یعنی ساختن object از دادهٔ نتیجهٔ query. دیدن یک object با Title تازه در context اول، به‌تنهایی اثبات نمی‌کند که DB هم آن را ذخیره کرده است. برای همین بررسی context تازه مهم است.
 
 ## طول عمر و async
 
 یک context برای یک واحد کار کوتاه بساز و dispose کن.
-در ASP.NET Core ثبت معمول AddDbContext از نوع Scoped است؛ singleton بودن context اشتباه است.
+در الگوی این دوره، `AddDbContext` معمولاً context را Scoped ثبت می‌کند تا عمر کوتاه عملیات داشته باشد. آن را به‌عنوان singleton مشترکِ درخواست‌های وب ثبت نکن؛ دادهٔ tracker و استفادهٔ هم‌زمان باید در محدودهٔ واحد کار باقی بمانند.
 دو عملیات async هم‌زمان را روی همان context اجرا نکن.
 Task.WhenAll روی دو query با یک context، thread safety ایجاد نمی‌کند.
 CancellationToken را تا ToListAsync و SaveChangesAsync بفرست، نه فقط تا Controller.
@@ -109,7 +109,7 @@ CancellationToken را تا ToListAsync و SaveChangesAsync بفرست، نه ف
 
 ## ایجاد schema در این آزمایش
 
-Lab یک schema خالی با نام تصادفی تحت مالکیت خودش می‌سازد.
+کلاس آزمایشگاهی Lab یک schema خالی با نام تصادفی تحت مالکیت خودش می‌سازد.
 سپس IRelationalDatabaseCreator.CreateTablesAsync جدول‌های مدل را فقط برای این آزمایش ایجاد می‌کند.
 این API پایین‌سطح را در startup سرویس یا روی schema موجود صدا نزن.
 از درس ۴۲، تکامل schema با migration انجام می‌شود.
@@ -124,7 +124,7 @@ EnsureCreated مسیر دیگری برای ساخت اولیه است و نبا�
 dotnet run --project samples/40-ef-core/SupportDesk.csproj
 ```
 
-Lab یک schema تصادفی تازه می‌سازد و در پایان همان schema را پاک می‌کند.
+کلاس آزمایشگاهی Lab یک schema تصادفی تازه می‌سازد و در پایان همان schema را پاک می‌کند.
 با --keep در انتهای فرمان می‌توانی آن را برای بازرسی نگه داری؛ نام schema در خروجی چاپ می‌شود.
 این گزینه ابزار مشاهده است، نه ذخیره‌سازی پایدار برنامه.
 کد خروج صفر و PASS: lesson scenario یعنی assertionهای همین سناریو عبور کرده‌اند.
